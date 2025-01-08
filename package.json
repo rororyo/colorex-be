@@ -19,7 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "NODE_OPTIONS='--loader ts-node/esm' typeorm",
-    "migration:generate": "bun --bun typeorm migration:generate -d src/frameworks/data-services/postgre/data-source.ts"
+    "migration:generate": "bun --bun typeorm migration:generate -d src/infrastructure/config/typeorm/typeorm.config.ts",
+    "migration:up": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:run -d src/infrastructure/config/typeorm/typeorm.config.ts",
+    "migration:down": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:revert -d src/infrastructure/config/typeorm/typeorm.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -29,11 +31,15 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.2",
+    "argon2": "^0.41.1",
     "class-validator": "^0.14.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "instances-container": "^2.0.6",
     "nanoid": "^5.0.9",
     "node-pg-migrate": "^7.8.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
