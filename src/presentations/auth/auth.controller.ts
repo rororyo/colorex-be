@@ -70,7 +70,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Register a new user' })
-  @ApiBody({ type: RegisterDto }) // Links request body to the DTO
+  @ApiBody({ type: RegisterDto }) 
   @ApiResponse({
     status: 201,
     description: 'User registered successfully.',

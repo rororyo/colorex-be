@@ -1,37 +1,40 @@
-
 import { Roles } from 'src/domains/model/roles.enum';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn } from 'typeorm';
+import { Post } from './post.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid') // Using UUID for id (common practice)
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true }) // Email should be unique
+  @Column({ unique: true })
   email: string;
 
-  @Column({ unique: true }) // Username should also be unique
+  @Column({ unique: true })
   username: string;
 
   @Column()
   password: string;
 
   @Column({
-    type: 'enum', // Map to the enum type in the database
+    type: 'enum',
     enum: Roles,
-    default: Roles.user, // Default role is 'user'
+    default: Roles.user,
   })
   role: Roles;
 
-  @Column({
-    type: 'timestamp', // Explicitly define type for timestamps
-    default: () => 'CURRENT_TIMESTAMP', // Use SQL's current timestamp function
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   created_at: Date;
 
   @Column({
     type: 'timestamp',
-    nullable: true, // Allow nulls if user hasn't subscribed yet
+    nullable: true,
   })
   subscribed_at: Date;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Promise<Post[]>;  
 }

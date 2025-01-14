@@ -29,18 +29,10 @@ export class UserRepositoryOrm implements UserRepository {
     const user = await this.userRepository.findOne({
       where: condition,
     });
+    const posts = await user.posts;
+
     if (!user) return null;
-    return this.toUserM(user); 
+    return user;
   }
-  private toUserM(user: User): UserM {
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      password: user.password,
-      role: user.role,
-      created_at: user.created_at,
-      subscribed_at: user.subscribed_at,
-    };
-  }
+  
 }

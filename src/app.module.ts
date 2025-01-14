@@ -3,10 +3,12 @@ import { UseCaseProxyModule } from "./infrastructure/usecase-proxy/usecase-proxy
 import { AuthModule } from "./presentations/auth/auth.module";
 import { EnvironmentConfigModule } from "./infrastructure/config/environment-config/environment-config.module";
 import { AuthController } from "./presentations/auth/auth.controller";
+import { PostMediaController } from "./presentations/posts/post.controller";
+import { PostModule } from "./presentations/posts/post.module";
 
 @Module({
-  imports:[UseCaseProxyModule.register(),AuthModule,EnvironmentConfigModule],
-  controllers:[AuthController],
+  imports:[UseCaseProxyModule.register(),AuthModule,EnvironmentConfigModule,PostModule],
+  controllers:[AuthController,PostMediaController],
 
 })
 export class AppModule {}
