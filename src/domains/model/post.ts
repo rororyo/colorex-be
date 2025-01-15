@@ -1,15 +1,18 @@
-import { User } from "src/infrastructure/entities/user.entity";
+import { CommentM } from "./comment";
+import { postLikeM } from "./postLike";
 import { UserM } from "./user";
 
 export class PostM{
   id: string;
-  user: User;
+  user: UserM;
   post_type : PostType;
   media_url: string;
   title: string;
   content: string;
   created_at: Date;
   updated_at: Date;
+  comments: CommentM[];
+  postLikes: postLikeM[]
 }
 
 export enum PostType {

@@ -13,6 +13,13 @@ import { LoginUserUsecase } from 'src/applications/use-cases/user/loginUser.usec
 import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
 import { PostRepositoryOrm } from '../repositories/posts/post.repository';
 import { PostMediaUsecase } from 'src/applications/use-cases/posts/postMedia.usecase';
+import { CommentRepositoryOrm } from '../repositories/comment/comment.repository';
+import { PostCommentUsecase } from 'src/applications/use-cases/comment/postComment.usecase';
+import { ReplyRepositoryOrm } from '../repositories/reply/reply.repository';
+import { postReplyUseCase } from 'src/applications/use-cases/reply/postReply.usecase';
+import { getMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
+import { PostLikeUsecase } from 'src/applications/use-cases/like/postLike.usecase';
+import { postLikeRepositoryOrm } from '../repositories/like/postLike.repository';
 
 @Module({
   imports: [
@@ -25,10 +32,15 @@ import { PostMediaUsecase } from 'src/applications/use-cases/posts/postMedia.use
   ],
 })
 export class UseCaseProxyModule {
+  // usecases
   static LOGIN_USER_USECASE = 'loginUserUsecaseProxy';
   static REGISTER_USER_USECASE = 'registerUserUsecaseProxy';
   static CURRENT_USER_USECASE = 'currentUserUsecaseProxy';
   static POST_MEDIA_USECASE = 'postMediaUsecaseProxy';
+  static GET_MEDIA_USECASE = 'getMediaUsecaseProxy';
+  static POST_COMMENT_USECASE = 'postCommentUsecaseProxy';
+  static POST_REPLY_USECASE = 'postReplyUsecaseProxy';
+  static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
 
   static register(): DynamicModule {
     return {
@@ -92,12 +104,52 @@ export class UseCaseProxyModule {
             userRepository: UserRepositoryOrm,
           ) => new UseCaseProxy(new PostMediaUsecase(userRepository,postRepository)),
         },
+        {
+          inject:[UserRepositoryOrm,PostRepositoryOrm,postLikeRepositoryOrm],
+          provide:UseCaseProxyModule.POST_LIKE_USECASE,
+          useFactory:(
+            userRepository:UserRepositoryOrm,
+            postRepository:PostRepositoryOrm,
+            postLikeRepository:postLikeRepositoryOrm
+          )=> new UseCaseProxy(new PostLikeUsecase(userRepository,postRepository,postLikeRepository))
+        },
+        {
+          inject: [PostRepositoryOrm],
+          provide: UseCaseProxyModule.GET_MEDIA_USECASE,
+          useFactory:(
+            postRepository:PostRepositoryOrm
+          )=> new UseCaseProxy(new getMediaDetailsUsecase(postRepository))
+        },
+        {
+          inject:[PostRepositoryOrm,UserRepositoryOrm,CommentRepositoryOrm],
+          provide:UseCaseProxyModule.POST_COMMENT_USECASE,
+          useFactory:(
+            postRepository:PostRepositoryOrm,
+            userRepository:UserRepositoryOrm,
+            commentRepository:CommentRepositoryOrm
+          )=> new UseCaseProxy(new PostCommentUsecase(userRepository,postRepository,commentRepository))
+        },
+        {
+          inject:[UserRepositoryOrm,PostRepositoryOrm,CommentRepositoryOrm,ReplyRepositoryOrm],
+          provide:UseCaseProxyModule.POST_REPLY_USECASE,
+          useFactory:(
+            userRepository:UserRepositoryOrm,
+            postRepository:PostRepositoryOrm,
+            commentRepository:CommentRepositoryOrm,
+            replyRepository:ReplyRepositoryOrm
+          ) => new UseCaseProxy(new postReplyUseCase(userRepository,postRepository,commentRepository,replyRepository))
+        }
       ],
       exports: [
         UseCaseProxyModule.REGISTER_USER_USECASE,
         UseCaseProxyModule.LOGIN_USER_USECASE,
         UseCaseProxyModule.CURRENT_USER_USECASE,
-        UseCaseProxyModule.POST_MEDIA_USECASE
+        UseCaseProxyModule.POST_MEDIA_USECASE,
+        UseCaseProxyModule.POST_LIKE_USECASE,
+        UseCaseProxyModule.GET_MEDIA_USECASE,
+        UseCaseProxyModule.POST_COMMENT_USECASE,
+        UseCaseProxyModule.POST_REPLY_USECASE,
+
       ],
     };
   }

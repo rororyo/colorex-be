@@ -1,15 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { PostType } from "src/domains/model/post";
 import { User } from "./user.entity";
+import { Comment } from "./comment.entity";
+import { PostLike } from "./postLike.entity";
 
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User,(user) => user.posts,{eager: true} )  
+  @ManyToOne(() => User,(user) => user.posts,{onDelete: 'CASCADE'} )  
   @JoinColumn({ name: 'user_id' })
-  user: Promise<User>;
+  user: User;
   
   @Column({
     type: 'enum',
@@ -37,4 +39,10 @@ export class Post {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updated_at: Date;
+
+  @OneToMany(() => Comment, (comment) => comment.post,{cascade: true})
+  comments: Comment[];
+
+  @OneToMany(()=>PostLike, (postLike) => postLike.post)
+  postLikes: PostLike[]
 }

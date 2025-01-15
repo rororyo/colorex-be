@@ -1,6 +1,11 @@
 import { Roles } from 'src/domains/model/roles.enum';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn } from 'typeorm';
 import { Post } from './post.entity';
+import { Comment } from './comment.entity';
+import { Reply } from './reply.entity';
+import { PostLike } from './postLike.entity';
+import { commentLike } from './commentLike.entity';
+import { replyLike } from './replyLike.entity';
 
 @Entity()
 export class User {
@@ -36,5 +41,20 @@ export class User {
   subscribed_at: Date;
 
   @OneToMany(() => Post, (post) => post.user)
-  posts: Promise<Post[]>;  
+  posts: Post[];
+
+  @OneToMany(()=> PostLike, (postLike) => postLike.user)
+  postLikes: PostLike[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
+
+  @OneToMany(()=> commentLike, (commentLike) => commentLike.user)
+  commentLikes: commentLike[];
+
+  @OneToMany(() => Reply, (reply) => reply.user)
+  replies: Reply[];
+
+  @OneToMany(()=> replyLike, (replyLike) => replyLike.user)
+  replyLikes: replyLike[];
 }

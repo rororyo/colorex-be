@@ -14,7 +14,7 @@ export class PostMediaUsecase {
     post.media_url = 'lorem ipsum';
     post.post_type = postMediaDto.post_type;
     post.title = postMediaDto.title;
-    post.user = user.id;
+    post.user = user;
     await this.postRepository.createPost(post);
   }
 }
