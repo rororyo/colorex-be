@@ -1,7 +1,7 @@
+import { CommentM } from "src/domains/model/comment";
 import { CommentRepository } from "src/domains/repositories/comment/comment.repository"
 import { PostRepository } from "src/domains/repositories/post/post.repository";
 import { UserRepository } from "src/domains/repositories/user/user.repository"
-import { Comment } from "src/infrastructure/entities/comment.entity";
 import { PostCommentDto, PostCommentParamsDto } from "src/presentations/comment/dto/postComment.dto"
 
 export class PostCommentUsecase {
@@ -14,7 +14,7 @@ export class PostCommentUsecase {
     const user = await this.userRepository.findUser({ id: userId });
     await this.postRepository.verifyPostAvailability(postId);
     const post = await this.postRepository.getPostById(postId);
-    const comment = new Comment();
+    const comment = new CommentM();
     comment.content = commentDto.content;
     comment.user = user;
     comment.post = post;

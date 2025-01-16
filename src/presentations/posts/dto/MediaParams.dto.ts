@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsUUID } from "class-validator";
 
-export class getMediaDetailsParamsDto {
+export class MediaParamsDto {
   @IsUUID()
   @IsNotEmpty()
   postId: string

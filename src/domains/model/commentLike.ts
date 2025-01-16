@@ -1,7 +1,7 @@
 import { CommentM } from "./comment";
 import { UserM } from "./user";
 
-export class commentLikeM{
+export class CommentLikeM{
   id: string;
   user:UserM;
   comment:CommentM;

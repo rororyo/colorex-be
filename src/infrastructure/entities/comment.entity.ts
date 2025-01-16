@@ -2,7 +2,8 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'ty
 import { Post } from './post.entity';
 import { User } from './user.entity';
 import { Reply } from './reply.entity';
-import { commentLike } from './commentLike.entity';
+import { CommentLike } from './commentLike.entity';
+
 
 @Entity()
 export class Comment {
@@ -33,6 +34,8 @@ export class Comment {
   })
   updated_at: Date;
 
-  @OneToMany(() => commentLike, (commentLike) => commentLike.comment)
-  commentLikes: commentLike[];
+  @OneToMany(() => CommentLike, (commentLike) => commentLike.comment)
+  commentLikes: CommentLike[];
+
+  likeCount?: number
 }

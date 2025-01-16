@@ -9,6 +9,8 @@ import { CommentModule } from './presentations/comment/comment.module';
 import { CommentController } from './presentations/comment/comment.controller';
 import { ReplyController } from './presentations/reply/reply.controller';
 import { ReplyModule } from './presentations/reply/reply.module';
+import { LikeModule } from './presentations/like/like.module';
+import { LikeController } from './presentations/like/like.controller';
 
 @Module({
   imports: [
@@ -18,12 +20,14 @@ import { ReplyModule } from './presentations/reply/reply.module';
     PostModule,
     CommentModule,
     ReplyModule,
+    LikeModule
   ],
   controllers: [
     AuthController,
     PostMediaController,
     CommentController,
     ReplyController,
+    LikeController
   ],
 })
 export class AppModule {}

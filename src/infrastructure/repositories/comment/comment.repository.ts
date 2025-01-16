@@ -26,6 +26,7 @@ export class CommentRepositoryOrm implements CommentRepository{
     const comments = await this.commentRepository.find({where: {post: {id: postId}}});
     return comments;
   }
+  
   async getCommentById(commentId: string): Promise<CommentM> {
     const comment = await this.commentRepository.findOne({where: {id: commentId}});
     return comment;

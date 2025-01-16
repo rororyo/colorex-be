@@ -1,5 +1,5 @@
 import { CommentM } from "./comment";
-import { postLikeM } from "./postLike";
+import { PostLikeM } from "./postLike";
 import { UserM } from "./user";
 
 export class PostM{
@@ -12,7 +12,8 @@ export class PostM{
   created_at: Date;
   updated_at: Date;
   comments: CommentM[];
-  postLikes: postLikeM[]
+  postLikes: PostLikeM[]
+  likeCount?: number
 }
 
 export enum PostType {

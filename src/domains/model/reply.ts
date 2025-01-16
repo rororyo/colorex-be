@@ -1,5 +1,5 @@
 import { CommentM } from "./comment";
-import { replyLikeM } from "./replyLike";
+import { ReplyLikeM} from "./replyLike";
 import { UserM } from "./user";
 
 export class ReplyM{
@@ -9,5 +9,6 @@ export class ReplyM{
   content: string;
   created_at: Date;
   updated_at: Date
-  replyLikes: replyLikeM[]
+  replyLikes: ReplyLikeM[]
+  likeCount?: number
 }

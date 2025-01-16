@@ -17,9 +17,16 @@ import { CommentRepositoryOrm } from '../repositories/comment/comment.repository
 import { PostCommentUsecase } from 'src/applications/use-cases/comment/postComment.usecase';
 import { ReplyRepositoryOrm } from '../repositories/reply/reply.repository';
 import { postReplyUseCase } from 'src/applications/use-cases/reply/postReply.usecase';
-import { getMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
+import { GetMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
 import { PostLikeUsecase } from 'src/applications/use-cases/like/postLike.usecase';
-import { postLikeRepositoryOrm } from '../repositories/like/postLike.repository';
+import { CommentLikeRepositoryOrm } from '../repositories/like/commentLike.repository';
+import { CommentLikeUsecase } from 'src/applications/use-cases/like/commentLike.usecase';
+import { ReplyLikeRepositoryOrm } from '../repositories/like/replyLike.repository';
+import { ReplyLikeUsecase } from 'src/applications/use-cases/like/replyLike.usecasse';
+import { PostLikeRepositoryOrm } from '../repositories/like/postLike.repository';
+import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia.usecase';
+import { DeleteCommentUsecase} from 'src/applications/use-cases/comment/deleteComment.usecase';
+import { DeleteReplyUsecase } from 'src/applications/use-cases/reply/deleteReply.usecase';
 
 @Module({
   imports: [
@@ -37,10 +44,15 @@ export class UseCaseProxyModule {
   static REGISTER_USER_USECASE = 'registerUserUsecaseProxy';
   static CURRENT_USER_USECASE = 'currentUserUsecaseProxy';
   static POST_MEDIA_USECASE = 'postMediaUsecaseProxy';
+  static DELETE_POST_USECASE = 'deletePostUsecaseProxy';
+  static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
   static GET_MEDIA_USECASE = 'getMediaUsecaseProxy';
   static POST_COMMENT_USECASE = 'postCommentUsecaseProxy';
+  static DELETE_COMMENT_USECASE = 'deleteCommentUsecaseProxy';
+  static COMMENT_LIKE_USECASE = 'commentLikeUsecaseProxy';
   static POST_REPLY_USECASE = 'postReplyUsecaseProxy';
-  static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
+  static DELETE_REPLY_USECASE = 'deleteReplyUsecaseProxy';
+  static REPLY_LIKE_USECASE = 'replyLikeUsecaseProxy';
 
   static register(): DynamicModule {
     return {
@@ -102,54 +114,145 @@ export class UseCaseProxyModule {
           useFactory: (
             postRepository: PostRepositoryOrm,
             userRepository: UserRepositoryOrm,
-          ) => new UseCaseProxy(new PostMediaUsecase(userRepository,postRepository)),
+          ) =>
+            new UseCaseProxy(
+              new PostMediaUsecase(userRepository, postRepository),
+            ),
         },
         {
-          inject:[UserRepositoryOrm,PostRepositoryOrm,postLikeRepositoryOrm],
-          provide:UseCaseProxyModule.POST_LIKE_USECASE,
-          useFactory:(
-            userRepository:UserRepositoryOrm,
-            postRepository:PostRepositoryOrm,
-            postLikeRepository:postLikeRepositoryOrm
-          )=> new UseCaseProxy(new PostLikeUsecase(userRepository,postRepository,postLikeRepository))
+          inject: [PostRepositoryOrm],
+          provide: UseCaseProxyModule.DELETE_POST_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm) =>
+            new UseCaseProxy(new DeleteMediaUsecase(postRepository)),
+        },
+        {
+          inject: [UserRepositoryOrm, PostRepositoryOrm, PostLikeRepositoryOrm],
+          provide: UseCaseProxyModule.POST_LIKE_USECASE,
+          useFactory: (
+            userRepository: UserRepositoryOrm,
+            postRepository: PostRepositoryOrm,
+            postLikeRepository: PostLikeRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new PostLikeUsecase(
+                userRepository,
+                postRepository,
+                postLikeRepository,
+              ),
+            ),
         },
         {
           inject: [PostRepositoryOrm],
           provide: UseCaseProxyModule.GET_MEDIA_USECASE,
-          useFactory:(
-            postRepository:PostRepositoryOrm
-          )=> new UseCaseProxy(new getMediaDetailsUsecase(postRepository))
+          useFactory: (postRepository: PostRepositoryOrm) =>
+            new UseCaseProxy(new GetMediaDetailsUsecase(postRepository)),
         },
         {
-          inject:[PostRepositoryOrm,UserRepositoryOrm,CommentRepositoryOrm],
-          provide:UseCaseProxyModule.POST_COMMENT_USECASE,
-          useFactory:(
-            postRepository:PostRepositoryOrm,
-            userRepository:UserRepositoryOrm,
-            commentRepository:CommentRepositoryOrm
-          )=> new UseCaseProxy(new PostCommentUsecase(userRepository,postRepository,commentRepository))
+          inject: [PostRepositoryOrm, UserRepositoryOrm, CommentRepositoryOrm],
+          provide: UseCaseProxyModule.POST_COMMENT_USECASE,
+          useFactory: (
+            postRepository: PostRepositoryOrm,
+            userRepository: UserRepositoryOrm,
+            commentRepository: CommentRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new PostCommentUsecase(
+                userRepository,
+                postRepository,
+                commentRepository,
+              ),
+            ),
         },
         {
-          inject:[UserRepositoryOrm,PostRepositoryOrm,CommentRepositoryOrm,ReplyRepositoryOrm],
-          provide:UseCaseProxyModule.POST_REPLY_USECASE,
-          useFactory:(
-            userRepository:UserRepositoryOrm,
-            postRepository:PostRepositoryOrm,
-            commentRepository:CommentRepositoryOrm,
-            replyRepository:ReplyRepositoryOrm
-          ) => new UseCaseProxy(new postReplyUseCase(userRepository,postRepository,commentRepository,replyRepository))
-        }
+          inject: [CommentRepositoryOrm],
+          provide: UseCaseProxyModule.DELETE_COMMENT_USECASE,
+          useFactory: (commentRepository: CommentRepositoryOrm) =>
+            new UseCaseProxy(new DeleteCommentUsecase(commentRepository)),
+        },
+        {
+          inject: [
+            UserRepositoryOrm,
+            CommentRepositoryOrm,
+            CommentLikeRepositoryOrm,
+          ],
+          provide: UseCaseProxyModule.COMMENT_LIKE_USECASE,
+          useFactory: (
+            userRepository: UserRepositoryOrm,
+            commentRepository: CommentRepositoryOrm,
+            commentLikeRepository: CommentLikeRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new CommentLikeUsecase(
+                userRepository,
+                commentRepository,
+                commentLikeRepository,
+              ),
+            ),
+        },
+        {
+          inject: [
+            UserRepositoryOrm,
+            PostRepositoryOrm,
+            CommentRepositoryOrm,
+            ReplyRepositoryOrm,
+          ],
+          provide: UseCaseProxyModule.POST_REPLY_USECASE,
+          useFactory: (
+            userRepository: UserRepositoryOrm,
+            postRepository: PostRepositoryOrm,
+            commentRepository: CommentRepositoryOrm,
+            replyRepository: ReplyRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new postReplyUseCase(
+                userRepository,
+                postRepository,
+                commentRepository,
+                replyRepository,
+              ),
+            ),
+        },
+        {
+          inject: [ReplyRepositoryOrm],
+          provide: UseCaseProxyModule.DELETE_REPLY_USECASE,
+          useFactory: (replyRepository: ReplyRepositoryOrm) =>
+            new UseCaseProxy(new DeleteReplyUsecase(replyRepository)),
+        },
+        {
+          inject: [
+            UserRepositoryOrm,
+            ReplyRepositoryOrm,
+            ReplyLikeRepositoryOrm,
+          ],
+          provide: UseCaseProxyModule.REPLY_LIKE_USECASE,
+          useFactory: (
+            userRepository: UserRepositoryOrm,
+            replyRepository: ReplyRepositoryOrm,
+            replyLikeRepository: ReplyLikeRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new ReplyLikeUsecase(
+                userRepository,
+                replyRepository,
+                replyLikeRepository,
+              ),
+            ),
+        },
       ],
       exports: [
         UseCaseProxyModule.REGISTER_USER_USECASE,
         UseCaseProxyModule.LOGIN_USER_USECASE,
         UseCaseProxyModule.CURRENT_USER_USECASE,
         UseCaseProxyModule.POST_MEDIA_USECASE,
+        UseCaseProxyModule.DELETE_POST_USECASE,
         UseCaseProxyModule.POST_LIKE_USECASE,
         UseCaseProxyModule.GET_MEDIA_USECASE,
         UseCaseProxyModule.POST_COMMENT_USECASE,
+        UseCaseProxyModule.DELETE_COMMENT_USECASE,
+        UseCaseProxyModule.COMMENT_LIKE_USECASE,
         UseCaseProxyModule.POST_REPLY_USECASE,
-
+        UseCaseProxyModule.DELETE_REPLY_USECASE,
+        UseCaseProxyModule.REPLY_LIKE_USECASE,
       ],
     };
   }

@@ -4,8 +4,8 @@ import { Post } from './post.entity';
 import { Comment } from './comment.entity';
 import { Reply } from './reply.entity';
 import { PostLike } from './postLike.entity';
-import { commentLike } from './commentLike.entity';
-import { replyLike } from './replyLike.entity';
+import { CommentLike } from './commentLike.entity';
+import { ReplyLike } from './replyLike.entity';
 
 @Entity()
 export class User {
@@ -49,12 +49,12 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @OneToMany(()=> commentLike, (commentLike) => commentLike.user)
-  commentLikes: commentLike[];
+  @OneToMany(()=> CommentLike, (commentLike) => commentLike.user)
+  commentLikes: CommentLike[];
 
   @OneToMany(() => Reply, (reply) => reply.user)
   replies: Reply[];
 
-  @OneToMany(()=> replyLike, (replyLike) => replyLike.user)
-  replyLikes: replyLike[];
+  @OneToMany(()=> ReplyLike, (replyLike) => replyLike.user)
+  replyLikes: ReplyLike[];
 }

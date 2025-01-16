@@ -4,7 +4,7 @@ import { Comment } from "./comment.entity";
 
 
 @Entity()
-export class commentLike {
+export class CommentLike {
   @PrimaryGeneratedColumn('uuid')
   id: string
   @ManyToOne(() => User, (user) => user.commentLikes)

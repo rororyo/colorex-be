@@ -1,4 +1,4 @@
-import { commentLikeM } from "./commentLike"
+import { CommentLikeM } from "./commentLike"
 import { PostM } from "./post"
 import { ReplyM } from "./reply"
 import { UserM } from "./user"
@@ -11,5 +11,6 @@ export class CommentM {
   replies: ReplyM[]
   created_at:Date
   updated_at:Date
-  commentLikes: commentLikeM[]
+commentLikes: CommentLikeM[]
+likeCount?:number
 }

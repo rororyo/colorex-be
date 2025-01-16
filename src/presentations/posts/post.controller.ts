@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   Param,
@@ -21,8 +22,8 @@ import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer } from 'multer';
 import { convertToMediaFile } from 'src/utils/validator/file.validator';
-import { getMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
-import { getMediaDetailsParamsDto } from './dto/detailMedia.dto';
+import { GetMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
+import { MediaParamsDto } from './dto/MediaParams.dto';
 import { PostLikeUsecase } from 'src/applications/use-cases/like/postLike.usecase';
 
 @Controller('api')
@@ -33,12 +34,10 @@ export class PostMediaController {
     @Inject(UseCaseProxyModule.POST_MEDIA_USECASE)
     private readonly postMediaUsecaseProxy: UseCaseProxy<PostMediaUsecase>,
     @Inject(UseCaseProxyModule.GET_MEDIA_USECASE)
-    private readonly getMediaUsecaseProxy: UseCaseProxy<getMediaDetailsUsecase>,
-    @Inject(UseCaseProxyModule.POST_LIKE_USECASE)
-    private readonly postLikeUseCaseProxy: UseCaseProxy<PostLikeUsecase>,
+    private readonly getMediaUsecaseProxy: UseCaseProxy<GetMediaDetailsUsecase>,
   ) {}
-  @Get('posts/:postId')
-  async getMedia(@Param() params: getMediaDetailsParamsDto) {
+  @Get('post/:postId')
+  async getMedia(@Param() params: MediaParamsDto) {
     const { postId } = params;
     const post = await this.getMediaUsecaseProxy.getInstance().execute(postId);
     return {
@@ -48,7 +47,7 @@ export class PostMediaController {
     };
   }
   @UseGuards(JwtAuthGuard)
-  @Post('posts')
+  @Post('post')
   @UseInterceptors(FileInterceptor('file'))
   async postMedia(
     @Req() req: Request,
@@ -69,17 +68,5 @@ export class PostMediaController {
       status: 'success',
       message: 'Post created successfully',
     };
-  }
-  @UseGuards(JwtAuthGuard)
-  @Post('posts/:postId/like')
-  async postLike(@Req() req: Request, @Param() params: getMediaDetailsParamsDto) {
-    const { postId } = params;
-    const token = getAuthCookie(req);
-    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
-    await this.postLikeUseCaseProxy.getInstance().execute(postId, user.id);
-    return {
-      status: 'success',
-      message: 'Post like action successfully done',
-    }
   }
 }

@@ -1,9 +1,9 @@
 //TODO: Fix db structure here
+import { ReplyM } from "src/domains/model/reply";
 import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
 import { PostRepository } from "src/domains/repositories/post/post.repository";
 import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
 import { UserRepository } from "src/domains/repositories/user/user.repository";
-import { Reply } from "src/infrastructure/entities/reply.entity";
 import { PostReplyDto } from "src/presentations/reply/dto/postReply.dto";
 
 export class postReplyUseCase{
@@ -18,7 +18,7 @@ export class postReplyUseCase{
       await this.postRepository.verifyPostAvailability(postId);
       // const post = await this.postRepository.getPostById(postId);
       const comment = await this.commentRepository.getCommentById(commentId);
-      const reply = new Reply();
+      const reply = new ReplyM();
       reply.content = postReplyDto.content;
       reply.user = user;
       // reply = post;

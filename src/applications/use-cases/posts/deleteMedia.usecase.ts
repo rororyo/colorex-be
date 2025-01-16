@@ -1,6 +1,6 @@
 import { PostRepository } from "src/domains/repositories/post/post.repository";
 
-export class DeleteReplyUsecase {
+export class DeleteMediaUsecase {
   constructor(
     private postRepository: PostRepository
   ) {}

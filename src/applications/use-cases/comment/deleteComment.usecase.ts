@@ -1,7 +1,7 @@
 import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
 
 
-export class DeleteReplyUsecase {
+export class DeleteCommentUsecase {
   constructor(
     private commentRepository: CommentRepository
   ) {}

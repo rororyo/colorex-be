@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
-import { replyLike } from "./replyLike.entity";
+import { ReplyLike } from "./replyLike.entity";
 
 @Entity()
 export class Reply {
@@ -29,6 +29,8 @@ export class Reply {
   })
   updated_at: Date;
 
-  @OneToMany(()=>replyLike, (replyLike) => replyLike.reply)
-  replyLikes: replyLike[]
+  @OneToMany(()=>ReplyLike, (replyLike) => replyLike.reply)
+  replyLikes: ReplyLike[]
+
+  likeCount?: number
 }

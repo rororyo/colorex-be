@@ -1,11 +1,10 @@
 import { CommentM } from "./comment";
-import { commentLikeM } from "./commentLike";
+import { CommentLikeM } from "./commentLike";
 import { PostM } from "./post";
-import { postLikeM } from "./postLike";
+import { PostLikeM } from "./postLike";
 import { ReplyM } from "./reply";
-import { replyLikeM } from "./replyLike";
+import { ReplyLikeM } from "./replyLike";
 import { Roles } from "./roles.enum";
-import { Post } from "src/infrastructure/entities/post.entity";
 
 
 export class UserM {
@@ -17,10 +16,10 @@ export class UserM {
   created_at: Date;
   subscribed_at: Date;
   posts: PostM[];
-  postLikes: postLikeM[];
+  postLikes: PostLikeM[];
   comments: CommentM[];
-  commentLikes: commentLikeM[];
+  commentLikes: CommentLikeM[];
   replies: ReplyM[];
-  replyLikes: replyLikeM[];
+  replyLikes: ReplyLikeM[];
 
 }

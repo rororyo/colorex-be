@@ -1,23 +1,36 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { replyLikeM } from "src/domains/model/replyLike";
-import { replyLikeRepository } from "src/domains/repositories/like/replyLike.repository";
-import { replyLike } from "src/infrastructure/entities/replyLike.entity";
-import { Repository } from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ReplyLikeM } from 'src/domains/model/replyLike';
+import { ReplyLikeRepository } from 'src/domains/repositories/like/replyLike.repository';
+import { ReplyLike } from 'src/infrastructure/entities/replyLike.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class ReplyLikeRepositoryOrm implements replyLikeRepository  {
+export class ReplyLikeRepositoryOrm implements ReplyLikeRepository {
   constructor(
-    @InjectRepository(replyLike) private readonly replyLikeRepository: Repository<replyLike>,
-  ){}
-  async createReplyLike(replyLike: replyLikeM): Promise<void> {
+    @InjectRepository(ReplyLike)
+    private readonly replyLikeRepository: Repository<ReplyLike>,
+  ) {}
+  async createReplyLike(replyLike: ReplyLikeM): Promise<void> {
     await this.replyLikeRepository.save(replyLike);
   }
-  async verifyIsReplyLiked(userId: string, replyId: string): Promise<boolean> {
-    const commentLike = await this.replyLikeRepository.findOneBy({user: {id: userId}, reply: {id: replyId}});
-    return commentLike ? true : false
+  async getReplyLikeCount(replyId: string): Promise<number> {
+    return this.replyLikeRepository.count({
+      where: { reply: { id: replyId } },
+    });
   }
+  async verifyIsReplyLiked(userId: string, replyId: string): Promise<boolean> {
+    const commentLike = await this.replyLikeRepository.findOneBy({
+      user: { id: userId },
+      reply: { id: replyId },
+    });
+    return commentLike ? true : false;
+  }
+
   async deleteReplyLike(userId: string, replyId: string): Promise<void> {
-    await this.replyLikeRepository.delete({user: {id: userId}, reply: {id: replyId}});
+    await this.replyLikeRepository.delete({
+      user: { id: userId },
+      reply: { id: replyId },
+    });
   }
 }

@@ -3,7 +3,7 @@ import { User } from "./user.entity";
 import { Reply } from "./reply.entity";
 
 @Entity()
-export class replyLike {
+export class ReplyLike {
   @PrimaryGeneratedColumn('uuid')
   id: string
   @ManyToOne(() => User, (user) => user.replyLikes)
