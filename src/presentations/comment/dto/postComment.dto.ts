@@ -10,3 +10,4 @@ export class PostCommentDto {
   @IsNotEmpty()
   content: string;
 }
+

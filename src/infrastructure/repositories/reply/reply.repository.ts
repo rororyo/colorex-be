@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ReplyM } from "src/domains/model/reply";
 import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
@@ -20,6 +20,13 @@ export class ReplyRepositoryOrm implements ReplyRepository {
     }
     return true;
   }
+  async verifyReplyOwnership(userId: string, replyId: string): Promise<boolean> {
+    const reply = await this.replyRepository.findOne({where: {id: replyId, user: {id: userId}}});
+    if(!reply) {
+      throw new UnauthorizedException('You are not the owner of this reply');
+    }
+    return true;
+  }
   async getRepliesByCommentId(commentId: string): Promise<ReplyM[]> {
     const replies = await this.replyRepository.find({where: {comment: {id: commentId}}});
     return replies;
@@ -27,6 +34,9 @@ export class ReplyRepositoryOrm implements ReplyRepository {
   async getReplyById(replyId: string): Promise<ReplyM> {
     const reply = await this.replyRepository.findOne({where: {id: replyId}});
     return reply;
+  }
+  async editReplyById(replyId: string, reply: Partial<ReplyM>): Promise<void> {
+    await this.replyRepository.update({id: replyId}, reply);
   }
   async deleteReply(replyId: string): Promise<void> {
     await this.replyRepository.delete({id: replyId});

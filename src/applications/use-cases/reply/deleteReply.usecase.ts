@@ -4,8 +4,9 @@ export class DeleteReplyUsecase {
   constructor(
     private replyRepository: ReplyRepository
   ) {}
-  async execute(replyId: string) {
+  async execute(userId: string, replyId: string) {
     await this.replyRepository.verifyReplyAvailability(replyId);
+    await this.replyRepository.verifyReplyOwnership(userId, replyId);
     await this.replyRepository.deleteReply(replyId);
   }
 }

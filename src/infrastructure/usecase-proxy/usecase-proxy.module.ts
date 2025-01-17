@@ -27,6 +27,10 @@ import { PostLikeRepositoryOrm } from '../repositories/like/postLike.repository'
 import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia.usecase';
 import { DeleteCommentUsecase} from 'src/applications/use-cases/comment/deleteComment.usecase';
 import { DeleteReplyUsecase } from 'src/applications/use-cases/reply/deleteReply.usecase';
+import { GetPaginatedMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedMedia.usecase';
+import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
+import { EditCommentUsecase } from 'src/applications/use-cases/comment/editComment.usecase';
+import { EditReplyUsecase } from 'src/applications/use-cases/reply/editReply.usecase';
 
 @Module({
   imports: [
@@ -45,12 +49,16 @@ export class UseCaseProxyModule {
   static CURRENT_USER_USECASE = 'currentUserUsecaseProxy';
   static POST_MEDIA_USECASE = 'postMediaUsecaseProxy';
   static DELETE_POST_USECASE = 'deletePostUsecaseProxy';
+  static EDIT_POST_USECASE = 'editPostUsecaseProxy';
   static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
+  static GET_PAGINATED_MEDIA_USECASE = 'getPaginatedMediaUsecaseProxy';
   static GET_MEDIA_USECASE = 'getMediaUsecaseProxy';
   static POST_COMMENT_USECASE = 'postCommentUsecaseProxy';
+  static EDIT_COMMENT_USECASE = 'editCommentUsecaseProxy';
   static DELETE_COMMENT_USECASE = 'deleteCommentUsecaseProxy';
   static COMMENT_LIKE_USECASE = 'commentLikeUsecaseProxy';
   static POST_REPLY_USECASE = 'postReplyUsecaseProxy';
+  static EDIT_REPLY_USECASE = 'editReplyUsecaseProxy';
   static DELETE_REPLY_USECASE = 'deleteReplyUsecaseProxy';
   static REPLY_LIKE_USECASE = 'replyLikeUsecaseProxy';
 
@@ -126,6 +134,11 @@ export class UseCaseProxyModule {
             new UseCaseProxy(new DeleteMediaUsecase(postRepository)),
         },
         {
+          inject:[PostRepositoryOrm],
+          provide:UseCaseProxyModule.EDIT_POST_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm) => new UseCaseProxy(new EditMediaUsecase(postRepository)),
+        },
+        {
           inject: [UserRepositoryOrm, PostRepositoryOrm, PostLikeRepositoryOrm],
           provide: UseCaseProxyModule.POST_LIKE_USECASE,
           useFactory: (
@@ -140,6 +153,11 @@ export class UseCaseProxyModule {
                 postLikeRepository,
               ),
             ),
+        },
+        {
+          inject:[PostRepositoryOrm],
+          provide: UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm) => new UseCaseProxy(new GetPaginatedMediaUsecase(postRepository)),
         },
         {
           inject: [PostRepositoryOrm],
@@ -162,6 +180,11 @@ export class UseCaseProxyModule {
                 commentRepository,
               ),
             ),
+        },
+        {
+          inject:[CommentRepositoryOrm],
+          provide: UseCaseProxyModule.EDIT_COMMENT_USECASE,
+          useFactory: (commentRepository: CommentRepositoryOrm) => new UseCaseProxy(new EditCommentUsecase(commentRepository)),
         },
         {
           inject: [CommentRepositoryOrm],
@@ -213,6 +236,11 @@ export class UseCaseProxyModule {
             ),
         },
         {
+          inject:[ReplyRepositoryOrm],
+          provide: UseCaseProxyModule.EDIT_REPLY_USECASE,
+          useFactory: (replyRepository: ReplyRepositoryOrm) => new UseCaseProxy(new EditReplyUsecase(replyRepository)),
+        },
+        {
           inject: [ReplyRepositoryOrm],
           provide: UseCaseProxyModule.DELETE_REPLY_USECASE,
           useFactory: (replyRepository: ReplyRepositoryOrm) =>
@@ -245,14 +273,19 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.CURRENT_USER_USECASE,
         UseCaseProxyModule.POST_MEDIA_USECASE,
         UseCaseProxyModule.DELETE_POST_USECASE,
+        UseCaseProxyModule.EDIT_POST_USECASE,
         UseCaseProxyModule.POST_LIKE_USECASE,
+        UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
         UseCaseProxyModule.GET_MEDIA_USECASE,
         UseCaseProxyModule.POST_COMMENT_USECASE,
+        UseCaseProxyModule.EDIT_COMMENT_USECASE,
         UseCaseProxyModule.DELETE_COMMENT_USECASE,
         UseCaseProxyModule.COMMENT_LIKE_USECASE,
         UseCaseProxyModule.POST_REPLY_USECASE,
+        UseCaseProxyModule.EDIT_REPLY_USECASE,
         UseCaseProxyModule.DELETE_REPLY_USECASE,
         UseCaseProxyModule.REPLY_LIKE_USECASE,
+        
       ],
     };
   }
