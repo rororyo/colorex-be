@@ -17,6 +17,8 @@ import { ReplyLike } from '../entities/replyLike.entity';
 import { PostLikeRepositoryOrm } from './like/postLike.repository';
 import { CommentLikeRepositoryOrm } from './like/commentLike.repository';
 import { ReplyLikeRepositoryOrm } from './like/replyLike.repository';
+import { FollowRepositoryOrm } from './follow/follow.repository';
+import { Follow } from '../entities/follow.entity';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { ReplyLikeRepositoryOrm } from './like/replyLike.repository';
       CommentLike,
       Reply,
       ReplyLike,
+      Follow
     ]),
   ],
   providers: [
@@ -40,7 +43,8 @@ import { ReplyLikeRepositoryOrm } from './like/replyLike.repository';
     CommentRepositoryOrm,
     CommentLikeRepositoryOrm,
     ReplyRepositoryOrm,
-    ReplyLikeRepositoryOrm
+    ReplyLikeRepositoryOrm,
+    FollowRepositoryOrm
   ],
   exports: [
     UserRepositoryOrm,
@@ -50,7 +54,8 @@ import { ReplyLikeRepositoryOrm } from './like/replyLike.repository';
     CommentRepositoryOrm,
     CommentLikeRepositoryOrm,
     ReplyRepositoryOrm,
-    ReplyLikeRepositoryOrm
+    ReplyLikeRepositoryOrm,
+    FollowRepositoryOrm
   ],
 })
 export class RepositoriesModule {}

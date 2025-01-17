@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostM } from 'src/domains/model/post';
+import { UserM } from 'src/domains/model/user';
 import { PostRepository } from 'src/domains/repositories/post/post.repository';
 import { CommentLike } from 'src/infrastructure/entities/commentLike.entity';
 import { Post } from 'src/infrastructure/entities/post.entity';
@@ -74,7 +75,35 @@ export class PostRepositoryOrm implements PostRepository {
       total,
     };
   }
+  async getPostsByUserId(page: number, limit: number, userId: string): Promise<{
+    posts: Partial<PostM>[];
+    total: number;
+  }> {
+    const {entities: posts, raw} = await this.postRepository.createQueryBuilder('post')
+    .where('post.user_id = :userId', { userId })
+    .leftJoin('post.postLikes', 'postLikes') // Join postLikes for likeCount
+    .leftJoinAndSelect('post.user', 'user') // Join user to include user data
+    .addSelect(['user.id', 'user.email', 'user.username']) // Select only specific user fields
+    .addSelect('COUNT(postLikes.id)', 'likeCount') // Aggregate likeCount
+    .groupBy('post.id')
+    .addGroupBy('user.id') // Ensure grouping by user ID to avoid conflicts
+    .skip((page - 1) * limit)
+    .take(limit)
+    .getRawAndEntities();
 
+  const mappedPosts = posts.map((post, index) => ({
+    ...post,
+    user: post.user as UserM ,
+    likeCount: parseInt(raw[index]?.likeCount || '0', 10),
+  }));
+
+  const total = await this.postRepository.count();
+
+  return {
+    posts: mappedPosts,
+    total,
+  };
+  }
   async getPostById(id: string): Promise<PostM> {
     const post = await this.postRepository.findOneBy({ id });
     return post;

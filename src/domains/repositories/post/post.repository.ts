@@ -1,13 +1,25 @@
-import { PostM } from "src/domains/model/post";
-import { EditMediaDto } from "src/presentations/posts/dto/editMedia.dto";
+import { PostM } from 'src/domains/model/post';
+import { EditMediaDto } from 'src/presentations/posts/dto/editMedia.dto';
 
 export interface PostRepository {
-  createPost(post: PostM): Promise<void>
-  verifyPostAvailability(id: string): Promise<boolean>
-  verifyPostOwnership(userId: string, postId: string): Promise<boolean>
-  getPaginatedPosts(page: number, limit: number): Promise<{ posts: PostM[]; total: number }>
-  getPostById(id: string): Promise<PostM>
-  getDetailedPostById(id: string): Promise<PostM>
-  editPost(id: string, post: Partial<EditMediaDto>): Promise<void>
-  deletePost(id: string): Promise<void>
+  createPost(post: PostM): Promise<void>;
+  verifyPostAvailability(id: string): Promise<boolean>;
+  verifyPostOwnership(userId: string, postId: string): Promise<boolean>;
+  getPaginatedPosts(
+    page: number,
+    limit: number,
+  ): Promise<{ posts: PostM[]; total: number }>;
+
+getPostsByUserId(
+    page: number,
+    limit: number,
+    userId: string,
+  ): Promise<{
+    posts: Partial<PostM>[];
+    total: number;
+  }>;
+  getPostById(id: string): Promise<PostM>;
+  getDetailedPostById(id: string): Promise<PostM>;
+  editPost(id: string, post: Partial<EditMediaDto>): Promise<void>;
+  deletePost(id: string): Promise<void>;
 }

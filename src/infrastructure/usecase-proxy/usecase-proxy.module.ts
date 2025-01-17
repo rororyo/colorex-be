@@ -31,6 +31,11 @@ import { GetPaginatedMediaUsecase } from 'src/applications/use-cases/posts/getPa
 import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
 import { EditCommentUsecase } from 'src/applications/use-cases/comment/editComment.usecase';
 import { EditReplyUsecase } from 'src/applications/use-cases/reply/editReply.usecase';
+import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
+import { FollowRepositoryOrm } from '../repositories/follow/follow.repository';
+import { FollowUserUseCase } from 'src/applications/use-cases/follow/followUser.usecase';
+import { UnfollowUserUseCase } from 'src/applications/use-cases/follow/unfollowUser.usecase';
+import { GetUserFollowStatusUsecase } from 'src/applications/use-cases/follow/GetUserFollowStatus.usecase';
 
 @Module({
   imports: [
@@ -52,6 +57,7 @@ export class UseCaseProxyModule {
   static EDIT_POST_USECASE = 'editPostUsecaseProxy';
   static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
   static GET_PAGINATED_MEDIA_USECASE = 'getPaginatedMediaUsecaseProxy';
+  static GET_PAGINATED_USER_MEDIA_USECASE = 'getPaginatedUserMediaUsecaseProxy';
   static GET_MEDIA_USECASE = 'getMediaUsecaseProxy';
   static POST_COMMENT_USECASE = 'postCommentUsecaseProxy';
   static EDIT_COMMENT_USECASE = 'editCommentUsecaseProxy';
@@ -61,6 +67,9 @@ export class UseCaseProxyModule {
   static EDIT_REPLY_USECASE = 'editReplyUsecaseProxy';
   static DELETE_REPLY_USECASE = 'deleteReplyUsecaseProxy';
   static REPLY_LIKE_USECASE = 'replyLikeUsecaseProxy';
+  static FOLLOW_USER_USECASE = 'followUserUsecaseProxy';
+  static UNFOLLOW_USER_USECASE = 'unfollowUserUsecaseProxy';
+  static GET_USER_FOLLOW_STATUS_USECASE = 'getUserFollowStatusUsecaseProxy';
 
   static register(): DynamicModule {
     return {
@@ -158,6 +167,11 @@ export class UseCaseProxyModule {
           inject:[PostRepositoryOrm],
           provide: UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
           useFactory: (postRepository: PostRepositoryOrm) => new UseCaseProxy(new GetPaginatedMediaUsecase(postRepository)),
+        },
+        {
+          inject:[PostRepositoryOrm],
+          provide:UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm) => new UseCaseProxy(new GetPaginatedUserMediaUsecase(postRepository)),
         },
         {
           inject: [PostRepositoryOrm],
@@ -266,6 +280,21 @@ export class UseCaseProxyModule {
               ),
             ),
         },
+        {
+          inject:[FollowRepositoryOrm],
+          provide: UseCaseProxyModule.FOLLOW_USER_USECASE,
+          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new FollowUserUseCase(followRepository)),
+        },
+        {
+          inject:[FollowRepositoryOrm],
+          provide: UseCaseProxyModule.UNFOLLOW_USER_USECASE,
+          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new UnfollowUserUseCase(followRepository)),
+        },
+        {
+          inject:[FollowRepositoryOrm],
+          provide: UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE,
+          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new GetUserFollowStatusUsecase(followRepository)),
+        },
       ],
       exports: [
         UseCaseProxyModule.REGISTER_USER_USECASE,
@@ -276,6 +305,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.EDIT_POST_USECASE,
         UseCaseProxyModule.POST_LIKE_USECASE,
         UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
+        UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
         UseCaseProxyModule.GET_MEDIA_USECASE,
         UseCaseProxyModule.POST_COMMENT_USECASE,
         UseCaseProxyModule.EDIT_COMMENT_USECASE,
@@ -285,6 +315,9 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.EDIT_REPLY_USECASE,
         UseCaseProxyModule.DELETE_REPLY_USECASE,
         UseCaseProxyModule.REPLY_LIKE_USECASE,
+        UseCaseProxyModule.FOLLOW_USER_USECASE,
+        UseCaseProxyModule.UNFOLLOW_USER_USECASE,
+        UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE
         
       ],
     };

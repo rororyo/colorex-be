@@ -30,6 +30,8 @@ import { GetPaginatedMediaUsecase } from 'src/applications/use-cases/posts/getPa
 import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia.usecase';
 import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
 import { EditMediaDto } from './dto/editMedia.dto';
+import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
+import { GetMediaParamsDto } from './dto/getMedia.dto';
 
 @Controller('api')
 export class PostMediaController {
@@ -40,6 +42,7 @@ export class PostMediaController {
     private readonly getPaginatedMediaUsecaseProxy: UseCaseProxy<GetPaginatedMediaUsecase>,
     @Inject(UseCaseProxyModule.GET_MEDIA_USECASE)
     private readonly getMediaUsecaseProxy: UseCaseProxy<GetMediaDetailsUsecase>,
+    @Inject(UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE) private readonly getPaginatedUserMediaUsecaseProxy: UseCaseProxy<GetPaginatedUserMediaUsecase>,
     @Inject(UseCaseProxyModule.POST_MEDIA_USECASE)
     private readonly postMediaUsecaseProxy: UseCaseProxy<PostMediaUsecase>,
     @Inject(UseCaseProxyModule.EDIT_POST_USECASE)
@@ -49,9 +52,9 @@ export class PostMediaController {
   ) {}
   @Get('posts')
   async getPaginatedPosts(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query() getMediaParamsDto:GetMediaParamsDto
   ) {
+    const {page,limit} = getMediaParamsDto
     const posts = await this.getPaginatedMediaUsecaseProxy
       .getInstance()
       .execute(page, limit);
@@ -60,6 +63,22 @@ export class PostMediaController {
       message: 'Posts fetched successfully',
       data: posts,
     };
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('posts/user')
+  async getPostsByUserId(
+    @Req() req: Request,
+    @Query() getMediaParamsDto:GetMediaParamsDto
+) {
+  const {page,limit} = getMediaParamsDto
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    const posts = await this.getPaginatedUserMediaUsecaseProxy.getInstance().execute(page,limit,user.id)
+    return {
+      status: 'success',
+      message: 'Posts fetched successfully',
+      data: posts,
+    }
   }
   @Get('post/:postId')
   async getMedia(@Param() params: MediaParamsDto) {

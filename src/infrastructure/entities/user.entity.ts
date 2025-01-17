@@ -6,6 +6,7 @@ import { Reply } from './reply.entity';
 import { PostLike } from './postLike.entity';
 import { CommentLike } from './commentLike.entity';
 import { ReplyLike } from './replyLike.entity';
+import { Follow } from './follow.entity';
 
 @Entity()
 export class User {
@@ -57,4 +58,16 @@ export class User {
 
   @OneToMany(()=> ReplyLike, (replyLike) => replyLike.user)
   replyLikes: ReplyLike[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  following: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.following)
+  followers: Follow[];
+
+  @Column({ default: 0 })
+  followersCount: number;
+
+  @Column({ default: 0 })
+  followingCount: number;
 }

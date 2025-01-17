@@ -11,6 +11,8 @@ import { ReplyController } from './presentations/reply/reply.controller';
 import { ReplyModule } from './presentations/reply/reply.module';
 import { LikeModule } from './presentations/like/like.module';
 import { LikeController } from './presentations/like/like.controller';
+import { FollowModule } from './presentations/follow/follow.module';
+import { FollowController } from './presentations/follow/follow.controller';
 
 @Module({
   imports: [
@@ -20,14 +22,16 @@ import { LikeController } from './presentations/like/like.controller';
     PostModule,
     CommentModule,
     ReplyModule,
-    LikeModule
+    LikeModule,
+    FollowModule
   ],
   controllers: [
     AuthController,
     PostMediaController,
     CommentController,
     ReplyController,
-    LikeController
+    LikeController,
+    FollowController
   ],
 })
 export class AppModule {}

@@ -1,5 +1,6 @@
 import { CommentM } from "./comment";
 import { CommentLikeM } from "./commentLike";
+import { FollowM } from "./follow";
 import { PostM } from "./post";
 import { PostLikeM } from "./postLike";
 import { ReplyM } from "./reply";
@@ -21,5 +22,9 @@ export class UserM {
   commentLikes: CommentLikeM[];
   replies: ReplyM[];
   replyLikes: ReplyLikeM[];
+  following: FollowM[];
+  followers: FollowM[];
+  followersCount: number;
+  followingCount: number;
 
 }
