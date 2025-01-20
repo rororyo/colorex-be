@@ -1,11 +1,15 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { FollowRepository } from "src/domains/repositories/follow/follow.repository";
+import { UserRepository } from "src/domains/repositories/user/user.repository";
 
 @Injectable()
 export class UnfollowUserUseCase {
-  constructor(private readonly followRepository: FollowRepository) {}
+  constructor(
+    private readonly followRepository: FollowRepository,
+    private readonly userRepository: UserRepository
+  ) {}
 
-  async execute(userId: string, followingId: string): Promise<void> {
+  async execute(userId: string, followingId: string): Promise<string> {
     // Prevent self-unfollowing
     if (userId === followingId) {
       throw new UnauthorizedException('Invalid unfollow operation');
@@ -25,10 +29,12 @@ export class UnfollowUserUseCase {
     try {
       await this.followRepository.deleteFollow(userId, followingId);
       await Promise.all([
-        this.followRepository.decrementFollowerCount(followingId),
-        this.followRepository.decrementFollowingCount(userId)
+        this.userRepository.decrementFollowerCount(followingId),
+        this.userRepository.decrementFollowingCount(userId)
       ]);
+      return 'User unfollowed successfully';
     } catch (error) {
+      console.log(error)
       throw new BadRequestException('Failed to remove follow relationship');
     }
   }

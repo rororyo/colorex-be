@@ -14,6 +14,10 @@ export class Follow {
   @JoinColumn({ name: 'followingId' })
   following: User;
 
-  @CreateDateColumn()
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   created_at: Date;
+  
 }

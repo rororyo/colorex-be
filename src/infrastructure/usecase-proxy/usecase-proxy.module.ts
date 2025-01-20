@@ -25,7 +25,7 @@ import { ReplyLikeRepositoryOrm } from '../repositories/like/replyLike.repositor
 import { ReplyLikeUsecase } from 'src/applications/use-cases/like/replyLike.usecasse';
 import { PostLikeRepositoryOrm } from '../repositories/like/postLike.repository';
 import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia.usecase';
-import { DeleteCommentUsecase} from 'src/applications/use-cases/comment/deleteComment.usecase';
+import { DeleteCommentUsecase } from 'src/applications/use-cases/comment/deleteComment.usecase';
 import { DeleteReplyUsecase } from 'src/applications/use-cases/reply/deleteReply.usecase';
 import { GetPaginatedMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedMedia.usecase';
 import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
@@ -36,6 +36,8 @@ import { FollowRepositoryOrm } from '../repositories/follow/follow.repository';
 import { FollowUserUseCase } from 'src/applications/use-cases/follow/followUser.usecase';
 import { UnfollowUserUseCase } from 'src/applications/use-cases/follow/unfollowUser.usecase';
 import { GetUserFollowStatusUsecase } from 'src/applications/use-cases/follow/GetUserFollowStatus.usecase';
+import { GetUserFollowingUseCase } from 'src/applications/use-cases/follow/getUserFollowing.usecase';
+import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUserFollower.usecase';
 
 @Module({
   imports: [
@@ -70,6 +72,8 @@ export class UseCaseProxyModule {
   static FOLLOW_USER_USECASE = 'followUserUsecaseProxy';
   static UNFOLLOW_USER_USECASE = 'unfollowUserUsecaseProxy';
   static GET_USER_FOLLOW_STATUS_USECASE = 'getUserFollowStatusUsecaseProxy';
+  static GET_USER_FOLLOWERS_USECASE = 'getUserFollowersUsecaseProxy';
+  static GET_USER_FOLLOWING_USECASE = 'getUserFollowingUsecaseProxy';
 
   static register(): DynamicModule {
     return {
@@ -143,9 +147,10 @@ export class UseCaseProxyModule {
             new UseCaseProxy(new DeleteMediaUsecase(postRepository)),
         },
         {
-          inject:[PostRepositoryOrm],
-          provide:UseCaseProxyModule.EDIT_POST_USECASE,
-          useFactory: (postRepository: PostRepositoryOrm) => new UseCaseProxy(new EditMediaUsecase(postRepository)),
+          inject: [PostRepositoryOrm],
+          provide: UseCaseProxyModule.EDIT_POST_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm) =>
+            new UseCaseProxy(new EditMediaUsecase(postRepository)),
         },
         {
           inject: [UserRepositoryOrm, PostRepositoryOrm, PostLikeRepositoryOrm],
@@ -164,14 +169,16 @@ export class UseCaseProxyModule {
             ),
         },
         {
-          inject:[PostRepositoryOrm],
+          inject: [PostRepositoryOrm],
           provide: UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
-          useFactory: (postRepository: PostRepositoryOrm) => new UseCaseProxy(new GetPaginatedMediaUsecase(postRepository)),
+          useFactory: (postRepository: PostRepositoryOrm) =>
+            new UseCaseProxy(new GetPaginatedMediaUsecase(postRepository)),
         },
         {
-          inject:[PostRepositoryOrm],
-          provide:UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
-          useFactory: (postRepository: PostRepositoryOrm) => new UseCaseProxy(new GetPaginatedUserMediaUsecase(postRepository)),
+          inject: [PostRepositoryOrm],
+          provide: UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm) =>
+            new UseCaseProxy(new GetPaginatedUserMediaUsecase(postRepository)),
         },
         {
           inject: [PostRepositoryOrm],
@@ -196,9 +203,10 @@ export class UseCaseProxyModule {
             ),
         },
         {
-          inject:[CommentRepositoryOrm],
+          inject: [CommentRepositoryOrm],
           provide: UseCaseProxyModule.EDIT_COMMENT_USECASE,
-          useFactory: (commentRepository: CommentRepositoryOrm) => new UseCaseProxy(new EditCommentUsecase(commentRepository)),
+          useFactory: (commentRepository: CommentRepositoryOrm) =>
+            new UseCaseProxy(new EditCommentUsecase(commentRepository)),
         },
         {
           inject: [CommentRepositoryOrm],
@@ -250,9 +258,10 @@ export class UseCaseProxyModule {
             ),
         },
         {
-          inject:[ReplyRepositoryOrm],
+          inject: [ReplyRepositoryOrm],
           provide: UseCaseProxyModule.EDIT_REPLY_USECASE,
-          useFactory: (replyRepository: ReplyRepositoryOrm) => new UseCaseProxy(new EditReplyUsecase(replyRepository)),
+          useFactory: (replyRepository: ReplyRepositoryOrm) =>
+            new UseCaseProxy(new EditReplyUsecase(replyRepository)),
         },
         {
           inject: [ReplyRepositoryOrm],
@@ -281,20 +290,37 @@ export class UseCaseProxyModule {
             ),
         },
         {
-          inject:[FollowRepositoryOrm],
+          inject: [FollowRepositoryOrm, UserRepositoryOrm],
           provide: UseCaseProxyModule.FOLLOW_USER_USECASE,
-          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new FollowUserUseCase(followRepository)),
+          useFactory: (
+            followRepository: FollowRepositoryOrm,
+            userRepository: UserRepositoryOrm,
+          ) => new UseCaseProxy(new FollowUserUseCase(followRepository,userRepository)),
         },
         {
-          inject:[FollowRepositoryOrm],
+          inject: [FollowRepositoryOrm, UserRepositoryOrm],
           provide: UseCaseProxyModule.UNFOLLOW_USER_USECASE,
-          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new UnfollowUserUseCase(followRepository)),
+          useFactory: (
+            followRepository: FollowRepositoryOrm,
+            userRepository: UserRepositoryOrm,
+          ) => new UseCaseProxy(new UnfollowUserUseCase(followRepository,userRepository)),
+        },
+        {
+          inject: [FollowRepositoryOrm],
+          provide: UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE,
+          useFactory: (followRepository: FollowRepositoryOrm) =>
+            new UseCaseProxy(new GetUserFollowStatusUsecase(followRepository)),
         },
         {
           inject:[FollowRepositoryOrm],
-          provide: UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE,
-          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new GetUserFollowStatusUsecase(followRepository)),
+          provide: UseCaseProxyModule.GET_USER_FOLLOWING_USECASE,
+          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new GetUserFollowingUseCase(followRepository)),
         },
+        {
+          inject:[FollowRepositoryOrm],
+          provide: UseCaseProxyModule.GET_USER_FOLLOWERS_USECASE,
+          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new GetUserFollowerUseCase(followRepository)),
+        }
       ],
       exports: [
         UseCaseProxyModule.REGISTER_USER_USECASE,
@@ -317,8 +343,9 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.REPLY_LIKE_USECASE,
         UseCaseProxyModule.FOLLOW_USER_USECASE,
         UseCaseProxyModule.UNFOLLOW_USER_USECASE,
-        UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE
-        
+        UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE,
+        UseCaseProxyModule.GET_USER_FOLLOWING_USECASE,
+        UseCaseProxyModule.GET_USER_FOLLOWERS_USECASE
       ],
     };
   }

@@ -1,12 +1,17 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { FollowRepository } from 'src/domains/repositories/follow/follow.repository';
 import { FollowM } from 'src/domains/model/follow';
+import { UserRepository } from 'src/domains/repositories/user/user.repository';
 
 @Injectable()
 export class FollowUserUseCase {
-  constructor(private readonly followRepository: FollowRepository) {}
+  constructor(
+    private readonly followRepository: FollowRepository,
+    private readonly userRepository: UserRepository
 
-  async execute(userId: string, followingId: string): Promise<void> {
+  ) {}
+
+  async execute(userId: string, followingId: string): Promise<string> {
     // Prevent self-following
     if (userId === followingId) {
       throw new UnauthorizedException('Users cannot follow themselves');
@@ -31,10 +36,12 @@ export class FollowUserUseCase {
     try {
       await this.followRepository.createFollow(follow);
       await Promise.all([
-        this.followRepository.incrementFollowerCount(followingId),
-        this.followRepository.incrementFollowingCount(userId)
+        this.userRepository.incrementFollowerCount(followingId),
+        this.userRepository.incrementFollowingCount(userId)
       ]);
+      return 'User followed successfully';
     } catch (error) {
+      console.log(error)
       // Handle potential race conditions or db errors
       throw new BadRequestException('Failed to create follow relationship');
     }

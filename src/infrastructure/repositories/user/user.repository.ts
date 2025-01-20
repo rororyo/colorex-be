@@ -29,10 +29,25 @@ export class UserRepositoryOrm implements UserRepository {
     const user = await this.userRepository.findOne({
       where: condition,
     });
-    const posts = await user.posts;
 
     if (!user) return null;
     return user;
+  }
+  async incrementFollowerCount(userId: string): Promise<void> {
+    await this.userRepository.increment({id: userId}, 'followersCount', 1);
+    
+  }
+  async decrementFollowerCount(userId: string): Promise<void> {
+    await this.userRepository.decrement({id: userId}, 'followersCount', 1);
+    
+  }
+  async incrementFollowingCount(userId: string): Promise<void> {
+    await this.userRepository.increment({id: userId}, 'followingCount', 1);
+    
+  }
+  async decrementFollowingCount(userId: string): Promise<void> {
+    await this.userRepository.decrement({id: userId}, 'followingCount', 1);
+    
   }
   
 }

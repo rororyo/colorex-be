@@ -5,3 +5,9 @@ export class FollowParamsDto {
   @IsNotEmpty()
   followingId: string
 }
+
+export class UserFollowParamsDto {
+  @IsUUID()
+  @IsNotEmpty()
+  userId: string
+}

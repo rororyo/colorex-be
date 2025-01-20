@@ -22,29 +22,32 @@ export class FollowRepositoryOrm implements FollowRepository{
     if(follow) return true;
     return false;
   }
-  async incrementFollowerCount(userId: string): Promise<void> {
-    await this.followRepository.increment({id: userId}, 'follower_count', 1);
+
+  async getFollowersByUserId(userId: string): Promise<{
+  followers:  UserM[],
+  count: number
+  }> {
+    const follows = await this.followRepository.find({
+      where: { following: { id: userId } },
+      relations: ['follower'], // Ensure the 'follower' relation is loaded
+    });
+    return {
+      followers: follows.map(follow => follow.follower),
+      count: follows.length
+    }
     
   }
-  async decrementFollowerCount(userId: string): Promise<void> {
-    await this.followRepository.decrement({id: userId}, 'follower_count', 1);
-    
-  }
-  async incrementFollowingCount(userId: string): Promise<void> {
-    await this.followRepository.increment({id: userId}, 'following_count', 1);
-    
-  }
-  async decrementFollowingCount(userId: string): Promise<void> {
-    await this.followRepository.decrement({id: userId}, 'following_count', 1);
-    
-  }
-  async getFollowersByUserId(userId: string): Promise<UserM[]> {
-    const follows = await this.followRepository.find({where: {following: {id: userId}}});
-    return follows.map(follow => follow.follower);
-    
-  }
-  async getFollowingByUserId(userId: string): Promise<UserM[]> {
-    const follows = await this.followRepository.find({where: {follower: {id: userId}}});
-    return follows.map(follow => follow.following);
+  async getFollowingByUserId(userId: string): Promise<{
+    following:  UserM[],
+    count: number
+    }>  {
+      const follows = await this.followRepository.find({
+        where: { follower: { id: userId } },
+        relations: ['following'], // Ensure the 'follower' relation is loaded
+      });
+    return {
+      following: follows.map(follow => follow.following),
+      count: follows.length
+    }
   }
 }
