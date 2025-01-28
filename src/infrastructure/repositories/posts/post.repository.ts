@@ -42,18 +42,34 @@ export class PostRepositoryOrm implements PostRepository {
     return true;
   }
 
-  async getPaginatedPosts(page: number, limit: number): Promise<{
-    posts: any[];
+  async getPaginatedPosts(
+    searchQuery: string,
+    page: number,
+    limit: number
+  ): Promise<{
+    posts: Partial<PostM[]>;
     total: number;
   }> {
-    const { entities: posts, raw } = await this.postRepository
+    const queryBuilder = this.postRepository
       .createQueryBuilder('post')
-      .leftJoin('post.postLikes', 'postLikes') // Join postLikes for likeCount
-      .leftJoinAndSelect('post.user', 'user') // Join user to include user data
-      .addSelect(['user.id', 'user.email', 'user.username']) // Select only specific user fields
-      .addSelect('COUNT(postLikes.id)', 'likeCount') // Aggregate likeCount
+      .leftJoin('post.postLikes', 'postLikes')
+      .leftJoinAndSelect('post.user', 'user')
+      .addSelect(['user.id', 'user.email', 'user.username'])
+      .addSelect('COUNT(postLikes.id)', 'likeCount');
+  
+    // Add search condition for post title if searchQuery is provided
+    if (searchQuery && searchQuery.trim()) {
+      queryBuilder.where('LOWER(post.title) LIKE LOWER(:searchTerm)', {
+        searchTerm: `%${searchQuery.trim()}%`
+      });
+    }
+  
+    // Get total count before pagination
+    const total = await queryBuilder.getCount();
+  
+    const { entities: posts, raw } = await queryBuilder
       .groupBy('post.id')
-      .addGroupBy('user.id') // Ensure grouping by user ID to avoid conflicts
+      .addGroupBy('user.id')
       .skip((page - 1) * limit)
       .take(limit)
       .getRawAndEntities();
@@ -68,10 +84,8 @@ export class PostRepositoryOrm implements PostRepository {
       likeCount: parseInt(raw[index]?.likeCount || '0', 10),
     }));
   
-    const total = await this.postRepository.count();
-  
     return {
-      posts: mappedPosts,
+      posts: mappedPosts as PostM[],
       total,
     };
   }
@@ -97,7 +111,7 @@ export class PostRepositoryOrm implements PostRepository {
     likeCount: parseInt(raw[index]?.likeCount || '0', 10),
   }));
 
-  const total = await this.postRepository.count();
+  const total = mappedPosts.length;
 
   return {
     posts: mappedPosts,

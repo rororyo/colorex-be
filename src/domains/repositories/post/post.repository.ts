@@ -6,11 +6,12 @@ export interface PostRepository {
   verifyPostAvailability(id: string): Promise<boolean>;
   verifyPostOwnership(userId: string, postId: string): Promise<boolean>;
   getPaginatedPosts(
+    searchQuery: string,
     page: number,
     limit: number,
-  ): Promise<{ posts: PostM[]; total: number }>;
+  ): Promise<{ posts: Partial<PostM[]>; total: number }>;
 
-getPostsByUserId(
+  getPostsByUserId(
     page: number,
     limit: number,
     userId: string,

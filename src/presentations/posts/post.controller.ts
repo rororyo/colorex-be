@@ -22,7 +22,6 @@ import { PostMediaDto } from './dto/postMedia.dto';
 import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
 import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Multer } from 'multer';
 import { convertToMediaFile } from 'src/utils/validator/file.validator';
 import { GetMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
 import { MediaParamsDto } from './dto/MediaParams.dto';
@@ -31,7 +30,7 @@ import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia
 import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
 import { EditMediaDto } from './dto/editMedia.dto';
 import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
-import { GetMediaParamsDto } from './dto/getMedia.dto';
+import { GetMediaQueryDto, GetUserMediaParamsDto } from './dto/getMedia.dto';
 
 @Controller('api')
 export class PostMediaController {
@@ -51,29 +50,26 @@ export class PostMediaController {
     private readonly deletePostUsecaseProxy: UseCaseProxy<DeleteMediaUsecase>,
   ) {}
   @Get('posts')
-  async getPaginatedPosts(
-    @Query() getMediaParamsDto:GetMediaParamsDto
-  ) {
-    const {page,limit} = getMediaParamsDto
+  async getPaginatedPosts(@Query() getMediaQueryDto: GetMediaQueryDto) {
+    const { searchQuery, page, limit } = getMediaQueryDto;
     const posts = await this.getPaginatedMediaUsecaseProxy
       .getInstance()
-      .execute(page, limit);
+      .execute(searchQuery, page, limit);
+      
     return {
       status: 'success',
       message: 'Posts fetched successfully',
       data: posts,
-    };
+    }; 
   }
-  @UseGuards(JwtAuthGuard)
-  @Get('posts/user')
+  @Get('posts/user/:userId')
   async getPostsByUserId(
-    @Req() req: Request,
-    @Query() getMediaParamsDto:GetMediaParamsDto
+    @Param() getUserMediaQueryDto:GetUserMediaParamsDto,
+    @Query() getMediaParamsDto:GetMediaQueryDto
 ) {
+  const {userId}= getUserMediaQueryDto
   const {page,limit} = getMediaParamsDto
-    const token = getAuthCookie(req);
-    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
-    const posts = await this.getPaginatedUserMediaUsecaseProxy.getInstance().execute(page,limit,user.id)
+    const posts = await this.getPaginatedUserMediaUsecaseProxy.getInstance().execute(page,limit,userId);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
@@ -124,7 +120,6 @@ export class PostMediaController {
     const user = await this.currUserUseCaseProxy.getInstance().execute(token);
     const { postId } = params;
 
-    // Validate inputs (post_type, title, content)
     await this.editPostUsecaseProxy
       .getInstance()
       .execute(user.id, postId, editMediaDto);

@@ -1,8 +1,24 @@
-import { IsNotEmpty } from "class-validator";
+import { Type } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
 
-export class GetMediaParamsDto {
+export class GetMediaQueryDto {
+  @IsOptional()
+  @IsString()
+  searchQuery?: string = '';
   @IsNotEmpty()
-  page: number;
+  @IsNumber()
+  @Type(() => Number)
+  @Min(1)
+  page: number = 1;
   @IsNotEmpty()
-  limit: number;
+  @IsNumber()
+  @Type(() => Number)
+  @Min(1)
+  @Max(100)
+  limit: number = 9;
+}
+
+export class GetUserMediaParamsDto {
+  @IsNotEmpty()
+  userId: string;
 }
