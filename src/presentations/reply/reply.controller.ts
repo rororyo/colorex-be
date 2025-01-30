@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Inject, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { Request } from "express";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CurrUserUsecase } from "src/applications/use-cases/user/currUser.usecase";
 import { UseCaseProxy } from "src/infrastructure/usecase-proxy/usecase-proxy";
 import { UseCaseProxyModule } from "src/infrastructure/usecase-proxy/usecase-proxy.module";
@@ -12,14 +13,47 @@ import { DeleteReplyParamsDto } from "./dto/deleteReply.dto";
 import { EditReplyDto, EditReplyParamsDto } from "./dto/editReply.dto";
 import { EditReplyUsecase } from "src/applications/use-cases/reply/editReply.usecase";
 
+@ApiTags('reply')
 @Controller('api')
 export class ReplyController {
   constructor(
-    @Inject (UseCaseProxyModule.CURRENT_USER_USECASE) private readonly currUserUseCaseProxy: UseCaseProxy<CurrUserUsecase>,
-    @Inject (UseCaseProxyModule.POST_REPLY_USECASE) private readonly postReplyUseCaseProxy: UseCaseProxy<postReplyUseCase>,
-    @Inject(UseCaseProxyModule.EDIT_REPLY_USECASE) private readonly editReplyUseCaseProxy: UseCaseProxy<EditReplyUsecase>,
-    @Inject(UseCaseProxyModule.DELETE_REPLY_USECASE) private readonly deleteReplyUseCaseProxy: UseCaseProxy<DeleteReplyUsecase>,
+    @Inject(UseCaseProxyModule.CURRENT_USER_USECASE) 
+    private readonly currUserUseCaseProxy: UseCaseProxy<CurrUserUsecase>,
+    @Inject(UseCaseProxyModule.POST_REPLY_USECASE) 
+    private readonly postReplyUseCaseProxy: UseCaseProxy<postReplyUseCase>,
+    @Inject(UseCaseProxyModule.EDIT_REPLY_USECASE) 
+    private readonly editReplyUseCaseProxy: UseCaseProxy<EditReplyUsecase>,
+    @Inject(UseCaseProxyModule.DELETE_REPLY_USECASE) 
+    private readonly deleteReplyUseCaseProxy: UseCaseProxy<DeleteReplyUsecase>,
   ){}
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a reply to a comment' })
+  @ApiParam({
+    name: 'postId',
+    required: true,
+    description: 'ID of the post containing the comment',
+  })
+  @ApiParam({
+    name: 'commentId',
+    required: true,
+    description: 'ID of the comment to reply to',
+  })
+  @ApiBody({
+    type: PostReplyDto,
+    description: 'Reply content',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Reply created successfully',
+    schema: {
+      example: {
+        status: 'success',
+        message: 'Reply created successfully',
+      },
+    },
+  })
   @Post('/post/:postId/comment/:commentId/reply')
   async postReply(
     @Req() req: Request,
@@ -35,9 +69,35 @@ export class ReplyController {
       message: 'Reply created successfully',
     }
   }
+
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Edit a reply' })
+  @ApiParam({
+    name: 'replyId',
+    required: true,
+    description: 'ID of the reply to edit',
+  })
+  @ApiBody({
+    type: EditReplyDto,
+    description: 'Updated reply content',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reply updated successfully',
+    schema: {
+      example: {
+        status: 'success',
+        message: 'Reply updated successfully',
+      },
+    },
+  })
   @Put('reply/:replyId')
-  async editReply(@Req() req: Request, @Param() params: EditReplyParamsDto, @Body() replyDto: EditReplyDto){
+  async editReply(
+    @Req() req: Request, 
+    @Param() params: EditReplyParamsDto, 
+    @Body() replyDto: EditReplyDto
+  ){
     const {replyId} = params;
     const token = getAuthCookie(req);
     const user = await this.currUserUseCaseProxy.getInstance().execute(token);
@@ -47,9 +107,30 @@ export class ReplyController {
       message: 'Reply updated successfully',
     }
   }
+
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a reply' })
+  @ApiParam({
+    name: 'replyId',
+    required: true,
+    description: 'ID of the reply to delete',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reply deleted successfully',
+    schema: {
+      example: {
+        status: 'success',
+        message: 'Reply deleted successfully',
+      },
+    },
+  })
   @Delete('reply/:replyId')
-  async deleteReply(@Req() req: Request, @Param() params: DeleteReplyParamsDto){
+  async deleteReply(
+    @Req() req: Request, 
+    @Param() params: DeleteReplyParamsDto
+  ){
     const {replyId} = params;
     const token = getAuthCookie(req);
     const user = await this.currUserUseCaseProxy.getInstance().execute(token);
