@@ -1,18 +1,28 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
-import { PostType } from "src/domains/model/post";
-import { User } from "./user.entity";
-import { Comment } from "./comment.entity";
-import { PostLike } from "./postLike.entity";
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { PostType } from 'src/domains/model/post';
+import { User } from './user.entity';
+import { Comment } from './comment.entity';
+import { PostLike } from './postLike.entity';
+import { HashTag } from './hashtag.entity';
 
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User,(user) => user.posts,{onDelete: 'CASCADE'} )  
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
-  
+
   @Column({
     type: 'enum',
     enum: PostType,
@@ -40,11 +50,15 @@ export class Post {
   })
   updated_at: Date;
 
-  @OneToMany(() => Comment, (comment) => comment.post,{cascade: true})
+  @OneToMany(() => Comment, (comment) => comment.post, { cascade: true })
   comments: Comment[];
 
-  @OneToMany(()=>PostLike, (postLike) => postLike.post)
-  postLikes: PostLike[]
+  @OneToMany(() => PostLike, (postLike) => postLike.post)
+  postLikes: PostLike[];
 
-  likeCount?: number
+  @ManyToMany(() => HashTag, (hashTag) => hashTag.posts, { cascade: true })
+  @JoinTable()
+  hashTags: HashTag[];
+
+  likeCount?: number;
 }

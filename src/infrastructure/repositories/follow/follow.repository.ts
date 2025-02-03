@@ -49,5 +49,5 @@ export class FollowRepositoryOrm implements FollowRepository{
       following: follows.map(follow => follow.following),
       count: follows.length
     }
-  }
+  } 
 }

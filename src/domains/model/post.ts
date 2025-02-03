@@ -1,4 +1,5 @@
 import { CommentM } from "./comment";
+import { HashTagM } from "./hashtag";
 import { PostLikeM } from "./postLike";
 import { UserM } from "./user";
 
@@ -14,6 +15,7 @@ export class PostM{
   comments: CommentM[];
   postLikes: PostLikeM[]
   likeCount?: number
+  hashTags: HashTagM[]
 }
 
 export enum PostType {

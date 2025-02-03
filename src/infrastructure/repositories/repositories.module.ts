@@ -19,6 +19,8 @@ import { CommentLikeRepositoryOrm } from './like/commentLike.repository';
 import { ReplyLikeRepositoryOrm } from './like/replyLike.repository';
 import { FollowRepositoryOrm } from './follow/follow.repository';
 import { Follow } from '../entities/follow.entity';
+import { HashTag } from '../entities/hashtag.entity';
+import { HashTagRepositoryOrm } from './hashtag/hashtag.repository';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { Follow } from '../entities/follow.entity';
       User,
       Auth,
       Post,
+      HashTag,
       PostLike,
       Comment,
       CommentLike,
@@ -39,6 +42,7 @@ import { Follow } from '../entities/follow.entity';
     UserRepositoryOrm,
     AuthRepositoryOrm,
     PostRepositoryOrm,
+    HashTagRepositoryOrm,
     PostLikeRepositoryOrm,
     CommentRepositoryOrm,
     CommentLikeRepositoryOrm,
@@ -50,6 +54,7 @@ import { Follow } from '../entities/follow.entity';
     UserRepositoryOrm,
     AuthRepositoryOrm,
     PostRepositoryOrm,
+    HashTagRepositoryOrm,
     PostLikeRepositoryOrm,
     CommentRepositoryOrm,
     CommentLikeRepositoryOrm,

@@ -1,26 +1,28 @@
 import { PostM, PostType } from 'src/domains/model/post';
+import { HashTagRepository } from 'src/domains/repositories/hashtag/hashtag.repository';
 import { PostRepository } from 'src/domains/repositories/post/post.repository';
 import { EditMediaDto } from 'src/presentations/posts/dto/editMedia.dto';
 export interface EditPostInput {
   postType?: PostType;
   title?: string;
   content?: string;
+  hashtags?: string[];
 }
+
 export class EditMediaUsecase {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly hashTagRepository: HashTagRepository,
+  ) {}
 
   async execute(
     userId: string,
     postId: string,
     input: EditPostInput,
   ): Promise<void> {
-    // Ensure the post exists
     await this.postRepository.verifyPostAvailability(postId);
-
-    // Ensure the user owns the post
     await this.postRepository.verifyPostOwnership(userId, postId);
 
-    // Prepare the data to update, ignoring undefined fields
     const postToUpdate: Partial<PostM> = {
       ...(input.postType !== undefined && { post_type: input.postType }),
       ...(input.title !== undefined && { title: input.title }),
@@ -28,7 +30,22 @@ export class EditMediaUsecase {
       updated_at: new Date(),
     };
 
-    // Update the post
+    if (input.hashtags?.length) {
+      await Promise.all(
+        input.hashtags.map(async (hashtag) => {
+          const existingHashtag = await this.hashTagRepository.verifyHashtagAvailability(hashtag);
+          if (!existingHashtag) {
+            await this.hashTagRepository.createHashtag(hashtag);
+          }
+        })
+      );
+      
+      const hashtags = await Promise.all(
+        input.hashtags.map(name => this.hashTagRepository.findHashtagByName(name))
+      );
+      postToUpdate.hashTags = hashtags;
+    }
+
     await this.postRepository.editPost(postId, postToUpdate);
   }
 }

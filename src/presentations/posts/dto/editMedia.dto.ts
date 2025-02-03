@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { PostType } from 'src/domains/model/post';
 
 export class EditMediaDto {
@@ -30,6 +30,10 @@ export class EditMediaDto {
   @IsString()
   @IsOptional()
   content: string;
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  hashtags: string[]
 }
 
 

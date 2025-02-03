@@ -38,6 +38,7 @@ import { UnfollowUserUseCase } from 'src/applications/use-cases/follow/unfollowU
 import { GetUserFollowStatusUsecase } from 'src/applications/use-cases/follow/GetUserFollowStatus.usecase';
 import { GetUserFollowingUseCase } from 'src/applications/use-cases/follow/getUserFollowing.usecase';
 import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUserFollower.usecase';
+import { HashTagRepositoryOrm } from '../repositories/hashtag/hashtag.repository';
 
 @Module({
   imports: [
@@ -130,14 +131,15 @@ export class UseCaseProxyModule {
             ),
         },
         {
-          inject: [PostRepositoryOrm, UserRepositoryOrm],
+          inject: [PostRepositoryOrm, UserRepositoryOrm, HashTagRepositoryOrm],
           provide: UseCaseProxyModule.POST_MEDIA_USECASE,
           useFactory: (
             postRepository: PostRepositoryOrm,
             userRepository: UserRepositoryOrm,
+            hashtagRepository: HashTagRepositoryOrm,
           ) =>
             new UseCaseProxy(
-              new PostMediaUsecase(userRepository, postRepository),
+              new PostMediaUsecase(userRepository, postRepository, hashtagRepository),
             ),
         },
         {
@@ -147,10 +149,10 @@ export class UseCaseProxyModule {
             new UseCaseProxy(new DeleteMediaUsecase(postRepository)),
         },
         {
-          inject: [PostRepositoryOrm],
+          inject: [PostRepositoryOrm,HashTagRepositoryOrm],
           provide: UseCaseProxyModule.EDIT_POST_USECASE,
-          useFactory: (postRepository: PostRepositoryOrm) =>
-            new UseCaseProxy(new EditMediaUsecase(postRepository)),
+          useFactory: (postRepository: PostRepositoryOrm,hashtagRepository: HashTagRepositoryOrm) =>
+            new UseCaseProxy(new EditMediaUsecase(postRepository,hashtagRepository)),
         },
         {
           inject: [UserRepositoryOrm, PostRepositoryOrm, PostLikeRepositoryOrm],

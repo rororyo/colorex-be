@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash } from 'crypto';
 import { PostM } from 'src/domains/model/post';
 import { UserM } from 'src/domains/model/user';
 import { PostRepository } from 'src/domains/repositories/post/post.repository';
@@ -125,6 +126,7 @@ export class PostRepositoryOrm implements PostRepository {
   async getDetailedPostById(id: string): Promise<any> {
     const result = await this.postRepository
       .createQueryBuilder('post')
+      .leftJoinAndSelect('post.hashTags', 'hashTags')
       .leftJoin('post.postLikes', 'postLikes') // Join postLikes for post like count
       .leftJoinAndSelect('post.comments', 'comments') // Include comments
       .leftJoin('comments.commentLikes', 'commentLikes') // Join commentLikes for like count
@@ -140,11 +142,13 @@ export class PostRepositoryOrm implements PostRepository {
       .addSelect('COUNT(DISTINCT commentLikes.id)', 'commentLikeCount') // Count comment likes
       .addSelect('COUNT(DISTINCT replyLikes.id)', 'replyLikeCount') // Count reply likes
       .groupBy('post.id')
-      .addGroupBy('postUser.id') // Group by post user ID
+      .addGroupBy('postUser.id')
       .addGroupBy('comments.id')
-      .addGroupBy('commentUser.id') // Group by comment user ID
+      .addGroupBy('commentUser.id')
       .addGroupBy('replies.id')
       .addGroupBy('replyUser.id') // Group by reply user ID
+      .addGroupBy('hashTags.id') // Fix for error
+      .addGroupBy('hashTags.name') // Include more fields if needed
       .where('post.id = :id', { id })
       .getRawAndEntities();
   
@@ -199,19 +203,32 @@ export class PostRepositoryOrm implements PostRepository {
       media_url: postEntity.media_url,
       title: postEntity.title,
       content: postEntity.content,
+      hashTags: postEntity.hashTags,
       created_at: postEntity.created_at,
       updated_at: postEntity.updated_at,
       likeCount: parseInt(rawData[0]?.postLikeCount || '0', 10),
       comments: commentsWithReplies,
     };
   }
-  async editPost(id: string, post: Partial<EditMediaDto>): Promise<void> {
-    // Filter out undefined fields dynamically
-    const filteredPost = Object.fromEntries(
-      Object.entries(post).filter(([_, value]) => value !== undefined),
-    );
+  async editPost(id: string, post: Partial<PostM>): Promise<void> {
+    const existingPost = await this.postRepository.findOne({
+      where: { id },
+      relations: ['hashTags'],
+    });
   
-    await this.postRepository.update({ id }, filteredPost);
+    if (!existingPost) {
+      throw new Error('Post not found');
+    }
+  
+    // Update simple fields
+    Object.assign(existingPost, post);
+  
+    // If hashtags are updated, replace them
+    if (post.hashTags) {
+      existingPost.hashTags = post.hashTags; // Assign new hashtags
+    }
+  
+    await this.postRepository.save(existingPost);
   }
   
   async deletePost(id: string): Promise<void> {

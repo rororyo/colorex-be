@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsEnum, IsNotEmpty } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsString, IsEnum, IsNotEmpty, IsArray } from "class-validator";
 import { PostType } from "src/domains/model/post";
 
 export type AllowedMediaTypes = 
@@ -44,6 +45,12 @@ export class PostMediaDto {
   @IsString()
   @IsNotEmpty()
   content: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty()
+  @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
+  hashtags: string[];
 
   // Note: File upload is typically handled separately through @UploadedFile() decorator
   // and doesn't need @ApiProperty() documentation
