@@ -7,8 +7,8 @@ import { Comment } from "./comment.entity";
 export class CommentLike {
   @PrimaryGeneratedColumn('uuid')
   id: string
-  @ManyToOne(() => User, (user) => user.commentLikes)
+  @ManyToOne(() => User, (user) => user.commentLikes, { onDelete: 'CASCADE' })
   user: User
-  @ManyToOne(() => Comment, (comment)=>comment.commentLikes)
+  @ManyToOne(() => Comment, (comment)=>comment.commentLikes, { onDelete: 'CASCADE' })
   comment: Comment
 }

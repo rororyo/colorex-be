@@ -11,7 +11,7 @@ import { CommentLike } from 'src/infrastructure/entities/commentLike.entity';
 import { Post } from 'src/infrastructure/entities/post.entity';
 import { PostLike } from 'src/infrastructure/entities/postLike.entity';
 import { ReplyLike } from 'src/infrastructure/entities/replyLike.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class PostRepositoryOrm implements PostRepository {
@@ -111,7 +111,7 @@ export class PostRepositoryOrm implements PostRepository {
       .createQueryBuilder('post')
       .where('post.user_id = :userId', { userId })
       .leftJoin('post.postLikes', 'postLikes') // Join postLikes for likeCount
-      .leftJoinAndSelect('post.user', 'user') // Join user to include user data
+      .leftJoin('post.user', 'user') // Join user to include user data
       .leftJoinAndSelect('post.hashTags', 'hashTags')
       .addSelect(['user.id', 'user.email', 'user.username']) // Select only specific user fields
       .addSelect('COUNT(postLikes.id)', 'likeCount') // Aggregate likeCount
@@ -154,8 +154,7 @@ export class PostRepositoryOrm implements PostRepository {
       .addGroupBy('user.username')
       .addGroupBy('hashTags.id') // Ensures all hashtags are included
       .addGroupBy('hashTags.name');
-  
-    // ✅ Use `EXISTS` instead of filtering hashtags directly
+      
     if (hashTagName && hashTagName.trim()) {
       queryBuilder.andWhere(
         `EXISTS (
@@ -286,6 +285,52 @@ export class PostRepositoryOrm implements PostRepository {
       comments: commentsWithReplies,
     };
   }
+async getPostsByUserIds(
+  userIds: string[],
+  page: number,
+  limit: number
+): Promise<{ posts: PostM[]; total: number }> {
+  const queryBuilder = this.postRepository
+    .createQueryBuilder('post')
+    .leftJoinAndSelect('post.hashTags', 'hashTags')
+    .leftJoin('post.user', 'user')
+    .leftJoin('post.postLikes', 'postLikes')
+    .addSelect([
+      'user.id', 
+      'user.email', 
+      'user.username',
+      'user.role'
+    ])
+    .addSelect('COUNT(postLikes.id)', 'likeCount')
+    .where('post.user_id IN (:...userIds)', { userIds })
+    .groupBy('post.id')
+    .addGroupBy('post.title')
+    .addGroupBy('post.content')
+    .addGroupBy('post.media_url')
+    .addGroupBy('post.post_type')
+    .addGroupBy('post.created_at')
+    .addGroupBy('post.updated_at')
+    .addGroupBy('user.id')
+    .addGroupBy('user.email')
+    .addGroupBy('user.username')
+    .addGroupBy('user.role')
+    .addGroupBy('hashTags.id')
+    .addGroupBy('hashTags.name');
+
+  const total = await queryBuilder.getCount();
+
+  const { entities: posts, raw } = await queryBuilder
+    .skip((page - 1) * limit)
+    .take(limit)
+    .getRawAndEntities();
+
+  const mappedPosts = posts.map((post, index) => ({
+    ...post,
+    likeCount: parseInt(raw[index]?.likeCount || '0', 10),
+  }));
+
+  return { posts: mappedPosts, total };
+}
   async editPost(id: string, post: Partial<PostM>): Promise<void> {
     const existingPost = await this.postRepository.findOne({
       where: { id },

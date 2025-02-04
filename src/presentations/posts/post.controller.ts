@@ -42,6 +42,7 @@ import { EditMediaDto } from './dto/editMedia.dto';
 import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
 import { GetMediaQueryDto, GetUserMediaParamsDto } from './dto/getMedia.dto';
 import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
+import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
 
 @ApiTags('media')
 @Controller('api')
@@ -57,6 +58,8 @@ export class PostMediaController {
     private readonly getPaginatedUserMediaUsecaseProxy: UseCaseProxy<GetPaginatedUserMediaUsecase>,
     @Inject(UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE)
     private readonly getPaginatedHashtagMediaUsecaseProxy: UseCaseProxy<GetPaginatedHashtagMediaUsecase>,
+    @Inject(UseCaseProxyModule.GET_PAGINATED_FOLLOWING_MEDIA_USECASE)
+    private readonly getPaginatedFollowingMediaUsecaseProxy: UseCaseProxy<GetPagniatedFollowingMediaUseCase>,
     @Inject(UseCaseProxyModule.POST_MEDIA_USECASE)
     private readonly postMediaUsecaseProxy: UseCaseProxy<PostMediaUsecase>,
     @Inject(UseCaseProxyModule.EDIT_POST_USECASE)
@@ -121,7 +124,24 @@ export class PostMediaController {
       data: posts,
     };
   }
-
+  @UseGuards(JwtAuthGuard)
+  @Get('posts/following')
+  async getPaginatedFollowingPosts(
+    @Req() req: Request,
+    @Query() getMediaQueryDto: GetMediaQueryDto,
+  ) {
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    const {  page, limit } = getMediaQueryDto;
+    const posts = await this.getPaginatedFollowingMediaUsecaseProxy
+      .getInstance()
+      .execute(user.id,page,limit);
+    return {
+      status: 'success',
+      message: 'Posts fetched successfully',
+      data: posts,
+    };
+  }
   @ApiOperation({ summary: 'Get paginated posts for a specific user' })
   @ApiParam({
     name: 'userId',

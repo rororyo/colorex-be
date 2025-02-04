@@ -25,6 +25,7 @@ export interface PostRepository {
     hashTagName: string
   ): Promise<{ posts: Partial<PostM>[]; total: number }>;
   getPostById(id: string): Promise<PostM>;
+  getPostsByUserIds(userIds: string[], page: number, limit: number): Promise<{ posts: PostM[]; total: number }>;
   getDetailedPostById(id: string): Promise<PostM>;
   editPost(id: string, post: Partial<EditMediaDto>): Promise<void>;
   deletePost(id: string): Promise<void>;

@@ -5,9 +5,11 @@ import { Reply } from "./reply.entity";
 @Entity()
 export class ReplyLike {
   @PrimaryGeneratedColumn('uuid')
-  id: string
-  @ManyToOne(() => User, (user) => user.replyLikes)
-  user: User
-  @ManyToOne(() => Reply, (reply) => reply.replyLikes)
-  reply: Reply
+  id: string;
+
+  @ManyToOne(() => User, (user) => user.replyLikes, { onDelete: 'CASCADE' })
+  user: User;
+
+  @ManyToOne(() => Reply, (reply) => reply.replyLikes, { onDelete: 'CASCADE' })
+  reply: Reply;
 }

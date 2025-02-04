@@ -41,28 +41,28 @@ export class User {
   })
   subscribed_at: Date;
 
-  @OneToMany(() => Post, (post) => post.user)
+  @OneToMany(() => Post, (post) => post.user, { cascade: true, onDelete: 'CASCADE' })
   posts: Post[];
 
-  @OneToMany(()=> PostLike, (postLike) => postLike.user)
+  @OneToMany(() => PostLike, (postLike) => postLike.user, { cascade: true, onDelete: 'CASCADE' })
   postLikes: PostLike[];
 
-  @OneToMany(() => Comment, (comment) => comment.user)
+  @OneToMany(() => Comment, (comment) => comment.user, { cascade: true, onDelete: 'CASCADE' })
   comments: Comment[];
 
-  @OneToMany(()=> CommentLike, (commentLike) => commentLike.user)
+  @OneToMany(() => CommentLike, (commentLike) => commentLike.user, { cascade: true, onDelete: 'CASCADE' })
   commentLikes: CommentLike[];
 
-  @OneToMany(() => Reply, (reply) => reply.user)
+  @OneToMany(() => Reply, (reply) => reply.user, { cascade: true, onDelete: 'CASCADE' })
   replies: Reply[];
 
-  @OneToMany(()=> ReplyLike, (replyLike) => replyLike.user)
+  @OneToMany(() => ReplyLike, (replyLike) => replyLike.user, { cascade: true, onDelete: 'CASCADE' })
   replyLikes: ReplyLike[];
 
-  @OneToMany(() => Follow, (follow) => follow.follower)
+  @OneToMany(() => Follow, (follow) => follow.follower, { cascade: true, onDelete: 'CASCADE' })
   following: Follow[];
 
-  @OneToMany(() => Follow, (follow) => follow.following)
+  @OneToMany(() => Follow, (follow) => follow.following, { cascade: true, onDelete: 'CASCADE' })
   followers: Follow[];
 
   @Column({ default: 0 })

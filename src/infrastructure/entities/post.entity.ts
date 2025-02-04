@@ -50,13 +50,13 @@ export class Post {
   })
   updated_at: Date;
 
-  @OneToMany(() => Comment, (comment) => comment.post, { cascade: true })
+  @OneToMany(() => Comment, (comment) => comment.post, { cascade: ['remove'] }) // ✅ Change here
   comments: Comment[];
 
   @OneToMany(() => PostLike, (postLike) => postLike.post)
   postLikes: PostLike[];
 
-  @ManyToMany(() => HashTag, (hashTag) => hashTag.posts, { cascade: true })
+  @ManyToMany(() => HashTag, (hashTag) => hashTag.posts)
   @JoinTable()
   hashTags: HashTag[];
 

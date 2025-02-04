@@ -40,6 +40,7 @@ import { GetUserFollowingUseCase } from 'src/applications/use-cases/follow/getUs
 import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUserFollower.usecase';
 import { HashTagRepositoryOrm } from '../repositories/hashtag/hashtag.repository';
 import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
+import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ export class UseCaseProxyModule {
   static GET_PAGINATED_MEDIA_USECASE = 'getPaginatedMediaUsecaseProxy';
   static GET_PAGINATED_USER_MEDIA_USECASE = 'getPaginatedUserMediaUsecaseProxy';
   static GET_PAGINATED_HASHTAG_MEDIA_USECASE = 'getPaginatedHashtagMediaUsecaseProxy';
+  static GET_PAGINATED_FOLLOWING_MEDIA_USECASE = 'getPaginatedFollowingMediaUsecaseProxy';
   static GET_MEDIA_USECASE = 'getMediaUsecaseProxy';
   static POST_COMMENT_USECASE = 'postCommentUsecaseProxy';
   static EDIT_COMMENT_USECASE = 'editCommentUsecaseProxy';
@@ -189,6 +191,12 @@ export class UseCaseProxyModule {
           provide: UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE,
           useFactory: (postRepository: PostRepositoryOrm) =>
             new UseCaseProxy(new GetPaginatedHashtagMediaUsecase(postRepository)),
+        },
+        {
+          inject: [PostRepositoryOrm,FollowRepositoryOrm],
+          provide: UseCaseProxyModule.GET_PAGINATED_FOLLOWING_MEDIA_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm,followRepository: FollowRepositoryOrm) =>
+            new UseCaseProxy(new GetPagniatedFollowingMediaUseCase(postRepository,followRepository)),
         },
         {
           inject: [PostRepositoryOrm],
@@ -343,6 +351,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
         UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
         UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE,
+        UseCaseProxyModule.GET_PAGINATED_FOLLOWING_MEDIA_USECASE,
         UseCaseProxyModule.GET_MEDIA_USECASE,
         UseCaseProxyModule.POST_COMMENT_USECASE,
         UseCaseProxyModule.EDIT_COMMENT_USECASE,
