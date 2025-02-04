@@ -39,6 +39,7 @@ import { GetUserFollowStatusUsecase } from 'src/applications/use-cases/follow/Ge
 import { GetUserFollowingUseCase } from 'src/applications/use-cases/follow/getUserFollowing.usecase';
 import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUserFollower.usecase';
 import { HashTagRepositoryOrm } from '../repositories/hashtag/hashtag.repository';
+import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ export class UseCaseProxyModule {
   static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
   static GET_PAGINATED_MEDIA_USECASE = 'getPaginatedMediaUsecaseProxy';
   static GET_PAGINATED_USER_MEDIA_USECASE = 'getPaginatedUserMediaUsecaseProxy';
+  static GET_PAGINATED_HASHTAG_MEDIA_USECASE = 'getPaginatedHashtagMediaUsecaseProxy';
   static GET_MEDIA_USECASE = 'getMediaUsecaseProxy';
   static POST_COMMENT_USECASE = 'postCommentUsecaseProxy';
   static EDIT_COMMENT_USECASE = 'editCommentUsecaseProxy';
@@ -181,6 +183,12 @@ export class UseCaseProxyModule {
           provide: UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
           useFactory: (postRepository: PostRepositoryOrm) =>
             new UseCaseProxy(new GetPaginatedUserMediaUsecase(postRepository)),
+        },
+        {
+          inject: [PostRepositoryOrm],
+          provide: UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE,
+          useFactory: (postRepository: PostRepositoryOrm) =>
+            new UseCaseProxy(new GetPaginatedHashtagMediaUsecase(postRepository)),
         },
         {
           inject: [PostRepositoryOrm],
@@ -334,6 +342,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.POST_LIKE_USECASE,
         UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
         UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
+        UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE,
         UseCaseProxyModule.GET_MEDIA_USECASE,
         UseCaseProxyModule.POST_COMMENT_USECASE,
         UseCaseProxyModule.EDIT_COMMENT_USECASE,

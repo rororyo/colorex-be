@@ -3,16 +3,7 @@ import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Max, Min } from "class-validator";
 
 export class GetMediaQueryDto {
-  @ApiProperty({
-    description: 'Search query string',
-    required: false,
-    default: '',
-    example: 'sunset'
-  })
-  @IsOptional()
-  @IsString()
-  searchQuery?: string = '';
-
+  
   @ApiProperty({
     description: 'Page number for pagination',
     minimum: 1,
@@ -38,6 +29,16 @@ export class GetMediaQueryDto {
   @Min(1)
   @Max(100)
   limit: number = 9;
+  @ApiProperty({
+    description: 'Search query string',
+    required: false,
+    default: '',
+    example: 'sunset'
+  })
+  @IsOptional()
+  @IsString()
+  searchQuery?: string = '';
+
 }
 
 

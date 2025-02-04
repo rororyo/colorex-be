@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashTagM } from 'src/domains/model/hashtag';
+import { PostM } from 'src/domains/model/post';
 import { HashTagRepository } from 'src/domains/repositories/hashtag/hashtag.repository';
 import { HashTag } from 'src/infrastructure/entities/hashtag.entity';
 import { Repository } from 'typeorm';
@@ -23,5 +24,18 @@ export class HashTagRepositoryOrm implements HashTagRepository {
   }
   async findHashtagByName(name: string): Promise<HashTagM> {
     return await this.hashTagRepository.findOne({ where: { name } });
+  }
+  async getPopularHashtags(): Promise<Partial<PostM[]>> {
+    const hashtags = await this.hashTagRepository
+    .createQueryBuilder('hashtag')
+    .leftJoin('hashtag.posts', 'post') // Assuming a Many-to-Many relation
+    .select(['hashtag.id', 'hashtag.name'])
+    .addSelect('COUNT(post.id)', 'postCount') // Count how many posts have this hashtag
+    .groupBy('hashtag.id')
+    .orderBy('postCount', 'DESC') // Sort by popularity (most used first)
+    .limit(10)
+    .getRawMany();
+
+    return hashtags;
   }
 }

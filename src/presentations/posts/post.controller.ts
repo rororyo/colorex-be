@@ -41,6 +41,7 @@ import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.use
 import { EditMediaDto } from './dto/editMedia.dto';
 import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
 import { GetMediaQueryDto, GetUserMediaParamsDto } from './dto/getMedia.dto';
+import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
 
 @ApiTags('media')
 @Controller('api')
@@ -54,6 +55,8 @@ export class PostMediaController {
     private readonly getMediaUsecaseProxy: UseCaseProxy<GetMediaDetailsUsecase>,
     @Inject(UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE)
     private readonly getPaginatedUserMediaUsecaseProxy: UseCaseProxy<GetPaginatedUserMediaUsecase>,
+    @Inject(UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE)
+    private readonly getPaginatedHashtagMediaUsecaseProxy: UseCaseProxy<GetPaginatedHashtagMediaUsecase>,
     @Inject(UseCaseProxyModule.POST_MEDIA_USECASE)
     private readonly postMediaUsecaseProxy: UseCaseProxy<PostMediaUsecase>,
     @Inject(UseCaseProxyModule.EDIT_POST_USECASE)
@@ -98,6 +101,18 @@ export class PostMediaController {
   async getPaginatedPosts(@Query() getMediaQueryDto: GetMediaQueryDto) {
     const { searchQuery, page, limit } = getMediaQueryDto;
     const posts = await this.getPaginatedMediaUsecaseProxy
+      .getInstance()
+      .execute(searchQuery, page, limit);
+    return {
+      status: 'success',
+      message: 'Posts fetched successfully',
+      data: posts,
+    };
+  }
+  @Get('posts/hashtag')
+  async getPostsByHashtag(@Query() getMediaQueryDto: GetMediaQueryDto) {
+    const { searchQuery, page, limit } = getMediaQueryDto;
+    const posts = await this.getPaginatedHashtagMediaUsecaseProxy
       .getInstance()
       .execute(searchQuery, page, limit);
     return {
@@ -153,11 +168,11 @@ export class PostMediaController {
   })
   @Get('posts/user/:userId')
   async getPostsByUserId(
-    @Param() getUserMediaQueryDto: GetUserMediaParamsDto,
-    @Query() getMediaParamsDto: GetMediaQueryDto,
+    @Query() getUserMediaQueryDto: GetMediaQueryDto,
+    @Param() getMediaParamsDto: GetUserMediaParamsDto,
   ) {
-    const { userId } = getUserMediaQueryDto;
-    const { page, limit } = getMediaParamsDto;
+    const { userId } = getMediaParamsDto;
+    const { page, limit } = getUserMediaQueryDto;
     const posts = await this.getPaginatedUserMediaUsecaseProxy
       .getInstance()
       .execute(page, limit, userId);
