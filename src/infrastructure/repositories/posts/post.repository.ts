@@ -80,6 +80,7 @@ export class PostRepositoryOrm implements PostRepository {
       .addGroupBy('user.id')
       .addGroupBy('hashTags.id')
       .addGroupBy('hashTags.name')
+      .orderBy('post.created_at', 'DESC')
       .skip((page - 1) * limit)
       .take(limit)
       .getRawAndEntities();
@@ -103,58 +104,69 @@ export class PostRepositoryOrm implements PostRepository {
     page: number,
     limit: number,
     userId: string,
-  ): Promise<{
-    posts: Partial<PostM>[];
-    total: number;
-  }> {
-    const { entities: posts, raw } = await this.postRepository
+    searchQuery: string,
+  ): Promise<{ posts: Partial<PostM>[]; total: number }> {
+    const queryBuilder = this.postRepository
       .createQueryBuilder('post')
       .where('post.user_id = :userId', { userId })
-      .leftJoin('post.postLikes', 'postLikes') // Join postLikes for likeCount
-      .leftJoin('post.user', 'user') // Join user to include user data
       .leftJoinAndSelect('post.hashTags', 'hashTags')
-      .addSelect(['user.id', 'user.email', 'user.username']) // Select only specific user fields
-      .addSelect('COUNT(postLikes.id)', 'likeCount') // Aggregate likeCount
+      .leftJoin('post.postLikes', 'postLikes')
+      .leftJoinAndSelect('post.user', 'user')
+      .addSelect(['user.id', 'user.email', 'user.username'])
+      .addSelect('COUNT(postLikes.id)', 'likeCount');
+
+    // Add search condition for post title if searchQuery is provided
+    if (searchQuery && searchQuery.trim()) {
+      queryBuilder.where('LOWER(post.title) LIKE LOWER(:searchTerm)', {
+        searchTerm: `%${searchQuery.trim()}%`,
+      });
+    }
+    // Get total count before pagination
+    const total = await queryBuilder.getCount();
+
+    const { entities: posts, raw } = await queryBuilder
       .groupBy('post.id')
-      .addGroupBy('user.id') // Ensure grouping by user ID to avoid conflicts
-      .addGroupBy('hashTags.id') // Fix for error
-      .addGroupBy('hashTags.name') // Include more fields if needed
+      .addGroupBy('user.id')
+      .addGroupBy('hashTags.id')
+      .addGroupBy('hashTags.name')
       .skip((page - 1) * limit)
       .take(limit)
       .getRawAndEntities();
 
     const mappedPosts = posts.map((post, index) => ({
       ...post,
-      user: post.user as UserM,
+      user: {
+        id: post.user.id,
+        email: post.user.email,
+        username: post.user.username,
+      },
       likeCount: parseInt(raw[index]?.likeCount || '0', 10),
     }));
 
-    const total = mappedPosts.length;
-
     return {
-      posts: mappedPosts,
+      posts: mappedPosts as PostM[],
       total,
     };
   }
   async getPostsByHashTagName(
     page: number,
     limit: number,
-    hashTagName?: string // Optional hashtag search
+    hashTagName: string,
+    searchQuery: string,
   ): Promise<{ posts: Partial<PostM>[]; total: number }> {
     const queryBuilder = this.postRepository
       .createQueryBuilder('post')
+      .leftJoinAndSelect('post.hashTags', 'hashTags')
       .leftJoin('post.postLikes', 'postLikes')
-      .leftJoinAndSelect('post.user', 'user') // Fetch user details
-      .leftJoinAndSelect('post.hashTags', 'hashTags') // Ensure all hashtags are retrieved
+      .leftJoin('post.user', 'user')
       .addSelect(['user.id', 'user.email', 'user.username'])
-      .addSelect('COUNT(postLikes.id)', 'likeCount') // Aggregate likeCount
-      .groupBy('post.id')
-      .addGroupBy('user.id')
-      .addGroupBy('user.email')
-      .addGroupBy('user.username')
-      .addGroupBy('hashTags.id') // Ensures all hashtags are included
-      .addGroupBy('hashTags.name');
-      
+      .addSelect('COUNT(postLikes.id)', 'likeCount');
+
+    if (searchQuery && searchQuery.trim()) {
+      queryBuilder.where('LOWER(post.title) LIKE LOWER(:searchTerm)', {
+        searchTerm: `%${searchQuery.trim()}%`,
+      });
+    }
     if (hashTagName && hashTagName.trim()) {
       queryBuilder.andWhere(
         `EXISTS (
@@ -163,30 +175,33 @@ export class PostRepositoryOrm implements PostRepository {
           WHERE pht."postId" = post.id
           AND LOWER(ht.name) LIKE LOWER(:hashTagName)
         )`,
-        { hashTagName: `%${hashTagName.trim()}%` }
+        { hashTagName: `%${hashTagName.trim()}%` },
       );
     }
-  
+
     // 🔹 Get total before pagination
     const total = await queryBuilder.getCount();
-  
+
     // 🔹 Apply pagination
     const { entities: posts, raw } = await queryBuilder
+      .groupBy('post.id')
+      .addGroupBy('user.id')
+      .addGroupBy('hashTags.id')
+      .addGroupBy('hashTags.name')
       .skip((page - 1) * limit)
       .take(limit)
       .getRawAndEntities();
-  
+
     const mappedPosts = posts.map((post, index) => ({
       ...post,
       likeCount: parseInt(raw[index]?.likeCount || '0', 10),
     }));
-  
+
     return {
       posts: mappedPosts,
       total,
     };
   }
-  
 
   async getPostById(id: string): Promise<PostM> {
     const post = await this.postRepository.findOneBy({ id });
@@ -285,52 +300,54 @@ export class PostRepositoryOrm implements PostRepository {
       comments: commentsWithReplies,
     };
   }
-async getPostsByUserIds(
-  userIds: string[],
-  page: number,
-  limit: number
-): Promise<{ posts: PostM[]; total: number }> {
-  const queryBuilder = this.postRepository
-    .createQueryBuilder('post')
-    .leftJoinAndSelect('post.hashTags', 'hashTags')
-    .leftJoin('post.user', 'user')
-    .leftJoin('post.postLikes', 'postLikes')
-    .addSelect([
-      'user.id', 
-      'user.email', 
-      'user.username',
-      'user.role'
-    ])
-    .addSelect('COUNT(postLikes.id)', 'likeCount')
-    .where('post.user_id IN (:...userIds)', { userIds })
-    .groupBy('post.id')
-    .addGroupBy('post.title')
-    .addGroupBy('post.content')
-    .addGroupBy('post.media_url')
-    .addGroupBy('post.post_type')
-    .addGroupBy('post.created_at')
-    .addGroupBy('post.updated_at')
-    .addGroupBy('user.id')
-    .addGroupBy('user.email')
-    .addGroupBy('user.username')
-    .addGroupBy('user.role')
-    .addGroupBy('hashTags.id')
-    .addGroupBy('hashTags.name');
+  async getPostsByUserIds(
+    page: number,
+    limit: number,
+    userIds: string[],
+    searchQuery: string,
+  ): Promise<{ posts: PostM[]; total: number }> {
+    const queryBuilder = this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.hashTags', 'hashTags')
+      .leftJoin('post.user', 'user')
+      .leftJoin('post.postLikes', 'postLikes')
+      .addSelect(['user.id', 'user.email', 'user.username', 'user.role'])
+      .addSelect('COUNT(postLikes.id)', 'likeCount')
+      .where('post.user_id IN (:...userIds)', { userIds })
+      .groupBy('post.id')
+      .addGroupBy('post.title')
+      .addGroupBy('post.content')
+      .addGroupBy('post.media_url')
+      .addGroupBy('post.post_type')
+      .addGroupBy('post.created_at')
+      .addGroupBy('post.updated_at')
+      .addGroupBy('user.id')
+      .addGroupBy('user.email')
+      .addGroupBy('user.username')
+      .addGroupBy('user.role')
+      .addGroupBy('hashTags.id')
+      .addGroupBy('hashTags.name');
 
-  const total = await queryBuilder.getCount();
+    if (searchQuery && searchQuery.trim()) {
+      queryBuilder.where('LOWER(post.title) LIKE LOWER(:searchTerm)', {
+        searchTerm: `%${searchQuery.trim()}%`,
+      });
+    }
 
-  const { entities: posts, raw } = await queryBuilder
-    .skip((page - 1) * limit)
-    .take(limit)
-    .getRawAndEntities();
+    const total = await queryBuilder.getCount();
 
-  const mappedPosts = posts.map((post, index) => ({
-    ...post,
-    likeCount: parseInt(raw[index]?.likeCount || '0', 10),
-  }));
+    const { entities: posts, raw } = await queryBuilder
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getRawAndEntities();
 
-  return { posts: mappedPosts, total };
-}
+    const mappedPosts = posts.map((post, index) => ({
+      ...post,
+      likeCount: parseInt(raw[index]?.likeCount || '0', 10),
+    }));
+
+    return { posts: mappedPosts, total };
+  }
   async editPost(id: string, post: Partial<PostM>): Promise<void> {
     const existingPost = await this.postRepository.findOne({
       where: { id },

@@ -6,10 +6,10 @@ export class GetPagniatedFollowingMediaUseCase {
     private postRepository: PostRepository,
     private followRepository: FollowRepository
   ) {}
-  async execute(userId: string, page: number, limit: number) {
+  async execute(page: number, limit: number, userId: string, searchQuery: string) {
     const following = await this.followRepository.getFollowingByUserId(userId);
     const userFollowingIds = following.following.map(following => following.id);
-    const posts = await this.postRepository.getPostsByUserIds(userFollowingIds,page,limit);
+    const posts = await this.postRepository.getPostsByUserIds(page, limit, userFollowingIds, searchQuery);
     return posts
   }
 }

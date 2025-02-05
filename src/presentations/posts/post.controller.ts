@@ -40,7 +40,7 @@ import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia
 import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
 import { EditMediaDto } from './dto/editMedia.dto';
 import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
-import { GetMediaQueryDto, GetUserMediaParamsDto } from './dto/getMedia.dto';
+import { GetHashTagMediaQueryDto, GetMediaQueryDto, GetUserMediaParamsDto } from './dto/getMedia.dto';
 import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
 import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
 
@@ -113,11 +113,11 @@ export class PostMediaController {
     };
   }
   @Get('posts/hashtag')
-  async getPostsByHashtag(@Query() getMediaQueryDto: GetMediaQueryDto) {
-    const { searchQuery, page, limit } = getMediaQueryDto;
+  async getPostsByHashtag(@Query() getHashTagMediaQueryDto:GetHashTagMediaQueryDto) {
+    const { page,limit,hashTagName,searchQuery } = getHashTagMediaQueryDto;
     const posts = await this.getPaginatedHashtagMediaUsecaseProxy
       .getInstance()
-      .execute(searchQuery, page, limit);
+      .execute(page,limit,hashTagName,searchQuery);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
@@ -132,10 +132,10 @@ export class PostMediaController {
   ) {
     const token = getAuthCookie(req);
     const user = await this.currUserUseCaseProxy.getInstance().execute(token);
-    const {  page, limit } = getMediaQueryDto;
+    const {  page, limit, searchQuery } = getMediaQueryDto;
     const posts = await this.getPaginatedFollowingMediaUsecaseProxy
       .getInstance()
-      .execute(user.id,page,limit);
+      .execute(page,limit,user.id,searchQuery);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
@@ -192,10 +192,10 @@ export class PostMediaController {
     @Param() getMediaParamsDto: GetUserMediaParamsDto,
   ) {
     const { userId } = getMediaParamsDto;
-    const { page, limit } = getUserMediaQueryDto;
+    const { page, limit,searchQuery } = getUserMediaQueryDto;
     const posts = await this.getPaginatedUserMediaUsecaseProxy
       .getInstance()
-      .execute(page, limit, userId);
+      .execute(page, limit, userId,searchQuery);
     return {
       status: 'success',
       message: 'Posts fetched successfully',

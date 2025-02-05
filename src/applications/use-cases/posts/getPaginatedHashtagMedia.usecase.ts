@@ -5,7 +5,7 @@ export class GetPaginatedHashtagMediaUsecase {
     private postRepository: PostRepository
   ) {}
 
-  async execute(searchQuery: string, page: number, limit: number) {
-    return await this.postRepository.getPostsByHashTagName(page, limit, searchQuery);
+  async execute(page: number, limit: number,hashTagName: string, searchQuery: string) {
+    return await this.postRepository.getPostsByHashTagName(page,limit,hashTagName,searchQuery);
   }
 }
