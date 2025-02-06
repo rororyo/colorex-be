@@ -40,14 +40,21 @@ import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia
 import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
 import { EditMediaDto } from './dto/editMedia.dto';
 import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
-import { GetHashTagMediaQueryDto, GetMediaQueryDto, GetUserMediaParamsDto } from './dto/getMedia.dto';
+import {
+  GetHashTagMediaQueryDto,
+  GetMediaQueryDto,
+  GetUserMediaParamsDto,
+} from './dto/getMedia.dto';
 import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
 import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
+import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
 
 @ApiTags('media')
 @Controller('api')
 export class PostMediaController {
   constructor(
+    @Inject(UseCaseProxyModule.UPLOAD_MEDIA_USECASE)
+    private readonly uploadMediaUsecaseProxy: UseCaseProxy<UploadMediaUseCase>,
     @Inject(UseCaseProxyModule.CURRENT_USER_USECASE)
     private readonly currUserUseCaseProxy: UseCaseProxy<CurrUserUsecase>,
     @Inject(UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE)
@@ -113,11 +120,13 @@ export class PostMediaController {
     };
   }
   @Get('posts/hashtag')
-  async getPostsByHashtag(@Query() getHashTagMediaQueryDto:GetHashTagMediaQueryDto) {
-    const { page,limit,hashTagName,searchQuery } = getHashTagMediaQueryDto;
+  async getPostsByHashtag(
+    @Query() getHashTagMediaQueryDto: GetHashTagMediaQueryDto,
+  ) {
+    const { page, limit, hashTagName, searchQuery } = getHashTagMediaQueryDto;
     const posts = await this.getPaginatedHashtagMediaUsecaseProxy
       .getInstance()
-      .execute(page,limit,hashTagName,searchQuery);
+      .execute(page, limit, hashTagName, searchQuery);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
@@ -132,10 +141,10 @@ export class PostMediaController {
   ) {
     const token = getAuthCookie(req);
     const user = await this.currUserUseCaseProxy.getInstance().execute(token);
-    const {  page, limit, searchQuery } = getMediaQueryDto;
+    const { page, limit, searchQuery } = getMediaQueryDto;
     const posts = await this.getPaginatedFollowingMediaUsecaseProxy
       .getInstance()
-      .execute(page,limit,user.id,searchQuery);
+      .execute(page, limit, user.id, searchQuery);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
@@ -192,10 +201,10 @@ export class PostMediaController {
     @Param() getMediaParamsDto: GetUserMediaParamsDto,
   ) {
     const { userId } = getMediaParamsDto;
-    const { page, limit,searchQuery } = getUserMediaQueryDto;
+    const { page, limit, searchQuery } = getUserMediaQueryDto;
     const posts = await this.getPaginatedUserMediaUsecaseProxy
       .getInstance()
-      .execute(page, limit, userId,searchQuery);
+      .execute(page, limit, userId, searchQuery);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
@@ -318,22 +327,30 @@ export class PostMediaController {
     },
   })
   @Post('post')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { limits: { files: 1 } }))
   async postMedia(
     @Req() req: Request,
     @Body() postMediaDto: PostMediaDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
     const token = getAuthCookie(req);
     const user = await this.currUserUseCaseProxy.getInstance().execute(token);
-    const mediaFile = convertToMediaFile(file);
+    if(file){
+      const imageDestination = `posts/${Date.now()}-${file.originalname}`;
+      const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
+      postMediaDto.media_url = imageUrl;
+    }
+
+    const mediaFile = file ? convertToMediaFile(file) : null;
     const completePost = {
       ...postMediaDto,
+      media: mediaFile,
     };
 
     await this.postMediaUsecaseProxy
       .getInstance()
       .execute(completePost, user.id);
+
     return {
       status: 'success',
       message: 'Post created successfully',

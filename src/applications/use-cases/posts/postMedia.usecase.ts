@@ -32,7 +32,7 @@ export class PostMediaUsecase {
     post.hashTags = hashtags;
 
     post.content = postMediaDto.content;
-    post.media_url = 'lorem ipsum';
+    post.media_url = postMediaDto.media_url;
     post.post_type = postMediaDto.post_type;
     post.title = postMediaDto.title;
     post.user = user;

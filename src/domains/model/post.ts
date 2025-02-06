@@ -19,6 +19,7 @@ export class PostM{
 }
 
 export enum PostType {
+  text = 'text',
   image = 'image',
   video = 'video',
 }

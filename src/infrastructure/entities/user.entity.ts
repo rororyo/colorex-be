@@ -29,6 +29,9 @@ export class User {
   })
   role: Roles;
 
+  @Column({ nullable: true })
+  avatarUrl: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',

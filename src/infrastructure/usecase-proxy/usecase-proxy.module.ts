@@ -41,11 +41,15 @@ import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUse
 import { HashTagRepositoryOrm } from '../repositories/hashtag/hashtag.repository';
 import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
 import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
+import { STORAGE_TOKEN, StorageModule } from '../storage/storage.module';
+import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
+import { IGcsStorage } from 'src/domains/storage/IGcsStorage';
 
 @Module({
   imports: [
     EnvironmentConfigModule,
     RepositoriesModule,
+    StorageModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
@@ -57,6 +61,7 @@ export class UseCaseProxyModule {
   static LOGIN_USER_USECASE = 'loginUserUsecaseProxy';
   static REGISTER_USER_USECASE = 'registerUserUsecaseProxy';
   static CURRENT_USER_USECASE = 'currentUserUsecaseProxy';
+  static UPLOAD_MEDIA_USECASE = 'uploadMediaUsecaseProxy';
   static POST_MEDIA_USECASE = 'postMediaUsecaseProxy';
   static DELETE_POST_USECASE = 'deletePostUsecaseProxy';
   static EDIT_POST_USECASE = 'editPostUsecaseProxy';
@@ -133,6 +138,12 @@ export class UseCaseProxyModule {
             new UseCaseProxy(
               new CurrUserUsecase(userRepository, authTokenManager),
             ),
+        },
+        { 
+          inject: [STORAGE_TOKEN],
+          provide: UseCaseProxyModule.UPLOAD_MEDIA_USECASE,
+          useFactory: (gcsStorage: IGcsStorage) =>
+            new UseCaseProxy(new UploadMediaUseCase(gcsStorage)),
         },
         {
           inject: [PostRepositoryOrm, UserRepositoryOrm, HashTagRepositoryOrm],
@@ -344,6 +355,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.REGISTER_USER_USECASE,
         UseCaseProxyModule.LOGIN_USER_USECASE,
         UseCaseProxyModule.CURRENT_USER_USECASE,
+        UseCaseProxyModule.UPLOAD_MEDIA_USECASE,
         UseCaseProxyModule.POST_MEDIA_USECASE,
         UseCaseProxyModule.DELETE_POST_USECASE,
         UseCaseProxyModule.EDIT_POST_USECASE,

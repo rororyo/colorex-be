@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsString, IsEnum, IsNotEmpty, IsArray } from "class-validator";
+import { IsString, IsEnum, IsNotEmpty, IsArray, IsOptional } from "class-validator";
 import { PostType } from "src/domains/model/post";
 
 export type AllowedMediaTypes = 
@@ -46,6 +46,10 @@ export class PostMediaDto {
   @IsNotEmpty()
   content: string;
 
+  @IsOptional()
+  @IsString()
+  media_url: string;
+  
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()

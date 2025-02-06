@@ -29,13 +29,13 @@ export class Post {
   })
   post_type: PostType;
 
-  @Column()
+  @Column({nullable: true})
   media_url: string;
 
   @Column()
   title: string;
 
-  @Column()
+  @Column() 
   content: string;
 
   @Column({

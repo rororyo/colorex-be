@@ -14,6 +14,7 @@ export class UserM {
   username: string;
   password: string;
   role: Roles;
+  avatarUrl: string;
   created_at: Date;
   subscribed_at: Date;
   posts: PostM[];
