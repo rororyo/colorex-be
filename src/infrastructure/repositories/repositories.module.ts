@@ -21,6 +21,8 @@ import { FollowRepositoryOrm } from './follow/follow.repository';
 import { Follow } from '../entities/follow.entity';
 import { HashTag } from '../entities/hashtag.entity';
 import { HashTagRepositoryOrm } from './hashtag/hashtag.repository';
+import { Message } from '../entities/message.entity';
+import { MessageRepositoryOrm } from './message/message.repository';
 
 @Module({
   imports: [
@@ -35,7 +37,8 @@ import { HashTagRepositoryOrm } from './hashtag/hashtag.repository';
       CommentLike,
       Reply,
       ReplyLike,
-      Follow
+      Follow,
+      Message
     ]),
   ],
   providers: [
@@ -48,7 +51,8 @@ import { HashTagRepositoryOrm } from './hashtag/hashtag.repository';
     CommentLikeRepositoryOrm,
     ReplyRepositoryOrm,
     ReplyLikeRepositoryOrm,
-    FollowRepositoryOrm
+    FollowRepositoryOrm,
+    MessageRepositoryOrm
   ],
   exports: [
     UserRepositoryOrm,
@@ -60,7 +64,8 @@ import { HashTagRepositoryOrm } from './hashtag/hashtag.repository';
     CommentLikeRepositoryOrm,
     ReplyRepositoryOrm,
     ReplyLikeRepositoryOrm,
-    FollowRepositoryOrm
+    FollowRepositoryOrm,
+    MessageRepositoryOrm
   ],
 })
 export class RepositoriesModule {}

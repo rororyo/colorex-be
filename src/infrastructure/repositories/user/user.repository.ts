@@ -24,6 +24,13 @@ export class UserRepositoryOrm implements UserRepository {
     });
     return user ? false : true;
   }
+  async verifyProfileOwnership(userId: string, profileId: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    if (user.id !== profileId) throw new ConflictException('You are not the owner of this profile');
+    return true;
+  }
 
   async findUser(condition: any): Promise<UserM> {
     const user = await this.userRepository.findOne({
@@ -32,6 +39,10 @@ export class UserRepositoryOrm implements UserRepository {
 
     if (!user) return null;
     return user;
+  }
+  
+  async editUser(profileId: string, user: Partial<UserM>): Promise<void> {
+    await this.userRepository.update({ id: profileId }, user);
   }
   async incrementFollowerCount(userId: string): Promise<void> {
     await this.userRepository.increment({id: userId}, 'followersCount', 1);

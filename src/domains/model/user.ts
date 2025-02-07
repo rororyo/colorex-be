@@ -1,12 +1,12 @@
-import { CommentM } from "./comment";
-import { CommentLikeM } from "./commentLike";
-import { FollowM } from "./follow";
-import { PostM } from "./post";
-import { PostLikeM } from "./postLike";
-import { ReplyM } from "./reply";
-import { ReplyLikeM } from "./replyLike";
-import { Roles } from "./roles.enum";
-
+import { CommentM } from './comment';
+import { CommentLikeM } from './commentLike';
+import { FollowM } from './follow';
+import { MessageM } from './message';
+import { PostM } from './post';
+import { PostLikeM } from './postLike';
+import { ReplyM } from './reply';
+import { ReplyLikeM } from './replyLike';
+import { Roles } from './roles.enum';
 
 export class UserM {
   id: string;
@@ -15,6 +15,7 @@ export class UserM {
   password: string;
   role: Roles;
   avatarUrl: string;
+  bio: string;
   created_at: Date;
   subscribed_at: Date;
   posts: PostM[];
@@ -27,5 +28,6 @@ export class UserM {
   followers: FollowM[];
   followersCount: number;
   followingCount: number;
-
+  sentMessages: MessageM[];
+  receivedMessages: MessageM[];
 }

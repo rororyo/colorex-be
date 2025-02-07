@@ -50,7 +50,7 @@ export class Post {
   })
   updated_at: Date;
 
-  @OneToMany(() => Comment, (comment) => comment.post, { cascade: ['remove'] }) // ✅ Change here
+  @OneToMany(() => Comment, (comment) => comment.post, { cascade: ['remove'] })
   comments: Comment[];
 
   @OneToMany(() => PostLike, (postLike) => postLike.post)

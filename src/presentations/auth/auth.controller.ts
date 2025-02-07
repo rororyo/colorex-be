@@ -3,10 +3,14 @@ import {
   Controller,
   Get,
   Inject,
+  Param,
   Post,
+  Put,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -24,13 +28,21 @@ import { Request, Response } from 'express';
 import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
 import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
+import { EditUserDto, EditUserParamsDto } from './dto/editUser.dto';
+import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
 
-@ApiTags('auth') // Group endpoints under the "auth" tag
+@ApiTags('auth') 
 @Controller('auth')
 export class AuthController {
   constructor(
+    @Inject(UseCaseProxyModule.UPLOAD_MEDIA_USECASE)
+    private readonly uploadMediaUsecaseProxy: UseCaseProxy<UploadMediaUseCase>,
     @Inject(UseCaseProxyModule.REGISTER_USER_USECASE)
     private readonly registerUserUseCaseProxy: UseCaseProxy<RegisterUserUsecase>,
+    @Inject(UseCaseProxyModule.EDIT_USER_USECASE)
+    private readonly editUserUseCaseProxy: UseCaseProxy<EditUserUsecase>,
     @Inject(UseCaseProxyModule.LOGIN_USER_USECASE)
     private readonly loginUserUseCaseProxy: UseCaseProxy<LoginUserUsecase>,
     @Inject(UseCaseProxyModule.CURRENT_USER_USECASE)
@@ -68,9 +80,33 @@ export class AuthController {
       data: user,
     };
   }
-
+  @UseGuards(JwtAuthGuard)
+  @Put('user/:profileId')
+  @UseInterceptors(FileInterceptor('file', { limits: { files: 1 } }))
+  async updateUser(
+    @Req() req: Request,
+    @Param() editUserParamsDto: EditUserParamsDto,
+    @Body() editUserDto: EditUserDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    const { profileId } = editUserParamsDto;
+    const token = getAuthCookie(req);
+    const { id: userId } = await this.currUserUseCaseProxy
+      .getInstance()
+      .execute(token);
+    const imageDestination = `users/${Date.now()}-${file.originalname}`;
+    const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
+    editUserDto.avatarUrl = imageUrl;
+    await this.editUserUseCaseProxy
+      .getInstance()
+      .execute(userId, profileId, editUserDto);
+    return {
+      status: 'success',
+      message: 'User updated successfully',
+    };
+  }
   @ApiOperation({ summary: 'Register a new user' })
-  @ApiBody({ type: RegisterDto }) 
+  @ApiBody({ type: RegisterDto })
   @ApiResponse({
     status: 201,
     description: 'User registered successfully.',

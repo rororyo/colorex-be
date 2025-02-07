@@ -44,6 +44,9 @@ import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/po
 import { STORAGE_TOKEN, StorageModule } from '../storage/storage.module';
 import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
 import { IGcsStorage } from 'src/domains/storage/IGcsStorage';
+import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
+import { MessageRepositoryOrm } from '../repositories/message/message.repository';
+import { CreateMessageUsecase } from 'src/applications/use-cases/message/createMessage.usecase';
 
 @Module({
   imports: [
@@ -61,6 +64,7 @@ export class UseCaseProxyModule {
   static LOGIN_USER_USECASE = 'loginUserUsecaseProxy';
   static REGISTER_USER_USECASE = 'registerUserUsecaseProxy';
   static CURRENT_USER_USECASE = 'currentUserUsecaseProxy';
+  static EDIT_USER_USECASE = 'editUserUsecaseProxy';
   static UPLOAD_MEDIA_USECASE = 'uploadMediaUsecaseProxy';
   static POST_MEDIA_USECASE = 'postMediaUsecaseProxy';
   static DELETE_POST_USECASE = 'deletePostUsecaseProxy';
@@ -68,8 +72,10 @@ export class UseCaseProxyModule {
   static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
   static GET_PAGINATED_MEDIA_USECASE = 'getPaginatedMediaUsecaseProxy';
   static GET_PAGINATED_USER_MEDIA_USECASE = 'getPaginatedUserMediaUsecaseProxy';
-  static GET_PAGINATED_HASHTAG_MEDIA_USECASE = 'getPaginatedHashtagMediaUsecaseProxy';
-  static GET_PAGINATED_FOLLOWING_MEDIA_USECASE = 'getPaginatedFollowingMediaUsecaseProxy';
+  static GET_PAGINATED_HASHTAG_MEDIA_USECASE =
+    'getPaginatedHashtagMediaUsecaseProxy';
+  static GET_PAGINATED_FOLLOWING_MEDIA_USECASE =
+    'getPaginatedFollowingMediaUsecaseProxy';
   static GET_MEDIA_USECASE = 'getMediaUsecaseProxy';
   static POST_COMMENT_USECASE = 'postCommentUsecaseProxy';
   static EDIT_COMMENT_USECASE = 'editCommentUsecaseProxy';
@@ -84,7 +90,7 @@ export class UseCaseProxyModule {
   static GET_USER_FOLLOW_STATUS_USECASE = 'getUserFollowStatusUsecaseProxy';
   static GET_USER_FOLLOWERS_USECASE = 'getUserFollowersUsecaseProxy';
   static GET_USER_FOLLOWING_USECASE = 'getUserFollowingUsecaseProxy';
-
+  static POST_MESSAGE_USECASE = 'postMessageUsecaseProxy';
   static register(): DynamicModule {
     return {
       module: UseCaseProxyModule,
@@ -139,7 +145,13 @@ export class UseCaseProxyModule {
               new CurrUserUsecase(userRepository, authTokenManager),
             ),
         },
-        { 
+        {
+          inject: [UserRepositoryOrm],
+          provide: UseCaseProxyModule.EDIT_USER_USECASE,
+          useFactory: (userRepository: UserRepositoryOrm) =>
+            new UseCaseProxy(new EditUserUsecase(userRepository)),
+        },
+        {
           inject: [STORAGE_TOKEN],
           provide: UseCaseProxyModule.UPLOAD_MEDIA_USECASE,
           useFactory: (gcsStorage: IGcsStorage) =>
@@ -154,7 +166,11 @@ export class UseCaseProxyModule {
             hashtagRepository: HashTagRepositoryOrm,
           ) =>
             new UseCaseProxy(
-              new PostMediaUsecase(userRepository, postRepository, hashtagRepository),
+              new PostMediaUsecase(
+                userRepository,
+                postRepository,
+                hashtagRepository,
+              ),
             ),
         },
         {
@@ -164,10 +180,15 @@ export class UseCaseProxyModule {
             new UseCaseProxy(new DeleteMediaUsecase(postRepository)),
         },
         {
-          inject: [PostRepositoryOrm,HashTagRepositoryOrm],
+          inject: [PostRepositoryOrm, HashTagRepositoryOrm],
           provide: UseCaseProxyModule.EDIT_POST_USECASE,
-          useFactory: (postRepository: PostRepositoryOrm,hashtagRepository: HashTagRepositoryOrm) =>
-            new UseCaseProxy(new EditMediaUsecase(postRepository,hashtagRepository)),
+          useFactory: (
+            postRepository: PostRepositoryOrm,
+            hashtagRepository: HashTagRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new EditMediaUsecase(postRepository, hashtagRepository),
+            ),
         },
         {
           inject: [UserRepositoryOrm, PostRepositoryOrm, PostLikeRepositoryOrm],
@@ -201,13 +222,23 @@ export class UseCaseProxyModule {
           inject: [PostRepositoryOrm],
           provide: UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE,
           useFactory: (postRepository: PostRepositoryOrm) =>
-            new UseCaseProxy(new GetPaginatedHashtagMediaUsecase(postRepository)),
+            new UseCaseProxy(
+              new GetPaginatedHashtagMediaUsecase(postRepository),
+            ),
         },
         {
-          inject: [PostRepositoryOrm,FollowRepositoryOrm],
+          inject: [PostRepositoryOrm, FollowRepositoryOrm],
           provide: UseCaseProxyModule.GET_PAGINATED_FOLLOWING_MEDIA_USECASE,
-          useFactory: (postRepository: PostRepositoryOrm,followRepository: FollowRepositoryOrm) =>
-            new UseCaseProxy(new GetPagniatedFollowingMediaUseCase(postRepository,followRepository)),
+          useFactory: (
+            postRepository: PostRepositoryOrm,
+            followRepository: FollowRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new GetPagniatedFollowingMediaUseCase(
+                postRepository,
+                followRepository,
+              ),
+            ),
         },
         {
           inject: [PostRepositoryOrm],
@@ -324,7 +355,10 @@ export class UseCaseProxyModule {
           useFactory: (
             followRepository: FollowRepositoryOrm,
             userRepository: UserRepositoryOrm,
-          ) => new UseCaseProxy(new FollowUserUseCase(followRepository,userRepository)),
+          ) =>
+            new UseCaseProxy(
+              new FollowUserUseCase(followRepository, userRepository),
+            ),
         },
         {
           inject: [FollowRepositoryOrm, UserRepositoryOrm],
@@ -332,7 +366,10 @@ export class UseCaseProxyModule {
           useFactory: (
             followRepository: FollowRepositoryOrm,
             userRepository: UserRepositoryOrm,
-          ) => new UseCaseProxy(new UnfollowUserUseCase(followRepository,userRepository)),
+          ) =>
+            new UseCaseProxy(
+              new UnfollowUserUseCase(followRepository, userRepository),
+            ),
         },
         {
           inject: [FollowRepositoryOrm],
@@ -341,20 +378,34 @@ export class UseCaseProxyModule {
             new UseCaseProxy(new GetUserFollowStatusUsecase(followRepository)),
         },
         {
-          inject:[FollowRepositoryOrm],
+          inject: [FollowRepositoryOrm],
           provide: UseCaseProxyModule.GET_USER_FOLLOWING_USECASE,
-          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new GetUserFollowingUseCase(followRepository)),
+          useFactory: (followRepository: FollowRepositoryOrm) =>
+            new UseCaseProxy(new GetUserFollowingUseCase(followRepository)),
         },
         {
-          inject:[FollowRepositoryOrm],
+          inject: [FollowRepositoryOrm],
           provide: UseCaseProxyModule.GET_USER_FOLLOWERS_USECASE,
-          useFactory: (followRepository: FollowRepositoryOrm) => new UseCaseProxy(new GetUserFollowerUseCase(followRepository)),
-        }
+          useFactory: (followRepository: FollowRepositoryOrm) =>
+            new UseCaseProxy(new GetUserFollowerUseCase(followRepository)),
+        },
+        {
+          inject: [MessageRepositoryOrm, UserRepositoryOrm],
+          provide: UseCaseProxyModule.POST_MESSAGE_USECASE,
+          useFactory: (
+            messageRepository: MessageRepositoryOrm,
+            userRepository: UserRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new CreateMessageUsecase(userRepository, messageRepository),
+            ),
+        },
       ],
       exports: [
         UseCaseProxyModule.REGISTER_USER_USECASE,
         UseCaseProxyModule.LOGIN_USER_USECASE,
         UseCaseProxyModule.CURRENT_USER_USECASE,
+        UseCaseProxyModule.EDIT_USER_USECASE,
         UseCaseProxyModule.UPLOAD_MEDIA_USECASE,
         UseCaseProxyModule.POST_MEDIA_USECASE,
         UseCaseProxyModule.DELETE_POST_USECASE,
@@ -377,7 +428,8 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.UNFOLLOW_USER_USECASE,
         UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE,
         UseCaseProxyModule.GET_USER_FOLLOWING_USECASE,
-        UseCaseProxyModule.GET_USER_FOLLOWERS_USECASE
+        UseCaseProxyModule.GET_USER_FOLLOWERS_USECASE,
+        UseCaseProxyModule.POST_MESSAGE_USECASE,
       ],
     };
   }

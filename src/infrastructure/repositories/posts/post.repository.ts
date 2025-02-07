@@ -63,7 +63,8 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoin('post.postLikes', 'postLikes')
       .leftJoinAndSelect('post.user', 'user')
       .addSelect(['user.id', 'user.email', 'user.username'])
-      .addSelect('COUNT(postLikes.id)', 'likeCount');
+      .addSelect('COUNT(postLikes.id)', 'likeCount')
+      .orderBy('post.created_at', 'DESC');
 
     // Add search condition for post title if searchQuery is provided
     if (searchQuery && searchQuery.trim()) {
@@ -113,7 +114,8 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoin('post.postLikes', 'postLikes')
       .leftJoinAndSelect('post.user', 'user')
       .addSelect(['user.id', 'user.email', 'user.username'])
-      .addSelect('COUNT(postLikes.id)', 'likeCount');
+      .addSelect('COUNT(postLikes.id)', 'likeCount')
+      .orderBy('post.created_at', 'DESC');
 
     // Add search condition for post title if searchQuery is provided
     if (searchQuery && searchQuery.trim()) {
@@ -160,7 +162,8 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoin('post.postLikes', 'postLikes')
       .leftJoin('post.user', 'user')
       .addSelect(['user.id', 'user.email', 'user.username'])
-      .addSelect('COUNT(postLikes.id)', 'likeCount');
+      .addSelect('COUNT(postLikes.id)', 'likeCount')
+      .orderBy('post.created_at', 'DESC');
 
     if (searchQuery && searchQuery.trim()) {
       queryBuilder.where('LOWER(post.title) LIKE LOWER(:searchTerm)', {
@@ -326,7 +329,8 @@ export class PostRepositoryOrm implements PostRepository {
       .addGroupBy('user.username')
       .addGroupBy('user.role')
       .addGroupBy('hashTags.id')
-      .addGroupBy('hashTags.name');
+      .addGroupBy('hashTags.name')
+      .orderBy('post.created_at', 'DESC');
 
     if (searchQuery && searchQuery.trim()) {
       queryBuilder.where('LOWER(post.title) LIKE LOWER(:searchTerm)', {
@@ -353,11 +357,6 @@ export class PostRepositoryOrm implements PostRepository {
       where: { id },
       relations: ['hashTags'],
     });
-
-    if (!existingPost) {
-      throw new Error('Post not found');
-    }
-
     // Update simple fields
     Object.assign(existingPost, post);
 

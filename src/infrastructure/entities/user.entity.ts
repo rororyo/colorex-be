@@ -7,6 +7,7 @@ import { PostLike } from './postLike.entity';
 import { CommentLike } from './commentLike.entity';
 import { ReplyLike } from './replyLike.entity';
 import { Follow } from './follow.entity';
+import { Message } from './message.entity';
 
 @Entity()
 export class User {
@@ -31,6 +32,9 @@ export class User {
 
   @Column({ nullable: true })
   avatarUrl: string;
+
+  @Column({ nullable: true })
+  bio: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -73,4 +77,10 @@ export class User {
 
   @Column({ default: 0 })
   followingCount: number;
+
+  @OneToMany(() => Message, (message) => message.sender, { cascade: true, onDelete: 'CASCADE' })
+  sentMessages: Message[];
+
+  @OneToMany(() => Message, (message) => message.receiver, { cascade: true, onDelete: 'CASCADE' })
+  receivedMessages: Message[];
 }

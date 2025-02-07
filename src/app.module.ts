@@ -13,6 +13,8 @@ import { LikeModule } from './presentations/like/like.module';
 import { LikeController } from './presentations/like/like.controller';
 import { FollowModule } from './presentations/follow/follow.module';
 import { FollowController } from './presentations/follow/follow.controller';
+import { MessageModule } from './presentations/message/message.module';
+import { MessageController } from './presentations/message/message.controller';
 
 @Module({
   imports: [
@@ -23,7 +25,8 @@ import { FollowController } from './presentations/follow/follow.controller';
     CommentModule,
     ReplyModule,
     LikeModule,
-    FollowModule
+    FollowModule,
+    MessageModule
   ],
   controllers: [
     AuthController,
@@ -31,7 +34,8 @@ import { FollowController } from './presentations/follow/follow.controller';
     CommentController,
     ReplyController,
     LikeController,
-    FollowController
+    FollowController,
+    MessageController
   ],
 })
 export class AppModule {}
