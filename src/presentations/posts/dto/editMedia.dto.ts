@@ -30,6 +30,12 @@ export class EditMediaDto {
   @IsString()
   @IsOptional()
   content: string;
+  
+  @ApiProperty({
+    description: ' Hashtags of the media post',
+    required:true,
+    example: ['sunset', 'beach']
+  })
   @IsArray()
   @IsString({ each: true })
   @IsOptional()

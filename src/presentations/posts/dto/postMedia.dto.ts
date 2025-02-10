@@ -46,10 +46,18 @@ export class PostMediaDto {
   @IsNotEmpty()
   content: string;
 
+  @ApiProperty({
+    description: 'URL of the media file',
+    example: 'https://example.com/media/file.mp4'
+  })
   @IsOptional()
   @IsString()
   media_url: string;
   
+  @ApiProperty({
+    description: 'Hashtags associated with the media post',
+    example: ['sunset', 'beach', 'amazing']
+  })
   @IsArray()
   @IsString({ each: true })
   @IsNotEmpty()

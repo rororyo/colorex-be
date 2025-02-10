@@ -18,6 +18,8 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiParam,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { LoginUserUsecase } from 'src/applications/use-cases/user/loginUser.usecase';
 import { RegisterUserUsecase } from 'src/applications/use-cases/user/registerUser.usecase';
@@ -81,6 +83,24 @@ export class AuthController {
     };
   }
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth() // Indicates this endpoint requires authentication
+@ApiOperation({ summary: 'Update user profile' })
+@ApiParam(EditUserParamsDto)
+@ApiConsumes('multipart/form-data')
+@ApiBody({
+  description :'user edit with file upload for avatar image',
+  type:EditUserDto
+})
+@ApiResponse({
+  status: 200,
+  description: 'condition where the user updates successfully',
+  schema: {
+    example: {
+      status: 'success',
+      message: 'User updated successfully',
+    },
+  },
+})
   @Put('user/:profileId')
   @UseInterceptors(FileInterceptor('file', { limits: { files: 1 } }))
   async updateUser(

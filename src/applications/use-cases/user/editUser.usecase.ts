@@ -9,7 +9,7 @@ export class EditUserUsecase {
   async execute(userId: string,profileId: string, editUserDto: EditUserDto) {
     if(editUserDto.username !== undefined) {
       const user = await this.userRepository.verifyUserAvailability({username: editUserDto.username});  
-      if(!user) throw new ConflictException('Username already exists');
+      if(user) throw new ConflictException('Username already exists');
     }
     await this.userRepository.verifyProfileOwnership(userId, profileId);
     await this.userRepository.editUser(profileId, editUserDto);

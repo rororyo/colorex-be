@@ -47,6 +47,7 @@ import { IGcsStorage } from 'src/domains/storage/IGcsStorage';
 import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
 import { MessageRepositoryOrm } from '../repositories/message/message.repository';
 import { CreateMessageUsecase } from 'src/applications/use-cases/message/createMessage.usecase';
+import { GetMessagesUsecase } from 'src/applications/use-cases/message/getMessages.usecase';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ export class UseCaseProxyModule {
   static GET_USER_FOLLOWERS_USECASE = 'getUserFollowersUsecaseProxy';
   static GET_USER_FOLLOWING_USECASE = 'getUserFollowingUsecaseProxy';
   static POST_MESSAGE_USECASE = 'postMessageUsecaseProxy';
+  static GET_MESSAGES_USECASE = 'getMessagesUsecaseProxy';
   static register(): DynamicModule {
     return {
       module: UseCaseProxyModule,
@@ -400,6 +402,17 @@ export class UseCaseProxyModule {
               new CreateMessageUsecase(userRepository, messageRepository),
             ),
         },
+        {
+          inject: [MessageRepositoryOrm, UserRepositoryOrm],
+          provide: UseCaseProxyModule.GET_MESSAGES_USECASE,
+          useFactory: (
+            messageRepository: MessageRepositoryOrm,
+            userRepository: UserRepositoryOrm,
+          ) =>
+            new UseCaseProxy(
+              new GetMessagesUsecase(messageRepository, userRepository),
+            ),
+        },
       ],
       exports: [
         UseCaseProxyModule.REGISTER_USER_USECASE,
@@ -430,6 +443,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.GET_USER_FOLLOWING_USECASE,
         UseCaseProxyModule.GET_USER_FOLLOWERS_USECASE,
         UseCaseProxyModule.POST_MESSAGE_USECASE,
+        UseCaseProxyModule.GET_MESSAGES_USECASE
       ],
     };
   }

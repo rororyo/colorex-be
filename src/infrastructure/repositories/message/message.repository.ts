@@ -19,6 +19,22 @@ export class MessageRepositoryOrm implements MessageRepository  {
         { sender: { id: senderId } },
         { receiver: { id: receiverId } },
       ],
+      relations: ['sender', 'receiver'],
+      select: {
+        id: true,
+        content: true,
+        createdAt: true,
+        sender: {
+          username: true,
+          avatarUrl: true,
+          role: true,
+        },
+        receiver: {
+          username: true,
+          avatarUrl: true,
+          role: true,
+        },
+      },
     })
     return messages
   }

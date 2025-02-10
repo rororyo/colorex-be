@@ -22,7 +22,7 @@ export class UserRepositoryOrm implements UserRepository {
     const user = await this.userRepository.findOne({
       where: condition,
     });
-    return user ? false : true;
+    return user?true:false;
   }
   async verifyProfileOwnership(userId: string, profileId: string): Promise<boolean> {
     const user = await this.userRepository.findOne({

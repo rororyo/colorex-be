@@ -29,6 +29,7 @@ export class GetMediaQueryDto {
   @Min(1)
   @Max(100)
   limit: number = 9;
+
   @ApiProperty({
     description: 'Search query string',
     required: false,
@@ -67,6 +68,7 @@ export class GetHashTagMediaQueryDto{
   @Min(1)
   @Max(100)
   limit: number = 9;
+
   @ApiProperty({
     description: 'Search query string',
     required: false,
@@ -76,6 +78,13 @@ export class GetHashTagMediaQueryDto{
   @IsOptional()
   @IsString()
   searchQuery?: string = '';
+
+  @ApiProperty({
+    description: 'Hash tag name',
+    required: true,
+    default: '',
+    example: 'sunset'
+  })
   @IsOptional()
   @IsString()
   hashTagName: string

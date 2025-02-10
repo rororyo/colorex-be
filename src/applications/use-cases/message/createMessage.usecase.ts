@@ -10,10 +10,9 @@ export class CreateMessageUsecase {
     private readonly messageRepository: MessageRepository,
   ) {}
   async execute(senderId: string, receiverId: string, content: string): Promise<void> {
-    console.log(senderId ,receiverId,content)
     const sender = await this.userRepository.findUser({ id: senderId });
-    const isReceiverAvailable = await this.userRepository.verifyUserAvailability({ id: receiverId });
-    if (isReceiverAvailable) throw new NotFoundException('Receiver not found');
+    const isSenderExist = await this.userRepository.verifyUserAvailability({ id: receiverId });
+    if (!isSenderExist) throw new NotFoundException('Receiver not found');
     const receiver = await this.userRepository.findUser({ id: receiverId });
     const message = new MessageM();
     message.sender = sender;

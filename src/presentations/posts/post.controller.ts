@@ -76,7 +76,6 @@ export class PostMediaController {
   ) {}
 
   @ApiOperation({ summary: 'Get paginated posts with optional search' })
-  @ApiQuery({ type: GetMediaQueryDto })
   @ApiResponse({
     status: 200,
     description: 'Posts retrieved successfully',
@@ -119,6 +118,44 @@ export class PostMediaController {
       data: posts,
     };
   }
+  @ApiOperation({ summary: 'Get posts by hashtag' })
+  @ApiResponse({
+    status: 200,
+    description: 'Posts retrieved successfully',
+    schema: {
+      example: {
+        status: 'success',
+        message: 'Posts fetched successfully',
+        data: {
+          posts: [
+            {
+              id: '9376b3db-0756-44bc-a627-562bcdd95aaf',
+              post_type: 'text',
+              media_url:
+                'https://storage.googleapis.com/colorex-bucket/posts/1738857105070-sepatu.png',
+              title: 'test title to be deleted',
+              content: 'test content',
+              created_at: '2025-02-06T15:51:46.883Z',
+              updated_at: '2025-02-06T15:51:46.883Z',
+              hashTags: [
+                {
+                  id: 'df92c61d-f2f0-4945-929b-27c3c7da1b93',
+                  name: 'lifestyle',
+                },
+              ],
+              user: {
+                id: '95ea813f-3762-4eb2-9336-a4556d73214c',
+                email: 'test@mail.com',
+                username: 'test',
+              },
+              likeCount: 0,
+            },
+          ],
+          total: 1,
+        },
+      },
+    },
+  })
   @Get('posts/hashtag')
   async getPostsByHashtag(
     @Query() getHashTagMediaQueryDto: GetHashTagMediaQueryDto,
@@ -133,7 +170,47 @@ export class PostMediaController {
       data: posts,
     };
   }
+
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth() 
+  @ApiOperation({ summary: 'Get paginated posts from followed users' })
+  @ApiResponse({
+    status: 200,
+    description: 'Posts fetched successfully.',
+    schema: {
+      example: {
+        status: 'success',
+        message: 'Posts fetched successfully',
+        data: {
+          posts: [
+            {
+              "id": "9376b3db-0756-44bc-a627-562bcdd95aaf",
+              "post_type": "text",
+              "media_url": "https://storage.googleapis.com/colorex-bucket/posts/1738857105070-sepatu.png",
+              "title": "test title to be deleted",
+              "content": "test content",
+              "created_at": "2025-02-06T15:51:46.883Z",
+              "updated_at": "2025-02-06T15:51:46.883Z",
+              "hashTags": [
+                  {
+                      "id": "df92c61d-f2f0-4945-929b-27c3c7da1b93",
+                      "name": "lifestyle"
+                  }
+              ],
+              "user": {
+                  "id": "95ea813f-3762-4eb2-9336-a4556d73214c",
+                  "email": "test@mail.com",
+                  "username": "test",
+                  "role": "user"
+              },
+              "likeCount": 0
+          },
+          ],
+          total: 1
+        }
+      },
+    },
+  })
   @Get('posts/following')
   async getPaginatedFollowingPosts(
     @Req() req: Request,
@@ -151,13 +228,13 @@ export class PostMediaController {
       data: posts,
     };
   }
+
   @ApiOperation({ summary: 'Get paginated posts for a specific user' })
   @ApiParam({
     name: 'userId',
     description: 'ID of the user whose posts to retrieve',
     required: true,
   })
-  @ApiQuery({ type: GetMediaQueryDto })
   @ApiResponse({
     status: 200,
     description: 'User posts retrieved successfully',
@@ -335,9 +412,11 @@ export class PostMediaController {
   ) {
     const token = getAuthCookie(req);
     const user = await this.currUserUseCaseProxy.getInstance().execute(token);
-    if(file){
+    if (file) {
       const imageDestination = `posts/${Date.now()}-${file.originalname}`;
-      const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
+      const imageUrl = await this.uploadMediaUsecaseProxy
+        .getInstance()
+        .execute(file.buffer, imageDestination, file.mimetype);
       postMediaDto.media_url = imageUrl;
     }
 

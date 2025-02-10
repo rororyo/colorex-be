@@ -9,10 +9,10 @@ export class RegisterUserUsecase {
     private passwordHash: PasswordHash
   ){}
   async execute (registerDto :RegisterDto){
-    const isUEmailAvailable = await this.userRepository.verifyUserAvailability({email:registerDto.email});
-    if(isUEmailAvailable == false) throw new ConflictException('Email already exists');
-    const isUsernameAvailable = await this.userRepository.verifyUserAvailability({username: registerDto.username});
-    if(isUsernameAvailable == false) throw new ConflictException('Username already exists');
+    const isEmailExists = await this.userRepository.verifyUserAvailability({email:registerDto.email});
+    if(isEmailExists) throw new ConflictException('Email already exists');
+    const isUsernameExists = await this.userRepository.verifyUserAvailability({username: registerDto.username});
+    if(isUsernameExists) throw new ConflictException('Username already exists');
     registerDto.password = await this.passwordHash.hash(registerDto.password);
     await this.userRepository.createUser(registerDto);
   }
