@@ -47,6 +47,11 @@ export class User {
     nullable: true,
   })
   subscribed_at: Date;
+  
+  @Column({
+    nullable: true
+  })
+  fcmToken: string;
 
   @OneToMany(() => Post, (post) => post.user, { cascade: true, onDelete: 'CASCADE' })
   posts: Post[];

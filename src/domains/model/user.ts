@@ -18,6 +18,7 @@ export class UserM {
   bio: string;
   created_at: Date;
   subscribed_at: Date;
+  fcmToken: string;
   posts: PostM[];
   postLikes: PostLikeM[];
   comments: CommentM[];

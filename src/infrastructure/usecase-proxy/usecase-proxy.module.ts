@@ -48,6 +48,9 @@ import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecas
 import { MessageRepositoryOrm } from '../repositories/message/message.repository';
 import { CreateMessageUsecase } from 'src/applications/use-cases/message/createMessage.usecase';
 import { GetMessagesUsecase } from 'src/applications/use-cases/message/getMessages.usecase';
+import { FirebaseService } from '../repositories/firebase/firebase.service';
+import { PushNotificationUsecase } from 'src/applications/use-cases/firebase/pushNotification.usecase';
+import { EditFCMTokenUsecase } from 'src/applications/use-cases/firebase/saveFcmToken.usecase';
 
 @Module({
   imports: [
@@ -93,10 +96,14 @@ export class UseCaseProxyModule {
   static GET_USER_FOLLOWING_USECASE = 'getUserFollowingUsecaseProxy';
   static POST_MESSAGE_USECASE = 'postMessageUsecaseProxy';
   static GET_MESSAGES_USECASE = 'getMessagesUsecaseProxy';
+  static EDIT_FCM_TOKEN_USECASE = 'editFcmTokenUsecaseProxy';
+  // FCM
+  static SEND_NOTIFICATION_USECASE = 'sendNotificationUsecaseProxy';
   static register(): DynamicModule {
     return {
       module: UseCaseProxyModule,
       providers: [
+        FirebaseService,
         // external providers
         {
           provide: Argon2PasswordHash,
@@ -107,6 +114,11 @@ export class UseCaseProxyModule {
           provide: JwtTokenManager,
           useFactory: (jwtService: JwtService) =>
             new JwtTokenManager(jwtService),
+        },
+        {
+          inject:[FirebaseService],
+          provide:UseCaseProxyModule.SEND_NOTIFICATION_USECASE,
+          useFactory:(firebaseService:FirebaseService) => new UseCaseProxy(new PushNotificationUsecase(firebaseService))
         },
         // registering usecases
         {
@@ -413,8 +425,17 @@ export class UseCaseProxyModule {
               new GetMessagesUsecase(messageRepository, userRepository),
             ),
         },
+        {
+          inject: [UserRepositoryOrm],
+          provide: UseCaseProxyModule.EDIT_FCM_TOKEN_USECASE,
+          useFactory: (userRepository: UserRepositoryOrm) =>
+            new UseCaseProxy(new EditFCMTokenUsecase(userRepository)),
+        },
       ],
       exports: [
+        //external usecase
+        UseCaseProxyModule.SEND_NOTIFICATION_USECASE,
+        //internal usecase
         UseCaseProxyModule.REGISTER_USER_USECASE,
         UseCaseProxyModule.LOGIN_USER_USECASE,
         UseCaseProxyModule.CURRENT_USER_USECASE,
@@ -443,7 +464,8 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.GET_USER_FOLLOWING_USECASE,
         UseCaseProxyModule.GET_USER_FOLLOWERS_USECASE,
         UseCaseProxyModule.POST_MESSAGE_USECASE,
-        UseCaseProxyModule.GET_MESSAGES_USECASE
+        UseCaseProxyModule.GET_MESSAGES_USECASE,
+        UseCaseProxyModule.EDIT_FCM_TOKEN_USECASE,
       ],
     };
   }

@@ -15,6 +15,8 @@ import { FollowModule } from './presentations/follow/follow.module';
 import { FollowController } from './presentations/follow/follow.controller';
 import { MessageModule } from './presentations/message/message.module';
 import { MessageController } from './presentations/message/message.controller';
+import { FcmController } from './presentations/firebase/fcm.controller';
+import { FirebaseModule } from './presentations/firebase/fcm.module';
 
 @Module({
   imports: [
@@ -26,7 +28,8 @@ import { MessageController } from './presentations/message/message.controller';
     ReplyModule,
     LikeModule,
     FollowModule,
-    MessageModule
+    MessageModule,
+    FirebaseModule
   ],
   controllers: [
     AuthController,
@@ -35,7 +38,8 @@ import { MessageController } from './presentations/message/message.controller';
     ReplyController,
     LikeController,
     FollowController,
-    MessageController
+    MessageController,
+    FcmController
   ],
 })
 export class AppModule {}
