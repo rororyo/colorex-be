@@ -60,5 +60,7 @@ export class UserRepositoryOrm implements UserRepository {
     await this.userRepository.decrement({id: userId}, 'followingCount', 1);
     
   }
-  
+  async deleteFCMToken(userId: string): Promise<void> {
+    await this.userRepository.update({ id: userId }, { fcmToken: null });
+  }
 }

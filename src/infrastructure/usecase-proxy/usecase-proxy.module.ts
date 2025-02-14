@@ -51,6 +51,7 @@ import { GetMessagesUsecase } from 'src/applications/use-cases/message/getMessag
 import { FirebaseService } from '../repositories/firebase/firebase.service';
 import { PushNotificationUsecase } from 'src/applications/use-cases/firebase/pushNotification.usecase';
 import { EditFCMTokenUsecase } from 'src/applications/use-cases/firebase/saveFcmToken.usecase';
+import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
 
 @Module({
   imports: [
@@ -99,6 +100,7 @@ export class UseCaseProxyModule {
   static EDIT_FCM_TOKEN_USECASE = 'editFcmTokenUsecaseProxy';
   // FCM
   static SEND_NOTIFICATION_USECASE = 'sendNotificationUsecaseProxy';
+  static DELETE_FCM_TOKEN_USECASE = 'deleteFcmTokenUsecaseProxy';
   static register(): DynamicModule {
     return {
       module: UseCaseProxyModule,
@@ -431,10 +433,16 @@ export class UseCaseProxyModule {
           useFactory: (userRepository: UserRepositoryOrm) =>
             new UseCaseProxy(new EditFCMTokenUsecase(userRepository)),
         },
+        {
+          inject:[UserRepositoryOrm],
+          provide:UseCaseProxyModule.DELETE_FCM_TOKEN_USECASE,
+          useFactory:(userRepository:UserRepositoryOrm)=> new UseCaseProxy(new DeleteFcmTokenUseCase(userRepository))
+        },
       ],
       exports: [
         //external usecase
         UseCaseProxyModule.SEND_NOTIFICATION_USECASE,
+        UseCaseProxyModule.DELETE_FCM_TOKEN_USECASE,
         //internal usecase
         UseCaseProxyModule.REGISTER_USER_USECASE,
         UseCaseProxyModule.LOGIN_USER_USECASE,

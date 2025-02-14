@@ -26,7 +26,7 @@ import { RegisterUserUsecase } from 'src/applications/use-cases/user/registerUse
 import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
 import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
-import { Request, Response } from 'express';
+import {  Request, Response } from 'express';
 import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
 import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
@@ -34,6 +34,7 @@ import { EditUserDto, EditUserParamsDto } from './dto/editUser.dto';
 import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
+import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
 
 @ApiTags('auth') 
 @Controller('auth')
@@ -49,6 +50,7 @@ export class AuthController {
     private readonly loginUserUseCaseProxy: UseCaseProxy<LoginUserUsecase>,
     @Inject(UseCaseProxyModule.CURRENT_USER_USECASE)
     private readonly currUserUseCaseProxy: UseCaseProxy<CurrUserUsecase>,
+    @Inject(UseCaseProxyModule.DELETE_FCM_TOKEN_USECASE) private readonly deleteFCMTokenUseCaseProxy: UseCaseProxy<DeleteFcmTokenUseCase>,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -213,7 +215,10 @@ export class AuthController {
     },
   })
   @Post('logout')
-  async logoutUser(@Res({ passthrough: true }) response: Response) {
+  async logoutUser(@Req() req:Request,@Res({ passthrough: true }) response: Response) {
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    await this.deleteFCMTokenUseCaseProxy.getInstance().execute(user.id);
     response.clearCookie('accessToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -227,7 +232,7 @@ export class AuthController {
       sameSite: 'none',
       path: '/',
     });
-
+    
     response.removeHeader('Authorization');
 
     return {

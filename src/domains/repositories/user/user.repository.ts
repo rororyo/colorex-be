@@ -13,4 +13,5 @@ export interface UserRepository {
   decrementFollowerCount(userId: string): Promise<void>;
   incrementFollowingCount(userId: string): Promise<void>;
   decrementFollowingCount(userId: string): Promise<void>;
+  deleteFCMToken(userId: string): Promise<void>;
 }
