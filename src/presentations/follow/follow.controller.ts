@@ -5,6 +5,7 @@ import {
   Inject,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -15,7 +16,7 @@ import { UnfollowUserUseCase } from 'src/applications/use-cases/follow/unfollowU
 import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
 import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
 import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { FollowParamsDto, UserFollowParamsDto } from './dto/follow.dto';
+import { FollowParamsDto, UserFollowParamsDto, UserFollowQueryDto } from './dto/follow.dto';
 import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
 import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
 import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUserFollower.usecase';
@@ -124,11 +125,12 @@ export class FollowController {
     },
   })
   @Get('/followers/:userId')
-  async getFollowers(@Param() params: UserFollowParamsDto) {
+  async getFollowers(@Param() params: UserFollowParamsDto,@Query() query: UserFollowQueryDto) {
     const { userId } = params;
+    const { page, limit } = query;
     const followers = await this.getUserFollowersUsecase
       .getInstance()
-      .execute(userId);
+      .execute(userId,page,limit);
     return {
       status: 'success',
       message: 'Followers fetched successfully',
@@ -172,11 +174,12 @@ export class FollowController {
   })
 
   @Get('/following/:userId')
-  async getFollowing(@Param() params: UserFollowParamsDto) {
+  async getFollowing(@Param() params: UserFollowParamsDto,@Query() query: UserFollowQueryDto) {
     const { userId } = params;
+    const { page, limit } = query;
     const following = await this.getUserFollowingUsecase
       .getInstance()
-      .execute(userId);
+      .execute(userId,page,limit);
     return {
       status: 'success',
       message: 'Following fetched successfully',

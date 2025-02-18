@@ -6,7 +6,7 @@ export class GetUserFollowingUseCase {
   constructor(
     private readonly followRepository: FollowRepository
   ){}
-  async execute(userId: string) {
-    return await this.followRepository.getFollowingByUserId(userId);
+  async execute(userId: string, page: number, limit: number) {
+    return await this.followRepository.getFollowingByUserId(userId, page, limit);
   }
 }

@@ -5,24 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostM } from 'src/domains/model/post';
-import { UserM } from 'src/domains/model/user';
 import { PostRepository } from 'src/domains/repositories/post/post.repository';
-import { CommentLike } from 'src/infrastructure/entities/commentLike.entity';
 import { Post } from 'src/infrastructure/entities/post.entity';
-import { PostLike } from 'src/infrastructure/entities/postLike.entity';
-import { ReplyLike } from 'src/infrastructure/entities/replyLike.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PostRepositoryOrm implements PostRepository {
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
-    @InjectRepository(PostLike)
-    private readonly postLikeRepository: Repository<PostLike>,
-    @InjectRepository(CommentLike)
-    private readonly commentLikeRepository: Repository<CommentLike>,
-    @InjectRepository(ReplyLike)
-    private readonly replyLikeRepository: Repository<ReplyLike>,
   ) {}
   async createPost(post: PostM): Promise<void> {
     const postEntity = this.postRepository.create(post);

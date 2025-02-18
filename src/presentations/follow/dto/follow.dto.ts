@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import {  IsNotEmpty, IsUUID } from 'class-validator';
 
 export class FollowParamsDto {
   @ApiProperty({
@@ -19,4 +19,20 @@ export class UserFollowParamsDto {
   @IsUUID()
   @IsNotEmpty()
   userId: string;
+}
+
+export class UserFollowQueryDto {
+  @ApiProperty({
+    example: 1,
+    description: 'Page number for pagination',
+  })
+  @IsNotEmpty()
+  page: number
+
+  @ApiProperty({
+    example: 10,
+    description: 'Number of items per page for pagination',
+  })
+  @IsNotEmpty()
+  limit: number
 }

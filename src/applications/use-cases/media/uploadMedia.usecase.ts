@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
-import { IGcsStorage } from 'src/domains/storage/IGcsStorage';
+import { IGcsStorage } from 'src/domains/repositories/storage/IGcsStorage';
+
 import { STORAGE_TOKEN } from 'src/infrastructure/storage/storage.module';
 
 

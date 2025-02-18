@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
-import { IGcsStorage } from 'src/domains/storage/IGcsStorage';
+import { IGcsStorage } from 'src/domains/repositories/storage/IGcsStorage';
+
 
 @Injectable()
 export class GcsStorageService implements IGcsStorage {

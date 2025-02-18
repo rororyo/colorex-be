@@ -43,7 +43,7 @@ import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/post
 import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
 import { STORAGE_TOKEN, StorageModule } from '../storage/storage.module';
 import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
-import { IGcsStorage } from 'src/domains/storage/IGcsStorage';
+import { IGcsStorage } from 'src/domains/repositories/storage/IgcsStorage';
 import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
 import { MessageRepositoryOrm } from '../repositories/message/message.repository';
 import { CreateMessageUsecase } from 'src/applications/use-cases/message/createMessage.usecase';

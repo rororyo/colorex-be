@@ -23,31 +23,51 @@ export class FollowRepositoryOrm implements FollowRepository{
     return false;
   }
 
-  async getFollowersByUserId(userId: string): Promise<{
+  async getFollowersByUserId(userId: string,page: number, limit: number): Promise<{
   followers:  UserM[],
   count: number
   }> {
-    const follows = await this.followRepository.find({
+    const [follows, count] = await this.followRepository.findAndCount({
       where: { following: { id: userId } },
-      relations: ['follower'], // Ensure the 'follower' relation is loaded
+      relations: ['follower'],
+      select:{
+        following:{
+          id: true,
+          username: true,
+          avatarUrl: true
+        }
+      },
+      skip: (page - 1) * limit,
+      take: limit
     });
     return {
-      followers: follows.map(follow => follow.follower),
-      count: follows.length
+      followers: follows.map((follow) => follow.follower),
+      count: count
     }
     
   }
-  async getFollowingByUserId(userId: string): Promise<{
-    following:  UserM[],
-    count: number
-    }>  {
-      const follows = await this.followRepository.find({
-        where: { follower: { id: userId } },
-        relations: ['following'], // Ensure the 'follower' relation is loaded
-      });
+  async getFollowingByUserId(
+    userId: string,
+    page: number,
+    limit: number
+  ): Promise<{ following: UserM[]; count: number }> {
+    const [follows, count] = await this.followRepository.findAndCount({
+      where: { follower: { id: userId } },
+      relations: ['following'],
+      select:{
+        following:{
+          id: true,
+          username: true,
+          avatarUrl: true
+        }
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+  
     return {
-      following: follows.map(follow => follow.following),
-      count: follows.length
-    }
-  } 
+      following: follows.map((follow) => follow.following),
+      count,
+    };
+  }
 }
