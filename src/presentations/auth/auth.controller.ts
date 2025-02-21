@@ -116,9 +116,11 @@ export class AuthController {
     const { id: userId } = await this.currUserUseCaseProxy
       .getInstance()
       .execute(token);
-    const imageDestination = `users/${Date.now()}-${file.originalname}`;
-    const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
-    editUserDto.avatarUrl = imageUrl;
+    if(file){
+      const imageDestination = `users/${Date.now()}-${file.originalname}`;
+      const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
+      editUserDto.avatarUrl = imageUrl;
+    }
     await this.editUserUseCaseProxy
       .getInstance()
       .execute(userId, profileId, editUserDto);
