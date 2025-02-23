@@ -1,5 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
+import { IsEnum, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
+import { ColorType } from "src/domains/model/enums/colorType.enum";
+
 
 export class EditUserDto {
   @ApiProperty({
@@ -30,6 +32,15 @@ export class EditUserDto {
   @IsString()
   @IsOptional()
   avatarUrl: string;
+
+  @ApiProperty({
+    description: "The color type of the user",
+    example: "summer",
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(ColorType)
+  colorType: ColorType;
 }
 
 export class EditUserParamsDto {

@@ -6,7 +6,9 @@ import { PostM } from './post';
 import { PostLikeM } from './postLike';
 import { ReplyM } from './reply';
 import { ReplyLikeM } from './replyLike';
+import { ColorType } from './enums/colorType.enum';
 import { Roles } from './roles.enum';
+
 
 export class UserM {
   id: string;
@@ -15,6 +17,7 @@ export class UserM {
   password: string;
   role: Roles;
   avatarUrl: string;
+  colorType: ColorType;
   bio: string;
   created_at: Date;
   subscribed_at: Date;

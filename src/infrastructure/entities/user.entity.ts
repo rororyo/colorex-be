@@ -8,6 +8,7 @@ import { CommentLike } from './commentLike.entity';
 import { ReplyLike } from './replyLike.entity';
 import { Follow } from './follow.entity';
 import { Message } from './message.entity';
+import { ColorType } from 'src/domains/model/enums/colorType.enum';
 
 @Entity()
 export class User {
@@ -32,6 +33,13 @@ export class User {
 
   @Column({ nullable: true })
   avatarUrl: string;
+
+  @Column ({
+    type: 'enum',
+    enum: ColorType,
+    default: ColorType.notAvailable
+  })
+  colorType: ColorType
 
   @Column({ nullable: true })
   bio: string;

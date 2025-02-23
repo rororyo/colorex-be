@@ -108,15 +108,10 @@ export class FollowController {
           followers: [
             {
               id: '8eccff6a-f4a7-4502-9103-e725669b9011',
-              email: 'test@admin.com',
               username: 'admin',
-              password:
-                '$argon2id$v=19$m=65536,t=3,p=4$RSxRbgC2WQEV9463TTNCPg$d1X5D3Lvk0NS6wyn5hN7MuerP2kZ568nLNnf3zX77Og',
               role: 'user',
-              created_at: '2025-01-14T15:40:01.774Z',
-              subscribed_at: null,
-              followersCount: 0,
-              followingCount: 1,
+              avatarUrl: 'https://i.pravatar.cc/150?u=8eccff6a-f4a7-4502-9103-e725669b9011',
+              colorType: 'winter',
             },
           ],
           count: 1,
@@ -153,17 +148,13 @@ export class FollowController {
         status: 'success',
         message: 'Following fetched successfully',
         data:  {
-          "following": [
+          following: [
               {
-                  "id": "95ea813f-3762-4eb2-9336-a4556d73214c",
-                  "email": "test@mail.com",
-                  "username": "test",
-                  "password": "$argon2id$v=19$m=65536,t=3,p=4$5j6BLSqeA301CXROti6C+g$i4XSOgmCGByIu5tozc1zz4WectgD1sVSnHGasJdbul8",
-                  "role": "user",
-                  "created_at": "2025-01-18T06:44:44.747Z",
-                  "subscribed_at": null,
-                  "followersCount": 1,
-                  "followingCount": 0
+                id: '8eccff6a-f4a7-4502-9103-e725669b9011',
+                username: 'admin',
+                role: 'user',
+                avatarUrl: 'https://i.pravatar.cc/150?u=8eccff6a-f4a7-4502-9103-e725669b9011',
+                colorType: 'winter',
               }
           ],
           "count": 1

@@ -1,4 +1,4 @@
-import { ConflictException } from "@nestjs/common";
+import { BadRequestException, ConflictException } from "@nestjs/common";
 import { UserRepository } from "src/domains/repositories/user/user.repository";
 import { EditUserDto } from "src/presentations/auth/dto/editUser.dto";
 

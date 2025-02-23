@@ -52,7 +52,14 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoinAndSelect('post.hashTags', 'hashTags')
       .leftJoin('post.postLikes', 'postLikes')
       .leftJoinAndSelect('post.user', 'user')
-      .addSelect(['user.id', 'user.email', 'user.username'])
+      .addSelect([
+        'user.id',
+        'user.email',
+        'user.username',
+        'user.avatarUrl',
+        'user.role',
+        'user.colorType',
+      ])
       .addSelect('COUNT(postLikes.id)', 'likeCount')
       .orderBy('post.created_at', 'DESC');
 
@@ -82,6 +89,9 @@ export class PostRepositoryOrm implements PostRepository {
         id: post.user.id,
         email: post.user.email,
         username: post.user.username,
+        avatarUrl: post.user.avatarUrl,
+        role: post.user.role,
+        colorType: post.user.colorType,
       },
       likeCount: parseInt(raw[index]?.likeCount || '0', 10),
     }));
@@ -103,7 +113,14 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoinAndSelect('post.hashTags', 'hashTags')
       .leftJoin('post.postLikes', 'postLikes')
       .leftJoinAndSelect('post.user', 'user')
-      .addSelect(['user.id', 'user.email', 'user.username'])
+      .addSelect([
+        'user.id',
+        'user.email',
+        'user.username',
+        'user.avatarUrl',
+        'user.role',
+        'user.colorType',
+      ])
       .addSelect('COUNT(postLikes.id)', 'likeCount')
       .orderBy('post.created_at', 'DESC');
 
@@ -131,6 +148,9 @@ export class PostRepositoryOrm implements PostRepository {
         id: post.user.id,
         email: post.user.email,
         username: post.user.username,
+        avatarUrl: post.user.avatarUrl,
+        role: post.user.role,
+        colorType: post.user.colorType,
       },
       likeCount: parseInt(raw[index]?.likeCount || '0', 10),
     }));
@@ -151,7 +171,14 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoinAndSelect('post.hashTags', 'hashTags')
       .leftJoin('post.postLikes', 'postLikes')
       .leftJoin('post.user', 'user')
-      .addSelect(['user.id', 'user.email', 'user.username'])
+      .addSelect([
+        'user.id',
+        'user.email',
+        'user.username',
+        'user.avatarUrl',
+        'user.role',
+        'user.colorType',
+      ])
       .addSelect('COUNT(postLikes.id)', 'likeCount')
       .orderBy('post.created_at', 'DESC');
 
@@ -210,15 +237,32 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoinAndSelect('comments.replies', 'replies') // Include replies
       .leftJoin('replies.replyLikes', 'replyLikes') // Join replyLikes for like count
       .leftJoinAndSelect('post.user', 'postUser') // Include user for post
-      .addSelect(['postUser.id', 'postUser.email', 'postUser.username']) // Select specific fields for post user
+      .addSelect([
+        'postUser.id',
+        'postUser.email',
+        'postUser.username',
+        'postUser.avatarUrl',
+        'postUser.role',
+        'postUser.colorType',
+      ]) // Select specific fields for post user
       .leftJoinAndSelect('comments.user', 'commentUser') // Include user for comments
       .addSelect([
         'commentUser.id',
         'commentUser.email',
         'commentUser.username',
+        'commentUser.avatarUrl',
+        'commentUser.role',
+        'commentUser.colorType',
       ]) // Select specific fields for comment user
       .leftJoinAndSelect('replies.user', 'replyUser') // Include user for replies
-      .addSelect(['replyUser.id', 'replyUser.email', 'replyUser.username']) // Select specific fields for reply user
+      .addSelect([
+        'replyUser.id',
+        'replyUser.email',
+        'replyUser.username',
+        'replyUser.avatarUrl',
+        'replyUser.role',
+        'replyUser.colorType',
+      ]) // Select specific fields for reply user
       .addSelect('COUNT(DISTINCT postLikes.id)', 'postLikeCount') // Count post likes
       .addSelect('COUNT(DISTINCT commentLikes.id)', 'commentLikeCount') // Count comment likes
       .addSelect('COUNT(DISTINCT replyLikes.id)', 'replyLikeCount') // Count reply likes
@@ -258,6 +302,9 @@ export class PostRepositoryOrm implements PostRepository {
             id: reply.user.id,
             email: reply.user.email,
             username: reply.user.username,
+            avatarUrl: reply.user.avatarUrl,
+            role: reply.user.role,
+            colorType: reply.user.colorType,
           },
           likeCount: replyLikeCount,
         };
@@ -269,6 +316,9 @@ export class PostRepositoryOrm implements PostRepository {
           id: comment.user.id,
           email: comment.user.email,
           username: comment.user.username,
+          avatarUrl: comment.user.avatarUrl,
+          role: comment.user.role,
+          colorType: comment.user.colorType,
         },
         likeCount: commentLikeCount,
         replies: repliesWithLikeCount,
@@ -281,6 +331,9 @@ export class PostRepositoryOrm implements PostRepository {
         id: postEntity.user.id,
         email: postEntity.user.email,
         username: postEntity.user.username,
+        avatarUrl: postEntity.user.avatarUrl,
+        role: postEntity.user.role,
+        colorType: postEntity.user.colorType,
       },
       post_type: postEntity.post_type,
       media_url: postEntity.media_url,
@@ -304,7 +357,14 @@ export class PostRepositoryOrm implements PostRepository {
       .leftJoinAndSelect('post.hashTags', 'hashTags')
       .leftJoin('post.user', 'user')
       .leftJoin('post.postLikes', 'postLikes')
-      .addSelect(['user.id', 'user.email', 'user.username', 'user.role'])
+      .addSelect([
+        'user.id',
+        'user.email',
+        'user.username',
+        'user.role',
+        'user.avatarUrl',
+        'user.colorType',
+      ])
       .addSelect('COUNT(postLikes.id)', 'likeCount')
       .where('post.user_id IN (:...userIds)', { userIds })
       .groupBy('post.id')

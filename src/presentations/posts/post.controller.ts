@@ -97,6 +97,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                avatarUrl: null,
+                role: "user",
+                colorType: "notAvailable"
               },
               likeCount: 1,
             },
@@ -147,6 +150,9 @@ export class PostMediaController {
                 id: '95ea813f-3762-4eb2-9336-a4556d73214c',
                 email: 'test@mail.com',
                 username: 'test',
+                avatarUrl: null,
+                role: "user",
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },
@@ -201,7 +207,9 @@ export class PostMediaController {
                   "id": "95ea813f-3762-4eb2-9336-a4556d73214c",
                   "email": "test@mail.com",
                   "username": "test",
-                  "role": "user"
+                  "role": "user",
+                  "avatarUrl": null,
+                  "colorType": "notAvailable"
               },
               "likeCount": 0
           },
@@ -256,13 +264,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
-                password:
-                  '$argon2id$v=19$m=65536,t=3,p=4$RSxRbgC2WQEV9463TTNCPg$d1X5D3Lvk0NS6wyn5hN7MuerP2kZ568nLNnf3zX77Og',
-                role: 'user',
-                created_at: '2025-01-14T15:40:01.774Z',
-                subscribed_at: null,
-                followersCount: 0,
-                followingCount: 1,
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 1,
             },
@@ -308,6 +312,9 @@ export class PostMediaController {
             id: '8eccff6a-f4a7-4502-9103-e725669b9011',
             email: 'test@admin.com',
             username: 'admin',
+            role: "user",
+            avatarUrl: null,
+            colorType: "notAvailable"
           },
           post_type: 'image',
           media_url: 'lorem ipsum',
@@ -332,6 +339,9 @@ export class PostMediaController {
                     id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                     email: 'test@admin.com',
                     username: 'admin',
+                    role: "user",
+                    avatarUrl: null,
+                    colorType: "notAvailable"
                   },
                   likeCount: 1,
                 },
@@ -340,6 +350,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },
@@ -353,6 +366,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },
@@ -366,6 +382,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },

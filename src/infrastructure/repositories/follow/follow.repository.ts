@@ -28,13 +28,15 @@ export class FollowRepositoryOrm implements FollowRepository{
   count: number
   }> {
     const [follows, count] = await this.followRepository.findAndCount({
-      where: { following: { id: userId } },
+      where: { follower: { id: userId } },
       relations: ['follower'],
       select:{
-        following:{
+        follower:{
           id: true,
           username: true,
-          avatarUrl: true
+          avatarUrl: true,
+          role: true,
+          colorType: true
         }
       },
       skip: (page - 1) * limit,
@@ -58,7 +60,9 @@ export class FollowRepositoryOrm implements FollowRepository{
         following:{
           id: true,
           username: true,
-          avatarUrl: true
+          avatarUrl: true,
+          role: true,
+          colorType: true
         }
       },
       skip: (page - 1) * limit,
