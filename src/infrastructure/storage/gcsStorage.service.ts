@@ -33,4 +33,10 @@ export class GcsStorageService implements IGcsStorage {
 
     return `https://storage.googleapis.com/${this.bucketName}/${destination}`;
   }
+  async deleteFile(filePath: string): Promise<void> {
+    const bucket = this.storage.bucket(this.bucketName);
+    const file = bucket.file(filePath);
+
+    await file.delete();
+  }
 }

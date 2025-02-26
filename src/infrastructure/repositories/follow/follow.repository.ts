@@ -28,7 +28,7 @@ export class FollowRepositoryOrm implements FollowRepository{
   count: number
   }> {
     const [follows, count] = await this.followRepository.findAndCount({
-      where: { follower: { id: userId } },
+      where: { following: { id: userId } },
       relations: ['follower'],
       select:{
         follower:{
