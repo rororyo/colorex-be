@@ -8,6 +8,7 @@ import {
   Put,
   Req,
   Res,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -35,6 +36,7 @@ import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecas
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
 import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
+import { DeleteStorageMediaUseCase } from 'src/applications/use-cases/media/deleteStorageMedia.usecase';
 
 @ApiTags('auth') 
 @Controller('auth')
@@ -42,6 +44,8 @@ export class AuthController {
   constructor(
     @Inject(UseCaseProxyModule.UPLOAD_MEDIA_USECASE)
     private readonly uploadMediaUsecaseProxy: UseCaseProxy<UploadMediaUseCase>,
+    @Inject(UseCaseProxyModule.DELETE_STORAGE_MEDIA_USECASE)
+    private readonly deleteStorageMediaUsecaseProxy: UseCaseProxy<DeleteStorageMediaUseCase>,
     @Inject(UseCaseProxyModule.REGISTER_USER_USECASE)
     private readonly registerUserUseCaseProxy: UseCaseProxy<RegisterUserUsecase>,
     @Inject(UseCaseProxyModule.EDIT_USER_USECASE)
@@ -113,10 +117,22 @@ export class AuthController {
   ) {
     const { profileId } = editUserParamsDto;
     const token = getAuthCookie(req);
-    const { id: userId } = await this.currUserUseCaseProxy
+    const { id: userId,avatarUrl } = await this.currUserUseCaseProxy
       .getInstance()
       .execute(token);
+    if(userId !== profileId) throw new UnauthorizedException('You are not the owner of this profile');
     if(file){
+      if(avatarUrl){
+        const relativePath = decodeURIComponent(
+          avatarUrl.replace(`https://storage.googleapis.com/${process.env.GCS_BUCKET_NAME}/`, '')
+        );
+        try {
+          await this.deleteStorageMediaUsecaseProxy.getInstance().execute(relativePath);
+          console.log(`Deletion request completed for: ${relativePath}`);
+        } catch (error) {
+          console.error(`Error during deletion: ${relativePath}`, error);
+        }
+      }
       const imageDestination = `users/${Date.now()}-${file.originalname}`;
       const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
       editUserDto.avatarUrl = imageUrl;

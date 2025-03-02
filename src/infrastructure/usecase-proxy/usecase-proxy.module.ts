@@ -52,6 +52,7 @@ import { FirebaseService } from '../repositories/firebase/firebase.service';
 import { PushNotificationUsecase } from 'src/applications/use-cases/firebase/pushNotification.usecase';
 import { EditFCMTokenUsecase } from 'src/applications/use-cases/firebase/saveFcmToken.usecase';
 import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
+import { DeleteStorageMediaUseCase } from 'src/applications/use-cases/media/deleteStorageMedia.usecase';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ export class UseCaseProxyModule {
   static CURRENT_USER_USECASE = 'currentUserUsecaseProxy';
   static EDIT_USER_USECASE = 'editUserUsecaseProxy';
   static UPLOAD_MEDIA_USECASE = 'uploadMediaUsecaseProxy';
+  static DELETE_STORAGE_MEDIA_USECASE = 'deleteStorageMediaUsecaseProxy';
   static POST_MEDIA_USECASE = 'postMediaUsecaseProxy';
   static DELETE_POST_USECASE = 'deletePostUsecaseProxy';
   static EDIT_POST_USECASE = 'editPostUsecaseProxy';
@@ -172,6 +174,12 @@ export class UseCaseProxyModule {
           provide: UseCaseProxyModule.UPLOAD_MEDIA_USECASE,
           useFactory: (gcsStorage: IGcsStorage) =>
             new UseCaseProxy(new UploadMediaUseCase(gcsStorage)),
+        },
+        {
+          inject: [STORAGE_TOKEN],
+          provide: UseCaseProxyModule.DELETE_STORAGE_MEDIA_USECASE,
+          useFactory: (gcsStorage: IGcsStorage) =>
+            new UseCaseProxy(new DeleteStorageMediaUseCase(gcsStorage)),
         },
         {
           inject: [PostRepositoryOrm, UserRepositoryOrm, HashTagRepositoryOrm],
@@ -449,6 +457,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.CURRENT_USER_USECASE,
         UseCaseProxyModule.EDIT_USER_USECASE,
         UseCaseProxyModule.UPLOAD_MEDIA_USECASE,
+        UseCaseProxyModule.DELETE_STORAGE_MEDIA_USECASE,
         UseCaseProxyModule.POST_MEDIA_USECASE,
         UseCaseProxyModule.DELETE_POST_USECASE,
         UseCaseProxyModule.EDIT_POST_USECASE,
