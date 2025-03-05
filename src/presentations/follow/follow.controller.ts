@@ -119,6 +119,22 @@ export class FollowController {
       },
     },
   })
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/status/:userId')
+  async getUserFollowStatus(@Param() params: UserFollowParamsDto,@Req() req: Request) {
+    const token = getAuthCookie(req);
+    const { userId } = params;
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    const isFollowing = await this.getUserFollowStatusUsecase
+      .getInstance()
+      .execute(user.id, userId);
+    return {
+      status: 'success',
+      message: 'Follow status fetched successfully',
+      data: isFollowing,
+    };
+  }
   @Get('/followers/:userId')
   async getFollowers(@Param() params: UserFollowParamsDto,@Query() query: UserFollowQueryDto) {
     const { userId } = params;

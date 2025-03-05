@@ -17,6 +17,7 @@ import { MessageModule } from './presentations/message/message.module';
 import { MessageController } from './presentations/message/message.controller';
 import { FcmController } from './presentations/firebase/fcm.controller';
 import { FirebaseModule } from './presentations/firebase/fcm.module';
+import { StorageModule } from './infrastructure/storage/storage.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { FirebaseModule } from './presentations/firebase/fcm.module';
     LikeModule,
     FollowModule,
     MessageModule,
-    FirebaseModule
+    StorageModule,
+    FirebaseModule,
   ],
   controllers: [
     AuthController,

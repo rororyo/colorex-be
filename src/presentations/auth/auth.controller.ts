@@ -37,6 +37,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
 import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
 import { DeleteStorageMediaUseCase } from 'src/applications/use-cases/media/deleteStorageMedia.usecase';
+import { GetUserParamsDto } from './dto/getUser.dto';
+import { getUserByIdUsecase } from 'src/applications/use-cases/user/getUserById.usecase';
 
 @ApiTags('auth') 
 @Controller('auth')
@@ -54,6 +56,7 @@ export class AuthController {
     private readonly loginUserUseCaseProxy: UseCaseProxy<LoginUserUsecase>,
     @Inject(UseCaseProxyModule.CURRENT_USER_USECASE)
     private readonly currUserUseCaseProxy: UseCaseProxy<CurrUserUsecase>,
+    @Inject(UseCaseProxyModule.GET_USER_BY_ID_USECASE) private readonly getUserByIdUsecaseProxy: UseCaseProxy<getUserByIdUsecase>,
     @Inject(UseCaseProxyModule.DELETE_FCM_TOKEN_USECASE) private readonly deleteFCMTokenUseCaseProxy: UseCaseProxy<DeleteFcmTokenUseCase>,
   ) {}
 
@@ -87,6 +90,12 @@ export class AuthController {
       message: 'User data fetched successfully',
       data: user,
     };
+  }
+  @Get('user/:profileId')
+  async getUserById(@Param() params: GetUserParamsDto ) {
+    const { profileId } = params;
+    const user = await this.getUserByIdUsecaseProxy.getInstance().execute(profileId);
+    return user;
   }
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth() // Indicates this endpoint requires authentication

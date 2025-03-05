@@ -1,0 +1,30 @@
+import {
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './user.entity';
+import { SubscriptionStatus } from 'src/domains/model/subscription';
+
+@Entity()
+export class Subscription {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @OneToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
+  user: User;
+  @Column()
+  orderId: string;
+  @Column()
+  amount: number;
+  @Column({
+    type: 'enum',
+    enum: SubscriptionStatus,
+    default: SubscriptionStatus.pending,
+  })
+  status: SubscriptionStatus;
+  @Column({ type: 'timestamp', default: () => 'NOW()' })
+  startDate: Date;
+  @Column()
+  endDate: Date;
+}

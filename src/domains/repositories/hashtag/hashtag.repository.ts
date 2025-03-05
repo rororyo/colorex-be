@@ -5,5 +5,5 @@ export interface  HashTagRepository{
   createHashtag(name: string): Promise<void>;
   verifyHashtagAvailability(name: string): Promise<boolean>;
   findHashtagByName(name: string): Promise<HashTagM> 
-  getPopularHashtags(): Promise<Partial<PostM>[]>
+  getPopularHashtags(): Promise<Partial<HashTagM[]>>
 }

@@ -8,6 +8,7 @@ import { ReplyM } from './reply';
 import { ReplyLikeM } from './replyLike';
 import { ColorType } from './enums/colorType.enum';
 import { Roles } from './roles.enum';
+import { SubscriptionM } from './subscription';
 
 
 export class UserM {
@@ -34,4 +35,5 @@ export class UserM {
   followingCount: number;
   sentMessages: MessageM[];
   receivedMessages: MessageM[];
+  subscription: SubscriptionM
 }

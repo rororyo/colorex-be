@@ -25,7 +25,7 @@ export class HashTagRepositoryOrm implements HashTagRepository {
   async findHashtagByName(name: string): Promise<HashTagM> {
     return await this.hashTagRepository.findOne({ where: { name } });
   }
-  async getPopularHashtags(): Promise<Partial<PostM[]>> {
+  async getPopularHashtags(): Promise<Partial<HashTagM[]>> {
     const hashtags = await this.hashTagRepository
     .createQueryBuilder('hashtag')
     .leftJoin('hashtag.posts', 'post') // Assuming a Many-to-Many relation

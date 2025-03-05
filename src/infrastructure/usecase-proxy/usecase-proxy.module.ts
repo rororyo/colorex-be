@@ -53,6 +53,7 @@ import { PushNotificationUsecase } from 'src/applications/use-cases/firebase/pus
 import { EditFCMTokenUsecase } from 'src/applications/use-cases/firebase/saveFcmToken.usecase';
 import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
 import { DeleteStorageMediaUseCase } from 'src/applications/use-cases/media/deleteStorageMedia.usecase';
+import { getUserByIdUsecase } from 'src/applications/use-cases/user/getUserById.usecase';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ export class UseCaseProxyModule {
   static LOGIN_USER_USECASE = 'loginUserUsecaseProxy';
   static REGISTER_USER_USECASE = 'registerUserUsecaseProxy';
   static CURRENT_USER_USECASE = 'currentUserUsecaseProxy';
+  static GET_USER_BY_ID_USECASE = 'getUserByIdUsecaseProxy';
   static EDIT_USER_USECASE = 'editUserUsecaseProxy';
   static UPLOAD_MEDIA_USECASE = 'uploadMediaUsecaseProxy';
   static DELETE_STORAGE_MEDIA_USECASE = 'deleteStorageMediaUsecaseProxy';
@@ -162,6 +164,12 @@ export class UseCaseProxyModule {
             new UseCaseProxy(
               new CurrUserUsecase(userRepository, authTokenManager),
             ),
+        },
+        {
+          inject: [UserRepositoryOrm],
+          provide: UseCaseProxyModule.GET_USER_BY_ID_USECASE,
+          useFactory: (userRepository: UserRepositoryOrm) =>
+            new UseCaseProxy(new getUserByIdUsecase(userRepository)),
         },
         {
           inject: [UserRepositoryOrm],
@@ -455,6 +463,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.REGISTER_USER_USECASE,
         UseCaseProxyModule.LOGIN_USER_USECASE,
         UseCaseProxyModule.CURRENT_USER_USECASE,
+        UseCaseProxyModule.GET_USER_BY_ID_USECASE ,
         UseCaseProxyModule.EDIT_USER_USECASE,
         UseCaseProxyModule.UPLOAD_MEDIA_USECASE,
         UseCaseProxyModule.DELETE_STORAGE_MEDIA_USECASE,

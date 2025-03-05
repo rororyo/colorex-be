@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
 import { ColorType } from "src/domains/model/enums/colorType.enum";
+import { Roles } from "src/domains/model/roles.enum";
 
 
 export class EditUserDto {
@@ -41,11 +42,19 @@ export class EditUserDto {
   @IsOptional()
   @IsEnum(ColorType)
   colorType: ColorType;
+
+  @IsOptional()
+  @IsEnum(Roles)
+  role: Roles
+
+  @IsOptional()
+  @IsString()
+  subcribed_at: Date
 }
 
 export class EditUserParamsDto {
   @ApiProperty({
-    description: "The unique ID of the user profile",
+    description: "The unique ID on the user profile",
     example: "10350c9f-1384-4e9e-9aba-b9eef895a829",
   })
   @IsString()
