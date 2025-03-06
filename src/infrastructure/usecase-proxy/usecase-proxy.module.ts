@@ -54,11 +54,22 @@ import { EditFCMTokenUsecase } from 'src/applications/use-cases/firebase/saveFcm
 import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
 import { DeleteStorageMediaUseCase } from 'src/applications/use-cases/media/deleteStorageMedia.usecase';
 import { getUserByIdUsecase } from 'src/applications/use-cases/user/getUserById.usecase';
+import { MidtransModule, PAYMENT_GATEWAY_TOKEN } from '../payment-gateway/midtrans.module';
+import { CreateSubcriptionPaymentUseCase } from 'src/applications/use-cases/payment-gateway/createSubcriptionPayment.usecase';
+import { SubscriptionRepositoryOrm } from '../repositories/subcription/subscription.repository';
+import { IMidtrans } from 'src/domains/payment-gateway/IMidTrans';
+import { PostSubscriptionUseCase } from 'src/applications/use-cases/subscription/postSubscription.usecase';
+import { MidtransWebHookUseCase } from 'src/applications/use-cases/payment-gateway/midtransWebHook.usecase';
+import { GetPostLikeStatusUseCase } from 'src/applications/use-cases/like/getPostLikeStatus.usecase';
+import { GetCommentLikeStatusUsecase } from 'src/applications/use-cases/like/getCommentLikeStatus.usecase';
+import { GetReplyLikeStatusUsecase } from 'src/applications/use-cases/like/getReplyLikeStatus.usecase';
+import { HandleExpiredSubscriptionUseCase } from 'src/applications/use-cases/subscription/handleExpiredSubscription.usecase';
 
 @Module({
   imports: [
     EnvironmentConfigModule,
     RepositoriesModule,
+    MidtransModule,
     StorageModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -79,6 +90,7 @@ export class UseCaseProxyModule {
   static DELETE_POST_USECASE = 'deletePostUsecaseProxy';
   static EDIT_POST_USECASE = 'editPostUsecaseProxy';
   static POST_LIKE_USECASE = 'postLikeUsecaseProxy';
+  static GET_POST_LIKE_STATUS_USECASE = 'getPostLikeStatusUsecaseProxy';
   static GET_PAGINATED_MEDIA_USECASE = 'getPaginatedMediaUsecaseProxy';
   static GET_PAGINATED_USER_MEDIA_USECASE = 'getPaginatedUserMediaUsecaseProxy';
   static GET_PAGINATED_HASHTAG_MEDIA_USECASE =
@@ -90,10 +102,12 @@ export class UseCaseProxyModule {
   static EDIT_COMMENT_USECASE = 'editCommentUsecaseProxy';
   static DELETE_COMMENT_USECASE = 'deleteCommentUsecaseProxy';
   static COMMENT_LIKE_USECASE = 'commentLikeUsecaseProxy';
+  static GET_COMMENT_LIKE_STATUS_USECASE = 'getCommentLikeStatusUsecaseProxy';
   static POST_REPLY_USECASE = 'postReplyUsecaseProxy';
   static EDIT_REPLY_USECASE = 'editReplyUsecaseProxy';
   static DELETE_REPLY_USECASE = 'deleteReplyUsecaseProxy';
   static REPLY_LIKE_USECASE = 'replyLikeUsecaseProxy';
+  static GET_REPLY_LIKE_STATUS_USECASE = 'getReplyLikeStatusUsecaseProxy';
   static FOLLOW_USER_USECASE = 'followUserUsecaseProxy';
   static UNFOLLOW_USER_USECASE = 'unfollowUserUsecaseProxy';
   static GET_USER_FOLLOW_STATUS_USECASE = 'getUserFollowStatusUsecaseProxy';
@@ -101,10 +115,15 @@ export class UseCaseProxyModule {
   static GET_USER_FOLLOWING_USECASE = 'getUserFollowingUsecaseProxy';
   static POST_MESSAGE_USECASE = 'postMessageUsecaseProxy';
   static GET_MESSAGES_USECASE = 'getMessagesUsecaseProxy';
-  static EDIT_FCM_TOKEN_USECASE = 'editFcmTokenUsecaseProxy';
+  static POST_SUBSCRIPTION_USECASE = 'postSubscriptionUsecaseProxy';
+  static HANDLE_EXPIRED_SUBSCRIPTION_USECASE = 'handleExpiredSubscriptionUsecaseProxy';
   // FCM
   static SEND_NOTIFICATION_USECASE = 'sendNotificationUsecaseProxy';
   static DELETE_FCM_TOKEN_USECASE = 'deleteFcmTokenUsecaseProxy';
+  static EDIT_FCM_TOKEN_USECASE = 'editFcmTokenUsecaseProxy';
+  // payment gateway
+  static CREATE_SUBSCRIPTION_PAYMENT_USECASE = 'createSubcriptionPaymentUsecaseProxy';
+  static MIDTRANS_WEBHOOK_USECASE = 'midtransWebHookUsecaseProxy';
   static register(): DynamicModule {
     return {
       module: UseCaseProxyModule,
@@ -239,6 +258,12 @@ export class UseCaseProxyModule {
             ),
         },
         {
+          inject: [PostRepositoryOrm,PostLikeRepositoryOrm],
+          provide: UseCaseProxyModule.GET_POST_LIKE_STATUS_USECASE,
+          useFactory: (postRepository:PostRepositoryOrm,postLikeRepository: PostLikeRepositoryOrm) =>
+            new UseCaseProxy(new GetPostLikeStatusUseCase(postRepository,postLikeRepository)),
+        },
+        {
           inject: [PostRepositoryOrm],
           provide: UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
           useFactory: (postRepository: PostRepositoryOrm) =>
@@ -327,6 +352,12 @@ export class UseCaseProxyModule {
             ),
         },
         {
+          inject: [CommentRepositoryOrm,CommentLikeRepositoryOrm],
+          provide: UseCaseProxyModule.GET_COMMENT_LIKE_STATUS_USECASE,
+          useFactory: (commentRepository: CommentRepositoryOrm,commentLikeRepository: CommentLikeRepositoryOrm) =>
+            new UseCaseProxy(new GetCommentLikeStatusUsecase(commentRepository,commentLikeRepository)),
+        },
+        {
           inject: [
             UserRepositoryOrm,
             PostRepositoryOrm,
@@ -380,6 +411,12 @@ export class UseCaseProxyModule {
                 replyLikeRepository,
               ),
             ),
+        },
+        {
+          inject: [ReplyRepositoryOrm,ReplyLikeRepositoryOrm],
+          provide: UseCaseProxyModule.GET_REPLY_LIKE_STATUS_USECASE,
+          useFactory: (replyRepository: ReplyRepositoryOrm,replyLikeRepository: ReplyLikeRepositoryOrm) =>
+            new UseCaseProxy(new GetReplyLikeStatusUsecase(replyRepository,replyLikeRepository)),
         },
         {
           inject: [FollowRepositoryOrm, UserRepositoryOrm],
@@ -454,6 +491,27 @@ export class UseCaseProxyModule {
           provide:UseCaseProxyModule.DELETE_FCM_TOKEN_USECASE,
           useFactory:(userRepository:UserRepositoryOrm)=> new UseCaseProxy(new DeleteFcmTokenUseCase(userRepository))
         },
+        {
+          inject: [UserRepositoryOrm,SubscriptionRepositoryOrm],
+          provide: UseCaseProxyModule.POST_SUBSCRIPTION_USECASE,
+          useFactory: (userRepository: UserRepositoryOrm,subscriptionRepository: SubscriptionRepositoryOrm) =>
+            new UseCaseProxy(new PostSubscriptionUseCase(userRepository,subscriptionRepository)),
+        },
+        {
+          inject:[UserRepositoryOrm,SubscriptionRepositoryOrm],
+          provide:UseCaseProxyModule.HANDLE_EXPIRED_SUBSCRIPTION_USECASE,
+          useFactory:(userRepository:UserRepositoryOrm,subscriptionRepository:SubscriptionRepositoryOrm)=> new UseCaseProxy(new HandleExpiredSubscriptionUseCase(userRepository,subscriptionRepository))
+        },
+        {
+          inject:[PAYMENT_GATEWAY_TOKEN,SubscriptionRepositoryOrm],
+          provide:UseCaseProxyModule.CREATE_SUBSCRIPTION_PAYMENT_USECASE,
+          useFactory:(midtransService: IMidtrans,subscriptionRepository:SubscriptionRepositoryOrm  )=> new UseCaseProxy(new CreateSubcriptionPaymentUseCase(midtransService,subscriptionRepository))
+        },
+        {
+          inject:[SubscriptionRepositoryOrm,UserRepositoryOrm],
+          provide:UseCaseProxyModule.MIDTRANS_WEBHOOK_USECASE,
+          useFactory:(subscriptionRepository:SubscriptionRepositoryOrm,userRepository:UserRepositoryOrm)=> new UseCaseProxy(new MidtransWebHookUseCase(subscriptionRepository,userRepository))
+        },
       ],
       exports: [
         //external usecase
@@ -471,6 +529,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.DELETE_POST_USECASE,
         UseCaseProxyModule.EDIT_POST_USECASE,
         UseCaseProxyModule.POST_LIKE_USECASE,
+        UseCaseProxyModule.GET_POST_LIKE_STATUS_USECASE,
         UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
         UseCaseProxyModule.GET_PAGINATED_USER_MEDIA_USECASE,
         UseCaseProxyModule.GET_PAGINATED_HASHTAG_MEDIA_USECASE,
@@ -480,10 +539,12 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.EDIT_COMMENT_USECASE,
         UseCaseProxyModule.DELETE_COMMENT_USECASE,
         UseCaseProxyModule.COMMENT_LIKE_USECASE,
+        UseCaseProxyModule.GET_COMMENT_LIKE_STATUS_USECASE,
         UseCaseProxyModule.POST_REPLY_USECASE,
         UseCaseProxyModule.EDIT_REPLY_USECASE,
         UseCaseProxyModule.DELETE_REPLY_USECASE,
         UseCaseProxyModule.REPLY_LIKE_USECASE,
+        UseCaseProxyModule.GET_REPLY_LIKE_STATUS_USECASE,
         UseCaseProxyModule.FOLLOW_USER_USECASE,
         UseCaseProxyModule.UNFOLLOW_USER_USECASE,
         UseCaseProxyModule.GET_USER_FOLLOW_STATUS_USECASE,
@@ -492,6 +553,10 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.POST_MESSAGE_USECASE,
         UseCaseProxyModule.GET_MESSAGES_USECASE,
         UseCaseProxyModule.EDIT_FCM_TOKEN_USECASE,
+        UseCaseProxyModule.POST_SUBSCRIPTION_USECASE,
+        UseCaseProxyModule.HANDLE_EXPIRED_SUBSCRIPTION_USECASE,
+        UseCaseProxyModule.CREATE_SUBSCRIPTION_PAYMENT_USECASE,
+        UseCaseProxyModule.MIDTRANS_WEBHOOK_USECASE,
       ],
     };
   }

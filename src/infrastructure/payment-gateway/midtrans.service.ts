@@ -18,7 +18,7 @@ export class MidtransService implements IMidtrans{
     const transactionDetails = {
       transaction_details: {
         order_id: orderId,
-        gross_amount: amount,
+        gross_amount: 20000,
       },
       customer_details: {
         user_id: userId,
@@ -26,8 +26,8 @@ export class MidtransService implements IMidtrans{
       item_details: [
         {
           id: 'sub-1',
-          price: amount,
-          quantity: 1,
+          price: 20000,
+          quantity: amount,
           name: '1-Month Subscription',
         },
       ],

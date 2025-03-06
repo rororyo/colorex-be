@@ -137,7 +137,6 @@ export class AuthController {
         );
         try {
           await this.deleteStorageMediaUsecaseProxy.getInstance().execute(relativePath);
-          console.log(`Deletion request completed for: ${relativePath}`);
         } catch (error) {
           console.error(`Error during deletion: ${relativePath}`, error);
         }

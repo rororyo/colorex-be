@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Inject,
   Param,
   Post,
@@ -27,6 +28,9 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
+import { GetPostLikeStatusUseCase } from 'src/applications/use-cases/like/getPostLikeStatus.usecase';
+import { GetCommentLikeStatusUsecase } from 'src/applications/use-cases/like/getCommentLikeStatus.usecase';
+import { GetReplyLikeStatusUsecase } from 'src/applications/use-cases/like/getReplyLikeStatus.usecase';
 
 @ApiTags('like')
 @Controller('api')
@@ -40,6 +44,12 @@ export class LikeController {
     private readonly commentLikeUseCaseProxy: UseCaseProxy<CommentLikeUsecase>,
     @Inject(UseCaseProxyModule.REPLY_LIKE_USECASE)
     private readonly replyLikeUseCaseProxy: UseCaseProxy<ReplyLikeUsecase>,
+    @Inject(UseCaseProxyModule.GET_POST_LIKE_STATUS_USECASE)
+    private readonly getPostLikeStatusUseCaseProxy: UseCaseProxy<GetPostLikeStatusUseCase>,
+    @Inject(UseCaseProxyModule.GET_COMMENT_LIKE_STATUS_USECASE)
+    private readonly getCommentLikeStatusUseCaseProxy: UseCaseProxy<GetCommentLikeStatusUsecase>,
+    @Inject(UseCaseProxyModule.GET_REPLY_LIKE_STATUS_USECASE)
+    private readonly getReplyLikeStatusUseCaseProxy: UseCaseProxy<GetReplyLikeStatusUsecase>,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -74,6 +84,20 @@ export class LikeController {
     return {
       status: 'success',
       message: likeMsg,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/post/:postId/like/status')
+  async getPostLikeStatus(@Param() params: getPostLikesParamsDto,@Req() req: Request) {
+    const { postId } = params;
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    const isPostLiked =  await this.getPostLikeStatusUseCaseProxy.getInstance().execute(postId,user.id);
+    return {
+      status: 'success',
+      message: 'Successfuly retrieved post like status',
+      data: isPostLiked
     };
   }
 
@@ -113,6 +137,20 @@ export class LikeController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('/comment/:commentId/like/status')
+  async getCommentLikeStatus(@Param() params: getCommentLikesParamsDto,@Req() req: Request) {
+    const { commentId } = params;
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    const isCommentLiked =  await this.getCommentLikeStatusUseCaseProxy.getInstance().execute(commentId,user.id);
+    return {
+      status: 'success',
+      message: 'Successfuly retrieved comment like status',
+      data: isCommentLiked
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Like a reply' })
   @ApiParam({
@@ -144,6 +182,19 @@ export class LikeController {
     return {
       status: 'success',
       message: likeMsg,
+    };
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('/reply/:replyId/like/status')
+  async getReplyLikeStatus(@Param() params: getReplyLikesParamsDto,@Req() req: Request) {
+    const { replyId } = params;
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    const isReplyLiked =  await this.getReplyLikeStatusUseCaseProxy.getInstance().execute(replyId,user.id);
+    return {
+      status: 'success',
+      message: 'Successfuly retrieved reply like status',
+      data: isReplyLiked
     };
   }
 }
