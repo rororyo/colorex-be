@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 # Copy dependency manifests
 COPY package.json bun.lockb ./
 
-# Install dependencies (including peer dependencies)
+# Install dependencies
 RUN bun install --no-save
 
 # Copy source code
@@ -14,21 +14,25 @@ COPY . .
 # Install reflect-metadata explicitly
 RUN bun add reflect-metadata
 
-# Compile TypeScript - modify to include migrations
-RUN bun run tsc -p tsconfig.build.json
+# Build the application
+RUN bun run build
 
-###################
+##################
 # PRODUCTION
-###################
+##################
 
 FROM oven/bun:latest AS production
 
 WORKDIR /usr/src/app
 
-# Copy only necessary files from the build stage
-COPY --from=build /usr/src/app/node_modules ./node_modules
+# Copy package files
+COPY package.json bun.lockb ./
+
+# Install production dependencies only
+RUN bun install --production --no-save
+
+# Copy build artifacts
 COPY --from=build /usr/src/app/dist ./dist
-# Copy migrations if needed in production
 COPY --from=build /usr/src/app/database ./database
 
 # Start the server
