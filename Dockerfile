@@ -6,23 +6,17 @@ FROM oven/bun:latest AS build
 
 WORKDIR /usr/src/app
 
-COPY --chown=node:node package.json bun.lockb ./
+# Copy dependency manifests
+COPY package.json bun.lockb ./
 
-# Copy installed dependencies from development stage
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+# Install dependencies
+RUN bun install
 
-COPY --chown=node:node . .
+# Copy source code
+COPY . .
 
-# Run the build command
+# Compile TypeScript
 RUN bun run build
-
-# Set NODE_ENV environment variable
-ENV NODE_ENV=production
-
-# Install only production dependencies
-RUN bun install --frozen-lockfile --production
-
-USER node
 
 ###################
 # PRODUCTION
@@ -32,9 +26,9 @@ FROM oven/bun:latest AS production
 
 WORKDIR /usr/src/app
 
-# Copy built code and dependencies from build stage
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+# Copy only necessary files from the build stage
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/dist ./dist
 
-# Start the server using the production build
+# Start the server
 CMD ["bun", "run", "dist/src/main.js"]
