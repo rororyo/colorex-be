@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IGcsStorage } from 'src/domains/repositories/storage/IGcsStorage';
 
-import { STORAGE_TOKEN } from 'src/infrastructure/storage/storage.module';
+import { STORAGE_TOKEN } from 'src/infrastructure/repositories/storage/storage.module';
 
 
 export class UploadMediaUseCase {

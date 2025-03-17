@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { IMidtrans } from "src/domains/payment-gateway/IMidTrans";
+import { IMidtrans } from "src/domains/repositories/payment-gateway/IMidTrans";
 import { SubscriptionRepository } from "src/domains/repositories/subscription/subscription.repository";
 
 @Injectable()

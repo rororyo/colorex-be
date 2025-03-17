@@ -17,7 +17,7 @@ import { MessageModule } from './presentations/message/message.module';
 import { MessageController } from './presentations/message/message.controller';
 import { FcmController } from './presentations/firebase/fcm.controller';
 import { FirebaseModule } from './presentations/firebase/fcm.module';
-import { StorageModule } from './infrastructure/storage/storage.module';
+import { StorageModule } from './infrastructure/repositories/storage/storage.module';
 import { PaymentGatewayModule } from './presentations/payment-gateway/payment-gateway.module';
 import { PaymentGatewayController } from './presentations/payment-gateway/payment-gateway.controller';
 import { CronModule } from './presentations/cron/cron.module';

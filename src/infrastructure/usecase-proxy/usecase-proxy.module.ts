@@ -41,7 +41,7 @@ import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUse
 import { HashTagRepositoryOrm } from '../repositories/hashtag/hashtag.repository';
 import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
 import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
-import { STORAGE_TOKEN, StorageModule } from '../storage/storage.module';
+import { STORAGE_TOKEN, StorageModule } from '../repositories/storage/storage.module';
 import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
 import { IGcsStorage } from 'src/domains/repositories/storage/IgcsStorage';
 import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
@@ -54,10 +54,10 @@ import { EditFCMTokenUsecase } from 'src/applications/use-cases/firebase/saveFcm
 import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
 import { DeleteStorageMediaUseCase } from 'src/applications/use-cases/media/deleteStorageMedia.usecase';
 import { getUserByIdUsecase } from 'src/applications/use-cases/user/getUserById.usecase';
-import { MidtransModule, PAYMENT_GATEWAY_TOKEN } from '../payment-gateway/midtrans.module';
+import { MidtransModule, PAYMENT_GATEWAY_TOKEN } from '../repositories/payment-gateway/midtrans.module';
 import { CreateSubcriptionPaymentUseCase } from 'src/applications/use-cases/payment-gateway/createSubcriptionPayment.usecase';
 import { SubscriptionRepositoryOrm } from '../repositories/subcription/subscription.repository';
-import { IMidtrans } from 'src/domains/payment-gateway/IMidTrans';
+import { IMidtrans } from 'src/domains/repositories/payment-gateway/IMidTrans';
 import { PostSubscriptionUseCase } from 'src/applications/use-cases/subscription/postSubscription.usecase';
 import { MidtransWebHookUseCase } from 'src/applications/use-cases/payment-gateway/midtransWebHook.usecase';
 import { GetPostLikeStatusUseCase } from 'src/applications/use-cases/like/getPostLikeStatus.usecase';
