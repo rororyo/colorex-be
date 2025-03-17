@@ -1,21 +1,28 @@
+# Base Image for Build
 FROM oven/bun:latest AS build
 
 WORKDIR /usr/src/app
 
-# Copy dependency manifests
-COPY package.json bun.lockb ./
+# Set Node Path for module resolution
+ENV NODE_PATH=/usr/src/app
+
+# Copy package files first (faster caching)
+COPY package.json bun.lockb tsconfig.json ./
 
 # Install dependencies
 RUN bun install --no-save
 
-# Copy source code
+# Copy entire source code
 COPY . .
 
-# Install reflect-metadata explicitly
+# Debug: Ensure src files exist
+RUN ls -la src/
+
+# Install reflect-metadata explicitly (if needed)
 RUN bun add reflect-metadata
 
-# Build the application
-RUN bun run build
+# Build NestJS (using npx for safer execution)
+RUN npx nest build
 
 ##################
 # PRODUCTION
@@ -25,13 +32,16 @@ FROM oven/bun:latest AS production
 
 WORKDIR /usr/src/app
 
-# Copy package files
-COPY package.json bun.lockb ./
+# Set Node Path for module resolution
+ENV NODE_PATH=/usr/src/app
 
-# Install production dependencies only
+# Copy package files
+COPY package.json bun.lockb tsconfig.json ./
+
+# Install only production dependencies
 RUN bun install --production --no-save
 
-# Copy build artifacts
+# Copy compiled build artifacts
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/database ./database
 
