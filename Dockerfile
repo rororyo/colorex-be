@@ -2,7 +2,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:22-alpine As development
+FROM node:22-alpine AS development
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -26,7 +26,7 @@ USER node
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:22-alpine As build
+FROM node:22-alpine AS build
 
 WORKDIR /usr/src/app
 
@@ -41,7 +41,7 @@ COPY --chown=node:node . .
 RUN npm run build
 
 # Set NODE_ENV environment variable
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
 RUN npm ci --only=production && npm cache clean --force
@@ -52,7 +52,7 @@ USER node
 # PRODUCTION
 ###################
 
-FROM node:22-alpine As production
+FROM node:22-alpine AS production
 
 WORKDIR /usr/src/app
 
