@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as midtransClient from 'midtrans-client';
-import { IMidtrans } from 'src/domains/repositories/payment-gateway/IMidTrans';
+import { IMidtrans } from '../../../domains/repositories/payment-gateway/IMidTrans';
 
 @Injectable()
 export class MidtransService implements IMidtrans{

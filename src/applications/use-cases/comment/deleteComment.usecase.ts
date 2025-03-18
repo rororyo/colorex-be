@@ -1,4 +1,4 @@
-import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
+import { CommentRepository } from "../../../domains/repositories/comment/comment.repository";
 
 
 export class DeleteCommentUsecase {

@@ -1,8 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepositoryOrm } from 'src/infrastructure/repositories/user/user.repository';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
+import { UserRepositoryOrm } from '../../../infrastructure/repositories/user/user.repository';
+import { getAuthCookie } from '../../../utils/auth/get-auth-cookie';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

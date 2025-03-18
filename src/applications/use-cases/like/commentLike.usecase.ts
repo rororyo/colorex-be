@@ -1,7 +1,7 @@
-import { CommentLikeM } from "src/domains/model/commentLike";
-import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
-import { CommentLikeRepositoryOrm } from "src/infrastructure/repositories/like/commentLike.repository";
+import { CommentLikeM } from "../../../domains/model/commentLike";
+import { CommentRepository } from "../../../domains/repositories/comment/comment.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
+import { CommentLikeRepositoryOrm } from "../../../infrastructure/repositories/like/commentLike.repository";
 
 
 export class CommentLikeUsecase {

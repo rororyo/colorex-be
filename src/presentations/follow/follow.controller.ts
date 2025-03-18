@@ -10,17 +10,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { FollowUserUseCase } from 'src/applications/use-cases/follow/followUser.usecase';
-import { GetUserFollowStatusUsecase } from 'src/applications/use-cases/follow/GetUserFollowStatus.usecase';
-import { UnfollowUserUseCase } from 'src/applications/use-cases/follow/unfollowUser.usecase';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
+import { FollowUserUseCase } from '../../applications/use-cases/follow/followUser.usecase';
+import { GetUserFollowStatusUsecase } from '../../applications/use-cases/follow/GetUserFollowStatus.usecase';
+import { UnfollowUserUseCase } from '../../applications/use-cases/follow/unfollowUser.usecase';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
 import { FollowParamsDto, UserFollowParamsDto, UserFollowQueryDto } from './dto/follow.dto';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUserFollower.usecase';
-import { GetUserFollowingUseCase } from 'src/applications/use-cases/follow/getUserFollowing.usecase';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { GetUserFollowerUseCase } from '../../applications/use-cases/follow/getUserFollower.usecase';
+import { GetUserFollowingUseCase } from '../../applications/use-cases/follow/getUserFollowing.usecase';
 import {
   ApiBearerAuth,
   ApiOperation,

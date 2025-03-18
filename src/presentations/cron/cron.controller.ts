@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from "@nestjs/common";
-import { HandleExpiredSubscriptionUseCase } from "src/applications/use-cases/subscription/handleExpiredSubscription.usecase";
-import { UseCaseProxy } from "src/infrastructure/usecase-proxy/usecase-proxy";
-import { UseCaseProxyModule } from "src/infrastructure/usecase-proxy/usecase-proxy.module";
+import { HandleExpiredSubscriptionUseCase } from "../../applications/use-cases/subscription/handleExpiredSubscription.usecase";
+import { UseCaseProxy } from "../../infrastructure/usecase-proxy/usecase-proxy";
+import { UseCaseProxyModule } from "../../infrastructure/usecase-proxy/usecase-proxy.module";
 
 @Controller('cron')
 export class CronController {

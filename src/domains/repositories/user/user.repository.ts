@@ -1,6 +1,6 @@
 
-import { UserM } from "src/domains/model/user";
-import { RegisterDto } from "src/presentations/auth/dto/auth.dto";
+import { UserM } from "../../model/user";
+import { RegisterDto } from "../../../presentations/auth/dto/auth.dto";
 
 
 export interface UserRepository {

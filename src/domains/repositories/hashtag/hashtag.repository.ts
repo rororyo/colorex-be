@@ -1,6 +1,4 @@
-import { HashTagM } from "src/domains/model/hashtag";
-import { PostM } from "src/domains/model/post";
-
+import { HashTagM } from "../../model/hashtag";
 export interface  HashTagRepository{
   createHashtag(name: string): Promise<void>;
   verifyHashtagAvailability(name: string): Promise<boolean>;

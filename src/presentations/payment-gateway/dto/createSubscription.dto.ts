@@ -1,5 +1,4 @@
-import { Transform } from 'class-transformer';
-import { IsUUID, IsNumber, IsOptional } from 'class-validator';
+import { IsUUID, IsOptional } from 'class-validator';
 
 export class CreateSubscriptionDto {
   @IsUUID()

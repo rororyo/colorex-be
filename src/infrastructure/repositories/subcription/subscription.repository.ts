@@ -1,10 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SubscriptionM, SubscriptionStatus } from 'src/domains/model/subscription';
-import { SubscriptionRepository } from 'src/domains/repositories/subscription/subscription.repository';
-import { Subscription } from 'src/infrastructure/entities/subsctiption.entity';
-import { User } from 'src/infrastructure/entities/user.entity';
-import { CreateSubscriptionDto } from 'src/presentations/payment-gateway/dto/createSubscription.dto';
+import { SubscriptionM, SubscriptionStatus } from '../../../domains/model/subscription';
+import { SubscriptionRepository } from '../../../domains/repositories/subscription/subscription.repository';
+import { Subscription } from '../../../infrastructure/entities/subsctiption.entity';
+import { User } from '../../../infrastructure/entities/user.entity';
 import { MoreThan, Repository } from 'typeorm';
 
 @Injectable()

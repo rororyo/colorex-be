@@ -1,6 +1,6 @@
-import { BadRequestException, ConflictException } from "@nestjs/common";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
-import { EditUserDto } from "src/presentations/auth/dto/editUser.dto";
+import { ConflictException } from "@nestjs/common";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
+import { EditUserDto } from "../../../presentations/auth/dto/editUser.dto";
 
 export class EditUserUsecase {
   constructor(

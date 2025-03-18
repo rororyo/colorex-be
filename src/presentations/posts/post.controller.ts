@@ -25,29 +25,29 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PostMediaUsecase } from 'src/applications/use-cases/posts/postMedia.usecase';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
+import { PostMediaUsecase } from '../../applications/use-cases/posts/postMedia.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
 import { PostMediaDto } from './dto/postMedia.dto';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { convertToMediaFile } from 'src/utils/validator/file.validator';
-import { GetMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { convertToMediaFile } from '../../utils/validator/file.validator';
+import { GetMediaDetailsUsecase } from '../../applications/use-cases/posts/getMedia.usecase';
 import { MediaParamsDto } from './dto/MediaParams.dto';
-import { GetPaginatedMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedMedia.usecase';
-import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia.usecase';
-import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
+import { GetPaginatedMediaUsecase } from '../../applications/use-cases/posts/getPaginatedMedia.usecase';
+import { DeleteMediaUsecase } from '../../applications/use-cases/posts/deleteMedia.usecase';
+import { EditMediaUsecase } from '../../applications/use-cases/posts/editMedia.usecase';
 import { EditMediaDto } from './dto/editMedia.dto';
-import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
+import { GetPaginatedUserMediaUsecase } from '../../applications/use-cases/posts/getPaginatedUserMedia.usecase';
 import {
   GetHashTagMediaQueryDto,
   GetMediaQueryDto,
   GetUserMediaParamsDto,
 } from './dto/getMedia.dto';
-import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
-import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
-import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
+import { GetPaginatedHashtagMediaUsecase } from '../../applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
+import { GetPagniatedFollowingMediaUseCase } from '../../applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
+import { UploadMediaUseCase } from '../../applications/use-cases/media/uploadMedia.usecase';
 
 @ApiTags('media')
 @Controller('api')

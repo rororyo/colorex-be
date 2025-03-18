@@ -1,4 +1,4 @@
-import { ReplyLikeM } from "src/domains/model/replyLike";
+import { ReplyLikeM } from "../../model/replyLike";
 
 export interface ReplyLikeRepository {
   createReplyLike(postLike: ReplyLikeM): Promise<void>

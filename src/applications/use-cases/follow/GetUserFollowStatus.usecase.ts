@@ -1,4 +1,4 @@
-import { FollowRepository } from "src/domains/repositories/follow/follow.repository";
+import { FollowRepository } from "../../../domains/repositories/follow/follow.repository";
 
 export class GetUserFollowStatusUsecase {
   constructor(

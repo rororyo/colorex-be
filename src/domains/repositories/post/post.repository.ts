@@ -1,5 +1,5 @@
-import { PostM } from 'src/domains/model/post';
-import { EditMediaDto } from 'src/presentations/posts/dto/editMedia.dto';
+import { PostM } from '../../model/post';
+import { EditMediaDto } from '../../../presentations/posts/dto/editMedia.dto';
 
 export interface PostRepository {
   createPost(post: PostM): Promise<void>;

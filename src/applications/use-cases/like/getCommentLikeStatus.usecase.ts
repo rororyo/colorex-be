@@ -1,5 +1,5 @@
-import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
-import { CommentLikeRepository } from "src/domains/repositories/like/commentLike.repository";
+import { CommentRepository } from "../../../domains/repositories/comment/comment.repository";
+import { CommentLikeRepository } from "../../../domains/repositories/like/commentLike.repository";
 
 export class GetCommentLikeStatusUsecase {
   constructor(

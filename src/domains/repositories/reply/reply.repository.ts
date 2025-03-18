@@ -1,4 +1,4 @@
-import { ReplyM } from "src/domains/model/reply";
+import { ReplyM } from "../../model/reply";
 
 export interface ReplyRepository{
   createReply(reply: ReplyM): Promise<void>

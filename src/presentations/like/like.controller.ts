@@ -8,19 +8,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { CommentLikeUsecase } from 'src/applications/use-cases/like/commentLike.usecase';
-import { PostLikeUsecase } from 'src/applications/use-cases/like/postLike.usecase';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
+import { CommentLikeUsecase } from '../../applications/use-cases/like/commentLike.usecase';
+import { PostLikeUsecase } from '../../applications/use-cases/like/postLike.usecase';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
 import {
   getCommentLikesParamsDto,
   getPostLikesParamsDto,
   getReplyLikesParamsDto,
 } from './dto/like.dto';
-import { ReplyLikeUsecase } from 'src/applications/use-cases/like/replyLike.usecasse';
+import { ReplyLikeUsecase } from '../../applications/use-cases/like/replyLike.usecasse';
 import {
   ApiTags,
   ApiOperation,
@@ -28,9 +28,9 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { GetPostLikeStatusUseCase } from 'src/applications/use-cases/like/getPostLikeStatus.usecase';
-import { GetCommentLikeStatusUsecase } from 'src/applications/use-cases/like/getCommentLikeStatus.usecase';
-import { GetReplyLikeStatusUsecase } from 'src/applications/use-cases/like/getReplyLikeStatus.usecase';
+import { GetPostLikeStatusUseCase } from '../../applications/use-cases/like/getPostLikeStatus.usecase';
+import { GetCommentLikeStatusUsecase } from '../../applications/use-cases/like/getCommentLikeStatus.usecase';
+import { GetReplyLikeStatusUsecase } from '../../applications/use-cases/like/getReplyLikeStatus.usecase';
 
 @ApiTags('like')
 @Controller('api')

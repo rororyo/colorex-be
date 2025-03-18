@@ -4,9 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PostM } from 'src/domains/model/post';
-import { PostRepository } from 'src/domains/repositories/post/post.repository';
-import { Post } from 'src/infrastructure/entities/post.entity';
+import { PostM } from '../../../domains/model/post';
+import { PostRepository } from '../../../domains/repositories/post/post.repository';
+import { Post } from '../../../infrastructure/entities/post.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

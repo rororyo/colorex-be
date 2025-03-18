@@ -1,7 +1,7 @@
 import { ConflictException } from "@nestjs/common";
-import PasswordHash from "src/applications/security/PasswordHash";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
-import { RegisterDto } from "src/presentations/auth/dto/auth.dto";
+import PasswordHash from "../../../applications/security/PasswordHash";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
+import { RegisterDto } from "../../../presentations/auth/dto/auth.dto";
 
 export class RegisterUserUsecase {
   constructor(

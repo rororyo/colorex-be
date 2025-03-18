@@ -1,4 +1,4 @@
-import PasswordHash from "src/applications/security/PasswordHash";
+import PasswordHash from "../applications/security/PasswordHash";
 import * as argon2 from "argon2"; 
 
 class Argon2PasswordHash extends PasswordHash {

@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FollowM } from "src/domains/model/follow";
-import { UserM } from "src/domains/model/user";
-import { FollowRepository } from "src/domains/repositories/follow/follow.repository";
-import { Follow } from "src/infrastructure/entities/follow.entity";
+import { FollowM } from "../../../domains/model/follow";
+import { UserM } from "../../../domains/model/user";
+import { FollowRepository } from "../../../domains/repositories/follow/follow.repository";
+import { Follow } from "../../../infrastructure/entities/follow.entity";
 import { Repository } from "typeorm";
 
 @Injectable()

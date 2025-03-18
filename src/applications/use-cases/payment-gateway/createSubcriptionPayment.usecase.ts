@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { IMidtrans } from "src/domains/repositories/payment-gateway/IMidTrans";
-import { SubscriptionRepository } from "src/domains/repositories/subscription/subscription.repository";
+import { IMidtrans } from "../../../domains/repositories/payment-gateway/IMidTrans";
+import { SubscriptionRepository } from "../../../domains/repositories/subscription/subscription.repository";
 
 @Injectable()
 export class CreateSubcriptionPaymentUseCase {

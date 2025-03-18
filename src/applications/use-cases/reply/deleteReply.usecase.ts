@@ -1,4 +1,4 @@
-import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
+import { ReplyRepository } from "../../../domains/repositories/reply/reply.repository";
 
 export class DeleteReplyUsecase {
   constructor(

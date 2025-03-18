@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsOptional, IsString, IsUUID, MaxLength } from "class-validator";
-import { ColorType } from "src/domains/model/enums/colorType.enum";
-import { Roles } from "src/domains/model/roles.enum";
+import { ColorType } from "../../../domains/model/enums/colorType.enum";
+import { Roles } from "../../../domains/model/roles.enum";
 
 
 export class EditUserDto {

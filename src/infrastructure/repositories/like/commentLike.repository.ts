@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CommentLikeM } from "src/domains/model/commentLike";
-import { CommentLikeRepository } from "src/domains/repositories/like/commentLike.repository";
-import { CommentLike } from "src/infrastructure/entities/commentLike.entity";
+import { CommentLikeM } from "../../../domains/model/commentLike";
+import { CommentLikeRepository } from "../../../domains/repositories/like/commentLike.repository";
+import { CommentLike } from "../../../infrastructure/entities/commentLike.entity";
 import { Repository } from "typeorm";
 
 @Injectable()

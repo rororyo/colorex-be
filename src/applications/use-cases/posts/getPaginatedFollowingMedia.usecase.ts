@@ -1,5 +1,5 @@
-import { FollowRepository } from "src/domains/repositories/follow/follow.repository";
-import { PostRepository } from "src/domains/repositories/post/post.repository";
+import { FollowRepository } from "../../../domains/repositories/follow/follow.repository";
+import { PostRepository } from "../../../domains/repositories/post/post.repository";
 
 export class GetPagniatedFollowingMediaUseCase {
   constructor(

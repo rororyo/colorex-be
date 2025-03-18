@@ -1,6 +1,4 @@
-import { SubscriptionM } from 'src/domains/model/subscription';
-import { CreateSubscriptionDto } from 'src/presentations/payment-gateway/dto/createSubscription.dto';
-
+import { SubscriptionM } from '../../model/subscription';
 export interface SubscriptionRepository {
   createSubscription(subcription:SubscriptionM): Promise<SubscriptionM>;
   verifySubcriptionAvailability(subscriptionId: string): Promise<boolean>;

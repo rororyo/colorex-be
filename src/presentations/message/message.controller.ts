@@ -1,15 +1,14 @@
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { Body, Controller, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
-import { CreateMessageUsecase } from 'src/applications/use-cases/message/createMessage.usecase';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
+import { CreateMessageUsecase } from '../../applications/use-cases/message/createMessage.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
 import { PostMessageDto, postMessageParamsDto } from './dto/postMessage.dto';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
 import { Request } from 'express';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { GetMessagesUsecase } from 'src/applications/use-cases/message/getMessages.usecase';
-import { ApiProperty } from '@nestjs/swagger';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { GetMessagesUsecase } from '../../applications/use-cases/message/getMessages.usecase';
 
 @Controller('api/message')
 export class MessageController {

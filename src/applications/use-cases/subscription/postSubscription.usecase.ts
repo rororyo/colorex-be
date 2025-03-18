@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { SubscriptionM, SubscriptionStatus } from "src/domains/model/subscription";
-import { SubscriptionRepository } from "src/domains/repositories/subscription/subscription.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
-import { CreateSubscriptionDto } from "src/presentations/payment-gateway/dto/createSubscription.dto";
+import { SubscriptionM, SubscriptionStatus } from "../../../domains/model/subscription";
+import { SubscriptionRepository } from "../../../domains/repositories/subscription/subscription.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
+import { CreateSubscriptionDto } from "../../../presentations/payment-gateway/dto/createSubscription.dto";
 
 @Injectable()
 export class PostSubscriptionUseCase {

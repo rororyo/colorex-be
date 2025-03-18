@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HashTagM } from 'src/domains/model/hashtag';
-import { PostM } from 'src/domains/model/post';
-import { HashTagRepository } from 'src/domains/repositories/hashtag/hashtag.repository';
-import { HashTag } from 'src/infrastructure/entities/hashtag.entity';
+import { HashTagM } from '../../../domains/model/hashtag';
+import { HashTagRepository } from '../../../domains/repositories/hashtag/hashtag.repository';
+import { HashTag } from '../../../infrastructure/entities/hashtag.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

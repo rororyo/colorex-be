@@ -22,23 +22,23 @@ import {
   ApiParam,
   ApiConsumes,
 } from '@nestjs/swagger';
-import { LoginUserUsecase } from 'src/applications/use-cases/user/loginUser.usecase';
-import { RegisterUserUsecase } from 'src/applications/use-cases/user/registerUser.usecase';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
+import { LoginUserUsecase } from '../../applications/use-cases/user/loginUser.usecase';
+import { RegisterUserUsecase } from '../../applications/use-cases/user/registerUser.usecase';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import {  Request, Response } from 'express';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
 import { EditUserDto, EditUserParamsDto } from './dto/editUser.dto';
-import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
+import { EditUserUsecase } from '../../applications/use-cases/user/editUser.usecase';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
-import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
-import { DeleteStorageMediaUseCase } from 'src/applications/use-cases/media/deleteStorageMedia.usecase';
+import { UploadMediaUseCase } from '../../applications/use-cases/media/uploadMedia.usecase';
+import { DeleteFcmTokenUseCase } from '../../applications/use-cases/firebase/deleteFcmToken.usecase';
+import { DeleteStorageMediaUseCase } from '../../applications/use-cases/media/deleteStorageMedia.usecase';
 import { GetUserParamsDto } from './dto/getUser.dto';
-import { getUserByIdUsecase } from 'src/applications/use-cases/user/getUserById.usecase';
+import { getUserByIdUsecase } from '../../applications/use-cases/user/getUserById.usecase';
 
 @ApiTags('auth') 
 @Controller('auth')

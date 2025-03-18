@@ -1,4 +1,4 @@
-import { UserRepository } from "src/domains/repositories/user/user.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
 
 export class getUserByIdUsecase {
   constructor(

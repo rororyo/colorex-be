@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateNotificationDto } from 'src/presentations/firebase/dto/createNotification.dto';
-import { FirebaseRepository } from 'src/domains/repositories/firebase/firebase.repository';
+import { CreateNotificationDto } from '../../../presentations/firebase/dto/createNotification.dto';
+import { FirebaseRepository } from '../../../domains/repositories/firebase/firebase.repository';
 
 
 @Injectable()

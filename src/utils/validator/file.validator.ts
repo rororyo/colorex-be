@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { AllowedMediaTypes, isAllowedFileType, MediaFile } from 'src/presentations/posts/dto/postMedia.dto';
+import { AllowedMediaTypes, isAllowedFileType, MediaFile } from '../../presentations/posts/dto/postMedia.dto';
 
 
 export const convertToMediaFile = (file: Express.Multer.File): MediaFile => {

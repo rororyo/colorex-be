@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Roles } from 'src/domains/model/roles.enum';
-import { SubscriptionStatus } from 'src/domains/model/subscription';
-import { SubscriptionRepository } from 'src/domains/repositories/subscription/subscription.repository';
-import { UserRepository } from 'src/domains/repositories/user/user.repository';
+import { Roles } from '../../..//domains/model/roles.enum';
+import { SubscriptionStatus } from '../../..//domains/model/subscription';
+import { SubscriptionRepository } from '../../../domains/repositories/subscription/subscription.repository';
+import { UserRepository } from '../../../domains/repositories/user/user.repository';
 
 @Injectable()
 export class MidtransWebHookUseCase {

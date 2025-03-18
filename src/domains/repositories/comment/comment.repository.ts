@@ -1,5 +1,5 @@
-import { CommentM } from "src/domains/model/comment";
-import { EditCommentDto } from "src/presentations/comment/dto/editComment.dto";
+import { CommentM } from "../../model/comment";
+import { EditCommentDto } from "../../../presentations/comment/dto/editComment.dto";
 
 export interface CommentRepository {
   createComment(comment: CommentM ): Promise<void>

@@ -1,14 +1,14 @@
 import { Body, Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { CreateSubcriptionPaymentUseCase } from 'src/applications/use-cases/payment-gateway/createSubcriptionPayment.usecase';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
-import { PostSubscriptionUseCase } from 'src/applications/use-cases/subscription/postSubscription.usecase';
+import { CreateSubcriptionPaymentUseCase } from '../../applications/use-cases/payment-gateway/createSubcriptionPayment.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
+import { PostSubscriptionUseCase } from '../../applications/use-cases/subscription/postSubscription.usecase';
 import { Request } from 'express';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
 import { CreateSubscriptionDto } from './dto/createSubscription.dto';
-import { MidtransWebHookUseCase } from 'src/applications/use-cases/payment-gateway/midtransWebHook.usecase';
+import { MidtransWebHookUseCase } from '../../applications/use-cases/payment-gateway/midtransWebHook.usecase';
 
 @Controller('api')
 export class PaymentGatewayController {

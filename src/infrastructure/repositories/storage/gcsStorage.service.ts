@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
-import { IGcsStorage } from 'src/domains/repositories/storage/IGcsStorage';
+import { IGcsStorage } from '../../../domains/repositories/storage/IGcsStorage';
 
 
 @Injectable()

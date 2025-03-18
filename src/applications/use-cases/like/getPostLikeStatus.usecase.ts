@@ -1,5 +1,5 @@
-import { PostLikeRepository } from "src/domains/repositories/like/postLike.repository";
-import { PostRepository } from "src/domains/repositories/post/post.repository";
+import { PostLikeRepository } from "../../../domains/repositories/like/postLike.repository";
+import { PostRepository } from "../../../domains/repositories/post/post.repository";
 
 export class GetPostLikeStatusUseCase {
   constructor(

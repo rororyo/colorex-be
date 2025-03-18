@@ -1,5 +1,5 @@
-import { ReplyM } from "src/domains/model/reply";
-import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
+import { ReplyM } from "../../../domains/model/reply";
+import { ReplyRepository } from "../../../domains/repositories/reply/reply.repository";
 
 
 export class EditReplyUsecase {

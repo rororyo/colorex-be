@@ -1,5 +1,5 @@
-import { ReplyLikeRepository } from "src/domains/repositories/like/replyLike.repository";
-import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
+import { ReplyLikeRepository } from "../../../domains/repositories/like/replyLike.repository";
+import { ReplyRepository } from "../../../domains/repositories/reply/reply.repository";
 
 export class GetReplyLikeStatusUsecase {
   constructor(

@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { IsString, IsEnum, IsNotEmpty, IsArray, IsOptional } from "class-validator";
-import { PostType } from "src/domains/model/post";
+import { PostType } from "../../../domains/model/post";
 
 export type AllowedMediaTypes = 
   | 'image/jpeg'
