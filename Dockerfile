@@ -1,61 +1,63 @@
 ###################
-# BUILD FOR DEVELOPMENT
+# BUILD FOR LOCAL DEVELOPMENT
 ###################
-FROM oven/bun:latest AS development
 
+FROM node:22-alpine As development
+
+# Create app directory
 WORKDIR /usr/src/app
 
-# Copy dependency manifests
-COPY package.json bun.lockb ./
+# Copy application dependency manifests to the container image.
+# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
+# Copying this first prevents re-running npm install on every code change.
+COPY --chown=node:node package*.json ./
 
-# Install all dependencies (dev + prod)
-RUN bun install --no-save
+# Install app dependencies using the `npm ci` command instead of `npm install`
+RUN npm ci
 
-# Copy the application source code
-COPY . .
+# Bundle app source
+COPY --chown=node:node . .
 
-# Set user to bun (not root)
-USER bun
+# Use the node user from the image (instead of the root user)
+USER node
 
 ###################
 # BUILD FOR PRODUCTION
 ###################
-FROM oven/bun:latest AS build
+
+FROM node:22-alpine As build
 
 WORKDIR /usr/src/app
 
-# Copy dependency manifests
-COPY package.json bun.lockb ./
+COPY --chown=node:node package*.json ./
 
-# Install all dependencies (dev + prod)
-COPY --from=development /usr/src/app/node_modules ./node_modules
+# In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
+COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
 
-# Copy the full application source
-COPY . .
+COPY --chown=node:node . .
 
-# Build the application
-RUN bun run build
+# Run the build command which creates the production bundle
+RUN npm run build
 
-# Remove dev dependencies to optimize production image
-RUN bun install --production --no-save && bun cache clean
+# Set NODE_ENV environment variable
+ENV NODE_ENV production
 
-USER bun
+# Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
+RUN npm ci --only=production && npm cache clean --force
+
+USER node
 
 ###################
 # PRODUCTION
 ###################
-FROM oven/bun:latest AS production
+
+FROM node:22-alpine As production
 
 WORKDIR /usr/src/app
 
-# Copy only production dependencies
-COPY --from=build /usr/src/app/node_modules ./node_modules
+# Copy the bundled code from the build stage to the production image
+COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
-# Copy built application files
-COPY --from=build /usr/src/app/dist ./dist
-
-# Set user to bun (not root)
-USER bun
-
-# Start the server
-CMD ["bun", "dist/src/main.js"]
+# Start the server using the production build
+CMD [ "node", "dist/src/main.js" ]
