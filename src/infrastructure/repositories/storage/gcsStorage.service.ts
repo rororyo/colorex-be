@@ -1,7 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
-import { IGcsStorage } from '../../../domains/repositories/storage/IGcsStorage';
-
+import { IGcsStorage } from '../../../domains/repositories/storage/IgcsStorage';
 
 @Injectable()
 export class GcsStorageService implements IGcsStorage {
@@ -9,7 +12,9 @@ export class GcsStorageService implements IGcsStorage {
   private bucketName: string;
 
   constructor() {
-    const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+    const credentials = JSON.parse(
+      process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON,
+    );
 
     this.storage = new Storage({
       credentials: {
@@ -22,7 +27,11 @@ export class GcsStorageService implements IGcsStorage {
     this.bucketName = process.env.GCS_BUCKET_NAME;
   }
 
-  async uploadFile(fileBuffer: Buffer, destination: string, mimeType: string): Promise<string> {
+  async uploadFile(
+    fileBuffer: Buffer,
+    destination: string,
+    mimeType: string,
+  ): Promise<string> {
     const bucket = this.storage.bucket(this.bucketName);
     const file = bucket.file(destination);
 
@@ -36,14 +45,14 @@ export class GcsStorageService implements IGcsStorage {
   async deleteFile(filePath: string): Promise<void> {
     // Decode URL encoded characters
     const decodedPath = decodeURIComponent(filePath);
-    
+
     const bucket = this.storage.bucket(this.bucketName);
     const file = bucket.file(decodedPath);
-  
+
     try {
       // Check if file exists before attempting to delete
       const [exists] = await file.exists();
-      
+
       if (exists) {
         await file.delete();
       } else {
