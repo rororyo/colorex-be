@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { SubscriptionStatus } from 'src/domains/model/subscription';
+import { SubscriptionStatus } from '../../domains/model/subscription';
 
 @Entity()
 export class Subscription {

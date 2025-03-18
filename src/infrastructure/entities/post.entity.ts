@@ -8,7 +8,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { PostType } from 'src/domains/model/post';
+import { PostType } from '../../domains/model/post';
 import { User } from './user.entity';
 import { Comment } from './comment.entity';
 import { PostLike } from './postLike.entity';

@@ -1,4 +1,4 @@
-# compiled output
+# Compiled output
 /dist
 /node_modules
 /build
@@ -7,17 +7,18 @@
 logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
 
-# OS
+# OS-specific files
 .DS_Store
 
 # Tests
 /coverage
 /.nyc_output
+
+# Dependency lock file (keep package-lock.json, but ignore other managers)
+bun.lockb
+pnpm-lock.yaml
+yarn.lock
 
 # IDEs and editors
 /.idea
@@ -42,7 +43,7 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
-# temp directory
+# Temp directories
 .temp
 .tmp
 

@@ -8,7 +8,7 @@ import { CommentLike } from './commentLike.entity';
 import { ReplyLike } from './replyLike.entity';
 import { Follow } from './follow.entity';
 import { Message } from './message.entity';
-import { ColorType } from 'src/domains/model/enums/colorType.enum';
+import { ColorType } from '../../domains/model/enums/colorType.enum';
 import { Subscription } from './subsctiption.entity';
 
 @Entity()
