@@ -1,3 +1,25 @@
+###################
+# BUILD FOR DEVELOPMENT
+###################
+FROM oven/bun:latest AS development
+
+WORKDIR /usr/src/app
+
+# Copy dependency manifests
+COPY package.json bun.lockb ./
+
+# Install all dependencies (dev + prod)
+RUN bun install --no-save
+
+# Copy the application source code
+COPY . .
+
+# Set user to bun (not root)
+USER bun
+
+###################
+# BUILD FOR PRODUCTION
+###################
 FROM oven/bun:latest AS build
 
 WORKDIR /usr/src/app
@@ -5,36 +27,35 @@ WORKDIR /usr/src/app
 # Copy dependency manifests
 COPY package.json bun.lockb ./
 
-# Install dependencies including NestJS CLI
-RUN bun install --no-save
-RUN bun add -g @nestjs/cli
+# Install all dependencies (dev + prod)
+COPY --from=development /usr/src/app/node_modules ./node_modules
 
-# Copy source code
+# Copy the full application source
 COPY . .
 
-# Install reflect-metadata explicitly if needed
-RUN bun add reflect-metadata
-
-# Build the application using NestJS CLI
+# Build the application
 RUN bun run build
 
-##################
-# PRODUCTION
-##################
+# Remove dev dependencies to optimize production image
+RUN bun install --production --no-save && bun cache clean
 
+USER bun
+
+###################
+# PRODUCTION
+###################
 FROM oven/bun:latest AS production
 
 WORKDIR /usr/src/app
 
-# Copy package files
-COPY package.json bun.lockb ./
+# Copy only production dependencies
+COPY --from=build /usr/src/app/node_modules ./node_modules
 
-# Install production dependencies only
-RUN bun install --production --no-save
-
-# Copy build artifacts
+# Copy built application files
 COPY --from=build /usr/src/app/dist ./dist
-COPY --from=build /usr/src/app/database ./database
+
+# Set user to bun (not root)
+USER bun
 
 # Start the server
-CMD ["bun", "run", "dist/src/main.js"]
+CMD ["bun", "dist/src/main.js"]
