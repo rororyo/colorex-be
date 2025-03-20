@@ -47,6 +47,7 @@ export class SubscriptionRepositoryOrm implements SubscriptionRepository {
       relations: ['user']
     });
   }
+  
   async getSubscrtiptionByOrderId(orderId: string): Promise<SubscriptionM> {
     return this.subscriptionRepository.findOne({ where: { orderId }, relations: ['user'] });
   }

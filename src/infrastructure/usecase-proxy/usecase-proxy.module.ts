@@ -64,6 +64,7 @@ import { GetPostLikeStatusUseCase } from '../../applications/use-cases/like/getP
 import { GetCommentLikeStatusUsecase } from '../../applications/use-cases/like/getCommentLikeStatus.usecase';
 import { GetReplyLikeStatusUsecase } from '../../applications/use-cases/like/getReplyLikeStatus.usecase';
 import { HandleExpiredSubscriptionUseCase } from '../../applications/use-cases/subscription/handleExpiredSubscription.usecase';
+import { GetSubscriptionByOrderIdUseCase } from 'src/applications/use-cases/payment-gateway/getSubscriptionByOrderId.usecase';
 
 @Module({
   imports: [
@@ -115,6 +116,7 @@ export class UseCaseProxyModule {
   static GET_USER_FOLLOWING_USECASE = 'getUserFollowingUsecaseProxy';
   static POST_MESSAGE_USECASE = 'postMessageUsecaseProxy';
   static GET_MESSAGES_USECASE = 'getMessagesUsecaseProxy';
+  static GET_SUBSCRIPTION_USECASE = 'getSubscriptionUsecaseProxy';
   static POST_SUBSCRIPTION_USECASE = 'postSubscriptionUsecaseProxy';
   static HANDLE_EXPIRED_SUBSCRIPTION_USECASE = 'handleExpiredSubscriptionUsecaseProxy';
   // FCM
@@ -492,6 +494,11 @@ export class UseCaseProxyModule {
           useFactory:(userRepository:UserRepositoryOrm)=> new UseCaseProxy(new DeleteFcmTokenUseCase(userRepository))
         },
         {
+          inject:[SubscriptionRepositoryOrm],
+          provide:UseCaseProxyModule.GET_SUBSCRIPTION_USECASE,
+          useFactory:(subscriptionRepository:SubscriptionRepositoryOrm)=> new UseCaseProxy(new GetSubscriptionByOrderIdUseCase(subscriptionRepository))
+        },
+        {
           inject: [UserRepositoryOrm,SubscriptionRepositoryOrm],
           provide: UseCaseProxyModule.POST_SUBSCRIPTION_USECASE,
           useFactory: (userRepository: UserRepositoryOrm,subscriptionRepository: SubscriptionRepositoryOrm) =>
@@ -553,6 +560,7 @@ export class UseCaseProxyModule {
         UseCaseProxyModule.POST_MESSAGE_USECASE,
         UseCaseProxyModule.GET_MESSAGES_USECASE,
         UseCaseProxyModule.EDIT_FCM_TOKEN_USECASE,
+        UseCaseProxyModule.GET_SUBSCRIPTION_USECASE,
         UseCaseProxyModule.POST_SUBSCRIPTION_USECASE,
         UseCaseProxyModule.HANDLE_EXPIRED_SUBSCRIPTION_USECASE,
         UseCaseProxyModule.CREATE_SUBSCRIPTION_PAYMENT_USECASE,
