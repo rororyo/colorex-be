@@ -266,10 +266,10 @@ export class UseCaseProxyModule {
             new UseCaseProxy(new GetPostLikeStatusUseCase(postRepository,postLikeRepository)),
         },
         {
-          inject: [PostRepositoryOrm],
+          inject: [PostRepositoryOrm,PostLikeRepositoryOrm],
           provide: UseCaseProxyModule.GET_PAGINATED_MEDIA_USECASE,
-          useFactory: (postRepository: PostRepositoryOrm) =>
-            new UseCaseProxy(new GetPaginatedMediaUsecase(postRepository)),
+          useFactory: (postRepository: PostRepositoryOrm,likeRepository:PostLikeRepositoryOrm) =>
+            new UseCaseProxy(new GetPaginatedMediaUsecase(postRepository,likeRepository)),
         },
         {
           inject: [PostRepositoryOrm],
@@ -286,16 +286,18 @@ export class UseCaseProxyModule {
             ),
         },
         {
-          inject: [PostRepositoryOrm, FollowRepositoryOrm],
+          inject: [PostRepositoryOrm, FollowRepositoryOrm,PostLikeRepositoryOrm],
           provide: UseCaseProxyModule.GET_PAGINATED_FOLLOWING_MEDIA_USECASE,
           useFactory: (
             postRepository: PostRepositoryOrm,
             followRepository: FollowRepositoryOrm,
+            postLikeRepository: PostLikeRepositoryOrm
           ) =>
             new UseCaseProxy(
               new GetPagniatedFollowingMediaUseCase(
                 postRepository,
                 followRepository,
+                postLikeRepository
               ),
             ),
         },

@@ -16,6 +16,7 @@ export class PostM{
   postLikes: PostLikeM[]
   likeCount?: number
   hashTags: HashTagM[]
+  isLiked?: boolean;
 }
 
 export enum PostType {

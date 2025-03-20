@@ -109,12 +109,15 @@ export class PostMediaController {
       },
     },
   })
+  @UseGuards(JwtAuthGuard)
   @Get('posts')
-  async getPaginatedPosts(@Query() getMediaQueryDto: GetMediaQueryDto) {
+  async getPaginatedPosts(@Query() getMediaQueryDto: GetMediaQueryDto,@Req() req: Request) {
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
     const { searchQuery, page, limit } = getMediaQueryDto;
     const posts = await this.getPaginatedMediaUsecaseProxy
       .getInstance()
-      .execute(searchQuery, page, limit);
+      .execute(searchQuery, page, limit, user.id);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
