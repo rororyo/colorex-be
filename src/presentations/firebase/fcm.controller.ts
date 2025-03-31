@@ -12,6 +12,7 @@ import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
 import { Request } from 'express';
 import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
 import { EditFCMTokenUsecase } from '../../applications/use-cases/firebase/saveFcmToken.usecase';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('FCM') // Adds a category in Swagger
 @Controller('api/fcm')
