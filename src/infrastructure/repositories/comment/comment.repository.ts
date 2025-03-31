@@ -1,11 +1,9 @@
 import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CommentM } from "src/domains/model/comment";
-import { PostM } from "src/domains/model/post";
-import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
-import { Comment } from "src/infrastructure/entities/comment.entity";
-import { EditCommentDto } from "src/presentations/comment/dto/editComment.dto";
-import { PostCommentDto } from "src/presentations/comment/dto/postComment.dto";
+import { CommentM } from "../../../domains/model/comment";
+import { CommentRepository } from "../../../domains/repositories/comment/comment.repository";
+import { Comment } from "../../../infrastructure/entities/comment.entity";
+import { EditCommentDto } from "../../../presentations/comment/dto/editComment.dto";
 import { Repository } from "typeorm";
 
 @Injectable()

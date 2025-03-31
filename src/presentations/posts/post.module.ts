@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { UseCaseProxyModule } from "src/infrastructure/usecase-proxy/usecase-proxy.module";
+import { UseCaseProxyModule } from "../../infrastructure/usecase-proxy/usecase-proxy.module";
 import { PostMediaController } from "./post.controller";
 
 

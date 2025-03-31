@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
 
 @Injectable()
 export class DeleteFcmTokenUseCase {

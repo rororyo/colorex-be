@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { FollowRepository } from "src/domains/repositories/follow/follow.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
+import { FollowRepository } from "../../../domains/repositories/follow/follow.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
 
 @Injectable()
 export class UnfollowUserUseCase {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
-import { PostType } from 'src/domains/model/post';
+import { PostType } from '../../../domains/model/post';
 
 export class EditMediaDto {
   @ApiProperty({

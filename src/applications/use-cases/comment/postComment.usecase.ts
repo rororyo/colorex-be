@@ -1,8 +1,8 @@
-import { CommentM } from "src/domains/model/comment";
-import { CommentRepository } from "src/domains/repositories/comment/comment.repository"
-import { PostRepository } from "src/domains/repositories/post/post.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository"
-import { PostCommentDto, PostCommentParamsDto } from "src/presentations/comment/dto/postComment.dto"
+import { CommentM } from "../../../domains/model/comment";
+import { CommentRepository } from "../../../domains/repositories/comment/comment.repository"
+import { PostRepository } from "../../../domains/repositories/post/post.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository"
+import { PostCommentDto } from "../../../presentations/comment/dto/postComment.dto";
 
 export class PostCommentUsecase {
   constructor(

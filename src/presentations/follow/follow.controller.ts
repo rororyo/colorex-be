@@ -5,21 +5,22 @@ import {
   Inject,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { FollowUserUseCase } from 'src/applications/use-cases/follow/followUser.usecase';
-import { GetUserFollowStatusUsecase } from 'src/applications/use-cases/follow/GetUserFollowStatus.usecase';
-import { UnfollowUserUseCase } from 'src/applications/use-cases/follow/unfollowUser.usecase';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { FollowParamsDto, UserFollowParamsDto } from './dto/follow.dto';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { GetUserFollowerUseCase } from 'src/applications/use-cases/follow/getUserFollower.usecase';
-import { GetUserFollowingUseCase } from 'src/applications/use-cases/follow/getUserFollowing.usecase';
+import { FollowUserUseCase } from '../../applications/use-cases/follow/followUser.usecase';
+import { GetUserFollowStatusUsecase } from '../../applications/use-cases/follow/GetUserFollowStatus.usecase';
+import { UnfollowUserUseCase } from '../../applications/use-cases/follow/unfollowUser.usecase';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { FollowParamsDto, UserFollowParamsDto, UserFollowQueryDto } from './dto/follow.dto';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { GetUserFollowerUseCase } from '../../applications/use-cases/follow/getUserFollower.usecase';
+import { GetUserFollowingUseCase } from '../../applications/use-cases/follow/getUserFollowing.usecase';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -107,15 +108,10 @@ export class FollowController {
           followers: [
             {
               id: '8eccff6a-f4a7-4502-9103-e725669b9011',
-              email: 'test@admin.com',
               username: 'admin',
-              password:
-                '$argon2id$v=19$m=65536,t=3,p=4$RSxRbgC2WQEV9463TTNCPg$d1X5D3Lvk0NS6wyn5hN7MuerP2kZ568nLNnf3zX77Og',
               role: 'user',
-              created_at: '2025-01-14T15:40:01.774Z',
-              subscribed_at: null,
-              followersCount: 0,
-              followingCount: 1,
+              avatarUrl: 'https://i.pravatar.cc/150?u=8eccff6a-f4a7-4502-9103-e725669b9011',
+              colorType: 'winter',
             },
           ],
           count: 1,
@@ -123,12 +119,29 @@ export class FollowController {
       },
     },
   })
-  @Get('/followers/:userId')
-  async getFollowers(@Param() params: UserFollowParamsDto) {
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/status/:userId')
+  async getUserFollowStatus(@Param() params: UserFollowParamsDto,@Req() req: Request) {
+    const token = getAuthCookie(req);
     const { userId } = params;
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
+    const isFollowing = await this.getUserFollowStatusUsecase
+      .getInstance()
+      .execute(user.id, userId);
+    return {
+      status: 'success',
+      message: 'Follow status fetched successfully',
+      data: isFollowing,
+    };
+  }
+  @Get('/followers/:userId')
+  async getFollowers(@Param() params: UserFollowParamsDto,@Query() query: UserFollowQueryDto) {
+    const { userId } = params;
+    const { page, limit } = query;
     const followers = await this.getUserFollowersUsecase
       .getInstance()
-      .execute(userId);
+      .execute(userId,page,limit);
     return {
       status: 'success',
       message: 'Followers fetched successfully',
@@ -151,17 +164,13 @@ export class FollowController {
         status: 'success',
         message: 'Following fetched successfully',
         data:  {
-          "following": [
+          following: [
               {
-                  "id": "95ea813f-3762-4eb2-9336-a4556d73214c",
-                  "email": "test@mail.com",
-                  "username": "test",
-                  "password": "$argon2id$v=19$m=65536,t=3,p=4$5j6BLSqeA301CXROti6C+g$i4XSOgmCGByIu5tozc1zz4WectgD1sVSnHGasJdbul8",
-                  "role": "user",
-                  "created_at": "2025-01-18T06:44:44.747Z",
-                  "subscribed_at": null,
-                  "followersCount": 1,
-                  "followingCount": 0
+                id: '8eccff6a-f4a7-4502-9103-e725669b9011',
+                username: 'admin',
+                role: 'user',
+                avatarUrl: 'https://i.pravatar.cc/150?u=8eccff6a-f4a7-4502-9103-e725669b9011',
+                colorType: 'winter',
               }
           ],
           "count": 1
@@ -172,11 +181,12 @@ export class FollowController {
   })
 
   @Get('/following/:userId')
-  async getFollowing(@Param() params: UserFollowParamsDto) {
+  async getFollowing(@Param() params: UserFollowParamsDto,@Query() query: UserFollowQueryDto) {
     const { userId } = params;
+    const { page, limit } = query;
     const following = await this.getUserFollowingUsecase
       .getInstance()
-      .execute(userId);
+      .execute(userId,page,limit);
     return {
       status: 'success',
       message: 'Following fetched successfully',

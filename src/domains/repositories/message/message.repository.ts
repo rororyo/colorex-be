@@ -1,4 +1,4 @@
-import { MessageM } from "src/domains/model/message";
+import { MessageM } from "../../model/message";
 
 export interface MessageRepository {
   createMessage(message: Partial<MessageM>): Promise<void>

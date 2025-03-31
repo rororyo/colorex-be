@@ -1,8 +1,8 @@
 
 import { NotFoundException } from "@nestjs/common";
-import { MessageM } from "src/domains/model/message";
-import { MessageRepository } from "src/domains/repositories/message/message.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
+import { MessageM } from "../../../domains/model/message";
+import { MessageRepository } from "../../../domains/repositories/message/message.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
 
 export class CreateMessageUsecase {
   constructor(

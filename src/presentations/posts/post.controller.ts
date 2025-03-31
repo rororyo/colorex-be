@@ -25,29 +25,29 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PostMediaUsecase } from 'src/applications/use-cases/posts/postMedia.usecase';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
+import { PostMediaUsecase } from '../../applications/use-cases/posts/postMedia.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
 import { PostMediaDto } from './dto/postMedia.dto';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { convertToMediaFile } from 'src/utils/validator/file.validator';
-import { GetMediaDetailsUsecase } from 'src/applications/use-cases/posts/getMedia.usecase';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { convertToMediaFile } from '../../utils/validator/file.validator';
+import { GetMediaDetailsUsecase } from '../../applications/use-cases/posts/getMedia.usecase';
 import { MediaParamsDto } from './dto/MediaParams.dto';
-import { GetPaginatedMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedMedia.usecase';
-import { DeleteMediaUsecase } from 'src/applications/use-cases/posts/deleteMedia.usecase';
-import { EditMediaUsecase } from 'src/applications/use-cases/posts/editMedia.usecase';
+import { GetPaginatedMediaUsecase } from '../../applications/use-cases/posts/getPaginatedMedia.usecase';
+import { DeleteMediaUsecase } from '../../applications/use-cases/posts/deleteMedia.usecase';
+import { EditMediaUsecase } from '../../applications/use-cases/posts/editMedia.usecase';
 import { EditMediaDto } from './dto/editMedia.dto';
-import { GetPaginatedUserMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedUserMedia.usecase';
+import { GetPaginatedUserMediaUsecase } from '../../applications/use-cases/posts/getPaginatedUserMedia.usecase';
 import {
   GetHashTagMediaQueryDto,
   GetMediaQueryDto,
   GetUserMediaParamsDto,
 } from './dto/getMedia.dto';
-import { GetPaginatedHashtagMediaUsecase } from 'src/applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
-import { GetPagniatedFollowingMediaUseCase } from 'src/applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
-import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
+import { GetPaginatedHashtagMediaUsecase } from '../../applications/use-cases/posts/getPaginatedHashtagMedia.usecase';
+import { GetPagniatedFollowingMediaUseCase } from '../../applications/use-cases/posts/getPaginatedFollowingMedia.usecase';
+import { UploadMediaUseCase } from '../../applications/use-cases/media/uploadMedia.usecase';
 
 @ApiTags('media')
 @Controller('api')
@@ -97,6 +97,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                avatarUrl: null,
+                role: "user",
+                colorType: "notAvailable"
               },
               likeCount: 1,
             },
@@ -106,12 +109,15 @@ export class PostMediaController {
       },
     },
   })
+  @UseGuards(JwtAuthGuard)
   @Get('posts')
-  async getPaginatedPosts(@Query() getMediaQueryDto: GetMediaQueryDto) {
+  async getPaginatedPosts(@Query() getMediaQueryDto: GetMediaQueryDto,@Req() req: Request) {
+    const token = getAuthCookie(req);
+    const user = await this.currUserUseCaseProxy.getInstance().execute(token);
     const { searchQuery, page, limit } = getMediaQueryDto;
     const posts = await this.getPaginatedMediaUsecaseProxy
       .getInstance()
-      .execute(searchQuery, page, limit);
+      .execute(searchQuery, page, limit, user.id);
     return {
       status: 'success',
       message: 'Posts fetched successfully',
@@ -147,6 +153,9 @@ export class PostMediaController {
                 id: '95ea813f-3762-4eb2-9336-a4556d73214c',
                 email: 'test@mail.com',
                 username: 'test',
+                avatarUrl: null,
+                role: "user",
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },
@@ -201,7 +210,9 @@ export class PostMediaController {
                   "id": "95ea813f-3762-4eb2-9336-a4556d73214c",
                   "email": "test@mail.com",
                   "username": "test",
-                  "role": "user"
+                  "role": "user",
+                  "avatarUrl": null,
+                  "colorType": "notAvailable"
               },
               "likeCount": 0
           },
@@ -256,13 +267,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
-                password:
-                  '$argon2id$v=19$m=65536,t=3,p=4$RSxRbgC2WQEV9463TTNCPg$d1X5D3Lvk0NS6wyn5hN7MuerP2kZ568nLNnf3zX77Og',
-                role: 'user',
-                created_at: '2025-01-14T15:40:01.774Z',
-                subscribed_at: null,
-                followersCount: 0,
-                followingCount: 1,
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 1,
             },
@@ -308,6 +315,9 @@ export class PostMediaController {
             id: '8eccff6a-f4a7-4502-9103-e725669b9011',
             email: 'test@admin.com',
             username: 'admin',
+            role: "user",
+            avatarUrl: null,
+            colorType: "notAvailable"
           },
           post_type: 'image',
           media_url: 'lorem ipsum',
@@ -332,6 +342,9 @@ export class PostMediaController {
                     id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                     email: 'test@admin.com',
                     username: 'admin',
+                    role: "user",
+                    avatarUrl: null,
+                    colorType: "notAvailable"
                   },
                   likeCount: 1,
                 },
@@ -340,6 +353,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },
@@ -353,6 +369,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },
@@ -366,6 +385,9 @@ export class PostMediaController {
                 id: '8eccff6a-f4a7-4502-9103-e725669b9011',
                 email: 'test@admin.com',
                 username: 'admin',
+                role: "user",
+                avatarUrl: null,
+                colorType: "notAvailable"
               },
               likeCount: 0,
             },

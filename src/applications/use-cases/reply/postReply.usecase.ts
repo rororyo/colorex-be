@@ -1,9 +1,9 @@
-import { ReplyM } from "src/domains/model/reply";
-import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
-import { PostRepository } from "src/domains/repositories/post/post.repository";
-import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
-import { PostReplyDto } from "src/presentations/reply/dto/postReply.dto";
+import { ReplyM } from "../../../domains/model/reply";
+import { CommentRepository } from "../../../domains/repositories/comment/comment.repository";
+import { PostRepository } from "../../../domains/repositories/post/post.repository";
+import { ReplyRepository } from "../../../domains/repositories/reply/reply.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
+import { PostReplyDto } from "../../../presentations/reply/dto/postReply.dto";
 
 export class postReplyUseCase{
   constructor(

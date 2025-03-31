@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import AuthenticationTokenManager from 'src/applications/security/AuthTokenManager';
+import AuthenticationTokenManager from '../applications/security/AuthTokenManager';
 
 export class JwtTokenManager extends AuthenticationTokenManager {
   constructor(private readonly jwtService: JwtService) {

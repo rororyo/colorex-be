@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { FirebaseRepository } from 'src/domains/repositories/firebase/firebase.repository';
-import { CreateNotificationDto } from 'src/presentations/firebase/dto/createNotification.dto';
+import { FirebaseRepository } from '../../../domains/repositories/firebase/firebase.repository';
+import { CreateNotificationDto } from '../../../presentations/firebase/dto/createNotification.dto';
 
 @Injectable()
 export class PushNotificationUsecase {

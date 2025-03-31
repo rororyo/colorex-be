@@ -1,5 +1,5 @@
-import { PostM } from "src/domains/model/post";
-import { PostRepository } from "src/domains/repositories/post/post.repository";
+import { PostM } from "../../../domains/model/post";
+import { PostRepository } from "../../../domains/repositories/post/post.repository";
 
 export class GetMediaDetailsUsecase {
   constructor(private readonly postRepository: PostRepository) {}

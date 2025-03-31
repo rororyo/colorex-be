@@ -1,36 +1,60 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseConfig } from 'src/domains/config/database.interface';
+import { DatabaseConfig } from '../../../domains/config/database.interface';
 
 @Injectable()
 export class EnvironmentConfigService implements DatabaseConfig {
-  constructor(private configService: ConfigService) {}
+  private isProduction: boolean;
+
+  constructor(private configService: ConfigService) {
+    this.isProduction = this.configService.get<string>('NODE_ENV') === 'production';
+  }
 
   getDatabaseHost(): string {
-    return this.configService.get<string>('DATABASE_HOST');
+    return this.isProduction
+      ? this.configService.get<string>('DATABASE_PROD_HOST')
+      : this.configService.get<string>('DATABASE_HOST');
   }
 
   getDatabasePort(): number {
-    return this.configService.get<number>('DATABASE_PORT');
+    return this.isProduction
+      ? Number(this.configService.get<number>('DATABASE_PROD_PORT'))
+      : Number(this.configService.get<number>('DATABASE_PORT'));
   }
 
   getDatabaseUser(): string {
-    return this.configService.get<string>('DATABASE_USER');
+    return this.isProduction
+      ? this.configService.get<string>('DATABASE_PROD_USER')
+      : this.configService.get<string>('DATABASE_USER');
   }
 
   getDatabasePassword(): string {
-    return this.configService.get<string>('DATABASE_PASSWORD');
+    return this.isProduction
+      ? this.configService.get<string>('DATABASE_PROD_PASSWORD')
+      : this.configService.get<string>('DATABASE_PASSWORD');
   }
 
   getDatabaseName(): string {
-    return this.configService.get<string>('DATABASE_NAME');
+    return this.isProduction
+      ? this.configService.get<string>('DATABASE_PROD_NAME')
+      : this.configService.get<string>('DATABASE_NAME');
   }
 
   getDatabaseSchema(): string {
-    return this.configService.get<string>('DATABASE_SCHEMA');
+    return this.isProduction
+      ? this.configService.get<string>('DATABASE_PROD_SCHEMA')
+      : this.configService.get<string>('DATABASE_SCHEMA');
   }
 
   getDatabaseSync(): boolean {
-    return this.configService.get<boolean>('DATABASE_SYNCHRONIZE');
+    return this.isProduction
+      ? this.configService.get<string>('DATABASE_PROD_SYNCHRONIZE') === 'true'
+      : this.configService.get<string>('DATABASE_SYNCHRONIZE') === 'true';
+  }
+
+  getMigrationsRun(): boolean {
+    return this.isProduction
+      ? this.configService.get<string>('DATABASE_PROD_MIGRATIONS_RUN') === 'true'
+      : false;
   }
 }

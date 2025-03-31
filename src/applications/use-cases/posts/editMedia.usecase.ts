@@ -1,7 +1,6 @@
-import { PostM, PostType } from 'src/domains/model/post';
-import { HashTagRepository } from 'src/domains/repositories/hashtag/hashtag.repository';
-import { PostRepository } from 'src/domains/repositories/post/post.repository';
-import { EditMediaDto } from 'src/presentations/posts/dto/editMedia.dto';
+import { PostM, PostType } from '../../../domains/model/post';
+import { HashTagRepository } from '../../../domains/repositories/hashtag/hashtag.repository';
+import { PostRepository } from '../../../domains/repositories/post/post.repository';
 export interface EditPostInput {
   postType?: PostType;
   title?: string;

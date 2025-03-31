@@ -1,5 +1,5 @@
-import { CommentM } from "src/domains/model/comment";
-import { CommentRepository } from "src/domains/repositories/comment/comment.repository";
+import { CommentM } from "../../../domains/model/comment";
+import { CommentRepository } from "../../../domains/repositories/comment/comment.repository";
 
 export class EditCommentUsecase {
   constructor(

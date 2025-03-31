@@ -1,8 +1,8 @@
-import { PostRepository } from 'src/domains/repositories/post/post.repository';
-import { UserRepository } from 'src/domains/repositories/user/user.repository';
-import { PostMediaDto } from 'src/presentations/posts/dto/postMedia.dto';
-import { PostM } from 'src/domains/model/post';
-import { HashTagRepository } from 'src/domains/repositories/hashtag/hashtag.repository';
+import { PostRepository } from '../../../domains/repositories/post/post.repository';
+import { UserRepository } from '../../../domains/repositories/user/user.repository';
+import { PostMediaDto } from '../../../presentations/posts/dto/postMedia.dto';
+import { PostM } from '../../../domains/model/post';
+import { HashTagRepository } from '../../../domains/repositories/hashtag/hashtag.repository';
 export class PostMediaUsecase {
   constructor(
     private userRepository: UserRepository,

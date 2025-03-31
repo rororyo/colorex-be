@@ -1,7 +1,7 @@
-import { PostLikeM } from "src/domains/model/postLike";
-import { PostLikeRepository } from "src/domains/repositories/like/postLike.repository";
-import { PostRepository } from "src/domains/repositories/post/post.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
+import { PostLikeM } from "../../../domains/model/postLike";
+import { PostLikeRepository } from "../../../domains/repositories/like/postLike.repository";
+import { PostRepository } from "../../../domains/repositories/post/post.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
 
 export class PostLikeUsecase {
   constructor(

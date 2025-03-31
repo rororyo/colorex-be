@@ -1,4 +1,4 @@
-import { PostRepository } from "src/domains/repositories/post/post.repository";
+import { PostRepository } from "../../../domains/repositories/post/post.repository";
 
 export class GetPaginatedHashtagMediaUsecase {
   constructor(

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HashTagM } from 'src/domains/model/hashtag';
-import { PostM } from 'src/domains/model/post';
-import { HashTagRepository } from 'src/domains/repositories/hashtag/hashtag.repository';
-import { HashTag } from 'src/infrastructure/entities/hashtag.entity';
+import { HashTagM } from '../../../domains/model/hashtag';
+import { HashTagRepository } from '../../../domains/repositories/hashtag/hashtag.repository';
+import { HashTag } from '../../../infrastructure/entities/hashtag.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -25,7 +24,7 @@ export class HashTagRepositoryOrm implements HashTagRepository {
   async findHashtagByName(name: string): Promise<HashTagM> {
     return await this.hashTagRepository.findOne({ where: { name } });
   }
-  async getPopularHashtags(): Promise<Partial<PostM[]>> {
+  async getPopularHashtags(): Promise<Partial<HashTagM[]>> {
     const hashtags = await this.hashTagRepository
     .createQueryBuilder('hashtag')
     .leftJoin('hashtag.posts', 'post') // Assuming a Many-to-Many relation

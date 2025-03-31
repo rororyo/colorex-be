@@ -1,9 +1,8 @@
 import { BadRequestException } from "@nestjs/common";
-import AuthenticationTokenManager from "src/applications/security/AuthTokenManager";
-import PasswordHash from "src/applications/security/PasswordHash";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
-import { AuthRepository } from "src/domains/repositories/auth/auth.repository";
-import { LoginDto } from "src/presentations/auth/dto/auth.dto";
+import AuthenticationTokenManager from "../../../applications/security/AuthTokenManager";
+import PasswordHash from "../../../applications/security/PasswordHash";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
+import { LoginDto } from "../../../presentations/auth/dto/auth.dto";
 
 export class LoginUserUsecase {
   constructor(

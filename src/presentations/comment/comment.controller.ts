@@ -17,18 +17,18 @@ import {
   ApiBody,
   ApiParam,
 } from '@nestjs/swagger';
-import { PostCommentUsecase } from 'src/applications/use-cases/comment/postComment.usecase';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
+import { PostCommentUsecase } from '../../applications/use-cases/comment/postComment.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
 import { PostCommentDto, PostCommentParamsDto } from './dto/postComment.dto';
 import { Request } from 'express';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
 import { DeleteCommentParamsDto } from './dto/deleteComment.dto';
-import { DeleteCommentUsecase } from 'src/applications/use-cases/comment/deleteComment.usecase';
+import { DeleteCommentUsecase } from '../../applications/use-cases/comment/deleteComment.usecase';
 import { EditCommentDto, EditCommentParamsDto } from './dto/editComment.dto';
-import { EditCommentUsecase } from 'src/applications/use-cases/comment/editComment.usecase';
+import { EditCommentUsecase } from '../../applications/use-cases/comment/editComment.usecase';
 
 @ApiTags('comment')
 @Controller('api')

@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { FollowRepository } from "src/domains/repositories/follow/follow.repository";
+import { FollowRepository } from "../../../domains/repositories/follow/follow.repository";
 
 @Injectable()
 export class GetUserFollowingUseCase {
   constructor(
     private readonly followRepository: FollowRepository
   ){}
-  async execute(userId: string) {
-    return await this.followRepository.getFollowingByUserId(userId);
+  async execute(userId: string, page: number, limit: number) {
+    return await this.followRepository.getFollowingByUserId(userId, page, limit);
   }
 }

@@ -23,6 +23,8 @@ import { HashTag } from '../entities/hashtag.entity';
 import { HashTagRepositoryOrm } from './hashtag/hashtag.repository';
 import { Message } from '../entities/message.entity';
 import { MessageRepositoryOrm } from './message/message.repository';
+import { Subscription } from '../entities/subsctiption.entity';
+import { SubscriptionRepositoryOrm } from './subcription/subscription.repository';
 
 @Module({
   imports: [
@@ -38,7 +40,8 @@ import { MessageRepositoryOrm } from './message/message.repository';
       Reply,
       ReplyLike,
       Follow,
-      Message
+      Message,
+      Subscription
     ]),
   ],
   providers: [
@@ -52,7 +55,8 @@ import { MessageRepositoryOrm } from './message/message.repository';
     ReplyRepositoryOrm,
     ReplyLikeRepositoryOrm,
     FollowRepositoryOrm,
-    MessageRepositoryOrm
+    MessageRepositoryOrm,
+    SubscriptionRepositoryOrm
   ],
   exports: [
     UserRepositoryOrm,
@@ -65,7 +69,8 @@ import { MessageRepositoryOrm } from './message/message.repository';
     ReplyRepositoryOrm,
     ReplyLikeRepositoryOrm,
     FollowRepositoryOrm,
-    MessageRepositoryOrm
+    MessageRepositoryOrm,
+    SubscriptionRepositoryOrm
   ],
 })
 export class RepositoriesModule {}

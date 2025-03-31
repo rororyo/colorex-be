@@ -8,6 +8,7 @@ import {
   Put,
   Req,
   Res,
+  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -21,20 +22,23 @@ import {
   ApiParam,
   ApiConsumes,
 } from '@nestjs/swagger';
-import { LoginUserUsecase } from 'src/applications/use-cases/user/loginUser.usecase';
-import { RegisterUserUsecase } from 'src/applications/use-cases/user/registerUser.usecase';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
+import { LoginUserUsecase } from '../../applications/use-cases/user/loginUser.usecase';
+import { RegisterUserUsecase } from '../../applications/use-cases/user/registerUser.usecase';
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import {  Request, Response } from 'express';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
 import { EditUserDto, EditUserParamsDto } from './dto/editUser.dto';
-import { EditUserUsecase } from 'src/applications/use-cases/user/editUser.usecase';
+import { EditUserUsecase } from '../../applications/use-cases/user/editUser.usecase';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadMediaUseCase } from 'src/applications/use-cases/media/uploadMedia.usecase';
-import { DeleteFcmTokenUseCase } from 'src/applications/use-cases/firebase/deleteFcmToken.usecase';
+import { UploadMediaUseCase } from '../../applications/use-cases/media/uploadMedia.usecase';
+import { DeleteFcmTokenUseCase } from '../../applications/use-cases/firebase/deleteFcmToken.usecase';
+import { DeleteStorageMediaUseCase } from '../../applications/use-cases/media/deleteStorageMedia.usecase';
+import { GetUserParamsDto } from './dto/getUser.dto';
+import { getUserByIdUsecase } from '../../applications/use-cases/user/getUserById.usecase';
 
 @ApiTags('auth') 
 @Controller('auth')
@@ -42,6 +46,8 @@ export class AuthController {
   constructor(
     @Inject(UseCaseProxyModule.UPLOAD_MEDIA_USECASE)
     private readonly uploadMediaUsecaseProxy: UseCaseProxy<UploadMediaUseCase>,
+    @Inject(UseCaseProxyModule.DELETE_STORAGE_MEDIA_USECASE)
+    private readonly deleteStorageMediaUsecaseProxy: UseCaseProxy<DeleteStorageMediaUseCase>,
     @Inject(UseCaseProxyModule.REGISTER_USER_USECASE)
     private readonly registerUserUseCaseProxy: UseCaseProxy<RegisterUserUsecase>,
     @Inject(UseCaseProxyModule.EDIT_USER_USECASE)
@@ -50,6 +56,7 @@ export class AuthController {
     private readonly loginUserUseCaseProxy: UseCaseProxy<LoginUserUsecase>,
     @Inject(UseCaseProxyModule.CURRENT_USER_USECASE)
     private readonly currUserUseCaseProxy: UseCaseProxy<CurrUserUsecase>,
+    @Inject(UseCaseProxyModule.GET_USER_BY_ID_USECASE) private readonly getUserByIdUsecaseProxy: UseCaseProxy<getUserByIdUsecase>,
     @Inject(UseCaseProxyModule.DELETE_FCM_TOKEN_USECASE) private readonly deleteFCMTokenUseCaseProxy: UseCaseProxy<DeleteFcmTokenUseCase>,
   ) {}
 
@@ -84,6 +91,12 @@ export class AuthController {
       data: user,
     };
   }
+  @Get('user/:profileId')
+  async getUserById(@Param() params: GetUserParamsDto ) {
+    const { profileId } = params;
+    const user = await this.getUserByIdUsecaseProxy.getInstance().execute(profileId);
+    return user;
+  }
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth() // Indicates this endpoint requires authentication
 @ApiOperation({ summary: 'Update user profile' })
@@ -113,12 +126,25 @@ export class AuthController {
   ) {
     const { profileId } = editUserParamsDto;
     const token = getAuthCookie(req);
-    const { id: userId } = await this.currUserUseCaseProxy
+    const { id: userId,avatarUrl } = await this.currUserUseCaseProxy
       .getInstance()
       .execute(token);
-    const imageDestination = `users/${Date.now()}-${file.originalname}`;
-    const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
-    editUserDto.avatarUrl = imageUrl;
+    if(userId !== profileId) throw new UnauthorizedException('You are not the owner of this profile');
+    if(file){
+      if(avatarUrl){
+        const relativePath = decodeURIComponent(
+          avatarUrl.replace(`https://storage.googleapis.com/${process.env.GCS_BUCKET_NAME}/`, '')
+        );
+        try {
+          await this.deleteStorageMediaUsecaseProxy.getInstance().execute(relativePath);
+        } catch (error) {
+          console.error(`Error during deletion: ${relativePath}`, error);
+        }
+      }
+      const imageDestination = `users/${Date.now()}-${file.originalname}`;
+      const imageUrl = await this.uploadMediaUsecaseProxy.getInstance().execute(file.buffer, imageDestination,file.mimetype);
+      editUserDto.avatarUrl = imageUrl;
+    }
     await this.editUserUseCaseProxy
       .getInstance()
       .execute(userId, profileId, editUserDto);

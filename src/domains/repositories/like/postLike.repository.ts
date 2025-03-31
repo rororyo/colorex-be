@@ -1,4 +1,4 @@
-import { PostLikeM } from "src/domains/model/postLike"
+import { PostLikeM } from "../../model/postLike"
 
 
 export interface PostLikeRepository {

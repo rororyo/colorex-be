@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
-import AuthenticationTokenManager from 'src/applications/security/AuthTokenManager';
-import { UserRepository } from 'src/domains/repositories/user/user.repository';
+import AuthenticationTokenManager from '../../../applications/security/AuthTokenManager';
+import { UserRepository } from '../../../domains/repositories/user/user.repository';
 
 export class CurrUserUsecase {
   constructor(

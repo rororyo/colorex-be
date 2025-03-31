@@ -1,5 +1,5 @@
 import { Roles } from 'src/domains/model/roles.enum';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, ManyToOne, OneToOne } from 'typeorm';
 import { Post } from './post.entity';
 import { Comment } from './comment.entity';
 import { Reply } from './reply.entity';
@@ -8,6 +8,8 @@ import { CommentLike } from './commentLike.entity';
 import { ReplyLike } from './replyLike.entity';
 import { Follow } from './follow.entity';
 import { Message } from './message.entity';
+import { ColorType } from '../../domains/model/enums/colorType.enum';
+import { Subscription } from './subsctiption.entity';
 
 @Entity()
 export class User {
@@ -32,6 +34,13 @@ export class User {
 
   @Column({ nullable: true })
   avatarUrl: string;
+
+  @Column ({
+    type: 'enum',
+    enum: ColorType,
+    default: ColorType.notAvailable
+  })
+  colorType: ColorType
 
   @Column({ nullable: true })
   bio: string;
@@ -88,4 +97,7 @@ export class User {
 
   @OneToMany(() => Message, (message) => message.receiver, { cascade: true, onDelete: 'CASCADE' })
   receivedMessages: Message[];
+
+  @OneToOne(() => Subscription, (subscription) => subscription.user)
+  subscription: Subscription;
 }

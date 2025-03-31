@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ReplyM } from "src/domains/model/reply";
-import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
-import { Reply } from "src/infrastructure/entities/reply.entity";
+import { ReplyM } from "../../../domains/model/reply";
+import { ReplyRepository } from "../../../domains/repositories/reply/reply.repository";
+import { Reply } from "../../../infrastructure/entities/reply.entity";
 import { Repository } from "typeorm";
 
 @Injectable()

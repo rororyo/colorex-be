@@ -17,6 +17,11 @@ import { MessageModule } from './presentations/message/message.module';
 import { MessageController } from './presentations/message/message.controller';
 import { FcmController } from './presentations/firebase/fcm.controller';
 import { FirebaseModule } from './presentations/firebase/fcm.module';
+import { StorageModule } from './infrastructure/repositories/storage/storage.module';
+import { PaymentGatewayModule } from './presentations/payment-gateway/payment-gateway.module';
+import { PaymentGatewayController } from './presentations/payment-gateway/payment-gateway.controller';
+import { CronModule } from './presentations/cron/cron.module';
+import { CronController } from './presentations/cron/cron.controller';
 
 @Module({
   imports: [
@@ -29,7 +34,10 @@ import { FirebaseModule } from './presentations/firebase/fcm.module';
     LikeModule,
     FollowModule,
     MessageModule,
-    FirebaseModule
+    StorageModule,
+    FirebaseModule,
+    PaymentGatewayModule,
+    CronModule
   ],
   controllers: [
     AuthController,
@@ -39,7 +47,9 @@ import { FirebaseModule } from './presentations/firebase/fcm.module';
     LikeController,
     FollowController,
     MessageController,
-    FcmController
+    FcmController,
+    PaymentGatewayController,
+    CronController
   ],
 })
 export class AppModule {}

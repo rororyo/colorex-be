@@ -1,17 +1,17 @@
-import { 
-  Controller, Post, Body, Inject, UseGuards, Req 
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PushNotificationUsecase } from 'src/applications/use-cases/firebase/pushNotification.usecase';
-import { UseCaseProxyModule } from 'src/infrastructure/usecase-proxy/usecase-proxy.module';
-import { UseCaseProxy } from 'src/infrastructure/usecase-proxy/usecase-proxy';
+import { Controller, Post, Body, Inject, UseGuards, Req } from '@nestjs/common';
+import { PushNotificationUsecase } from '../../applications/use-cases/firebase/pushNotification.usecase';
+import { UseCaseProxyModule } from '../../infrastructure/usecase-proxy/usecase-proxy.module';
+
+import { UseCaseProxy } from '../../infrastructure/usecase-proxy/usecase-proxy';
 import { CreateNotificationDto } from './dto/createNotification.dto';
-import { UpdateFCMTokenDto } from './dto/updateFCMToken.dto';
-import { CurrUserUsecase } from 'src/applications/use-cases/user/currUser.usecase';
-import { JwtAuthGuard } from 'src/infrastructure/auth/guards/jwt-auth.guard';
+import {
+  UpdateFCMTokenDto,
+} from './dto/updateFCMToken.dto';
+import { CurrUserUsecase } from '../../applications/use-cases/user/currUser.usecase';
+import { JwtAuthGuard } from '../../infrastructure/auth/guards/jwt-auth.guard';
 import { Request } from 'express';
-import { getAuthCookie } from 'src/utils/auth/get-auth-cookie';
-import { EditFCMTokenUsecase } from 'src/applications/use-cases/firebase/saveFcmToken.usecase';
+import { getAuthCookie } from '../../utils/auth/get-auth-cookie';
+import { EditFCMTokenUsecase } from '../../applications/use-cases/firebase/saveFcmToken.usecase';
 
 @ApiTags('FCM') // Adds a category in Swagger
 @Controller('api/fcm')

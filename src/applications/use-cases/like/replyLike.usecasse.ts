@@ -1,7 +1,7 @@
-import { ReplyLikeM } from "src/domains/model/replyLike";
-import { ReplyLikeRepository} from "src/domains/repositories/like/replyLike.repository";
-import { ReplyRepository } from "src/domains/repositories/reply/reply.repository";
-import { UserRepository } from "src/domains/repositories/user/user.repository";
+import { ReplyLikeM } from "../../../domains/model/replyLike";
+import { ReplyLikeRepository} from "../../../domains/repositories/like/replyLike.repository";
+import { ReplyRepository } from "../../../domains/repositories/reply/reply.repository";
+import { UserRepository } from "../../../domains/repositories/user/user.repository";
 
 
 export class ReplyLikeUsecase {

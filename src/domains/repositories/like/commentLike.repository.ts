@@ -1,4 +1,4 @@
-import { CommentLikeM } from "src/domains/model/commentLike"
+import { CommentLikeM } from "../../model/commentLike"
 
 export interface CommentLikeRepository {
   createCommentLike(commentLike: CommentLikeM): Promise<void>
