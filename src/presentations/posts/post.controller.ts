@@ -109,7 +109,6 @@ export class PostMediaController {
       },
     },
   })
-  @UseGuards(JwtAuthGuard)
   @Get('posts')
   async getPaginatedPosts(@Query() getMediaQueryDto: GetMediaQueryDto,@Req() req: Request) {
     const token = getAuthCookie(req);
