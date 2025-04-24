@@ -10,7 +10,8 @@ export class GetMessagesUsecase {
   async execute(senderId: string, receiverId: string) {
     const isReceiverExist = await this.userRepository.verifyUserAvailability({
       id: receiverId,
-    });
+    })
+    ;
     if (!isReceiverExist) {
       throw new NotFoundException('Receiver not found');
     }

@@ -15,10 +15,10 @@ export class MessageRepositoryOrm implements MessageRepository  {
   }
   async getMessages(senderId: string, receiverId: string): Promise<MessageM[]> {
     const messages = await this.messageRepository.find({
-      where: [
-        { sender: { id: senderId } },
-        { receiver: { id: receiverId } },
-      ],
+      where: {
+        sender: { id: senderId } ,
+        receiver: { id: receiverId } ,
+    },
       relations: ['sender', 'receiver'],
       select: {
         id: true,
@@ -34,6 +34,9 @@ export class MessageRepositoryOrm implements MessageRepository  {
           avatarUrl: true,
           role: true,
         },
+      },
+      order: {
+        createdAt: 'DESC',
       },
     })
     return messages
