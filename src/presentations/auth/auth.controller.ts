@@ -91,6 +91,7 @@ export class AuthController {
       data: user,
     };
   }
+  @UseGuards(JwtAuthGuard)
   @Get('user/:profileId')
   async getUserById(@Param() params: GetUserParamsDto ) {
     const { profileId } = params;

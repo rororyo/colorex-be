@@ -22,7 +22,7 @@ export class PostSubscriptionUseCase {
       subscription.orderId = crypto.randomUUID();
       subscription.startDate = new Date();
       subscription.endDate = new Date(new Date().setMonth(new Date().getMonth() + 1));
-
+      subscription.status = SubscriptionStatus.pending;
       return await this.subscriptionRepository.updateSubscription(subscription);
     }
 
